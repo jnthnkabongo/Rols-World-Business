@@ -14,7 +14,10 @@ class Produit extends Model
         'description', 
         'prix_achat', 
         'prix_vente', 
-        'stock_min'
+        'stock_min',
+        'stock',
+        'status',
+        'taille'
     ];
 
     public function categorie()

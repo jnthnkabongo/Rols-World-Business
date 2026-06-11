@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Roles;
 use App\Models\User;
+use App\Models\Produit;
+use App\Models\Categorie;
+use App\Models\Marque;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -127,10 +130,10 @@ class DashboardController extends Controller
             $user = User::find($id);
             $user->name = $validated['name'];
             $user->email = $validated['email'];
-            $user->password = bcrypt($validated['password']);
-            $user->role_id = $validated['role_id'];
+            $user->password = bcrypt($validated['password']) ?? null;
+            $user->role_id = $validated['role_id'] ?? null;
             $user->save();
-            //dd($user);
+            dd($user);
             return redirect()->route('liste-utilisateurs')->with('success', 'Utilisateur modifié avec succès');
 
         } catch (\Throwable $th) {
@@ -157,7 +160,110 @@ class DashboardController extends Controller
     //// 1. Lecture des donnees de la liste des produits
     public function produits()
     {
-        return view('pages.liste-produits');
+        $produits_electroniques = Produit::with(['categorie', 'marque'])
+            ->whereHas('categorie', function($query) {
+                $query->where('nom', 'like', '%électronique%');
+            })->get();
+        
+        $chaussures = Produit::with(['categorie', 'marque'])
+            ->whereHas('categorie', function($query) {
+                $query->where('nom', 'like', '%chaussure%');
+            })->get();
+        
+        $categories = Categorie::all();
+        $marques = Marque::all();
+        
+        return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'categories', 'marques'));
+    }
+
+    //// 2. Ajout d'un produit
+    public function AjouterProduit(Request $request)
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'categorie_id' => 'required|exists:categories,id',
+            'marque_id' => 'required|exists:marques,id',
+            'modele' => 'nullable|string|max:100',
+            'description' => 'nullable|string',
+            'prix_achat' => 'nullable|numeric',
+            'prix_vente' => 'required|numeric',
+            'stock_min' => 'nullable|integer',
+            'stock' => 'required|integer',
+            'status' => 'required|string|in:available,low_stock,out_of_stock',
+            'taille' => 'nullable|string',
+        ]);
+
+        try {
+            $produit = new Produit();
+            $produit->nom = $validated['nom'];
+            $produit->categorie_id = $validated['categorie_id'];
+            $produit->marque_id = $validated['marque_id'];
+            $produit->modele = $validated['modele'] ?? null;
+            $produit->description = $validated['description'] ?? null;
+            $produit->prix_achat = $validated['prix_achat'] ?? null;
+            $produit->prix_vente = $validated['prix_vente'];
+            $produit->stock_min = $validated['stock_min'] ?? 1;
+            $produit->stock = $validated['stock'];
+            $produit->status = $validated['status'];
+            $produit->taille = $validated['taille'] ?? null;
+            $produit->save();
+            
+            return redirect()->route('liste-produits')->with('success', 'Produit ajouté avec succès');
+
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-produits')->with('error', 'Erreur lors de l\'ajout du produit');
+        }
+    }
+
+    //// 3. Modification d'un produit
+    public function ModifierProduit(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'categorie_id' => 'required|exists:categories,id',
+            'marque_id' => 'required|exists:marques,id',
+            'modele' => 'nullable|string|max:100',
+            'description' => 'nullable|string',
+            'prix_achat' => 'nullable|numeric',
+            'prix_vente' => 'required|numeric',
+            'stock_min' => 'nullable|integer',
+            'stock' => 'required|integer',
+            'status' => 'required|string|in:available,low_stock,out_of_stock',
+            'taille' => 'nullable|string',
+        ]);
+
+        try {
+            $produit = Produit::find($id);
+            $produit->nom = $validated['nom'];
+            $produit->categorie_id = $validated['categorie_id'];
+            $produit->marque_id = $validated['marque_id'];
+            $produit->modele = $validated['modele'] ?? null;
+            $produit->description = $validated['description'] ?? null;
+            $produit->prix_achat = $validated['prix_achat'] ?? null;
+            $produit->prix_vente = $validated['prix_vente'];
+            $produit->stock_min = $validated['stock_min'] ?? 1;
+            $produit->stock = $validated['stock'];
+            $produit->status = $validated['status'];
+            $produit->taille = $validated['taille'] ?? null;
+            $produit->save();
+            
+            return redirect()->route('liste-produits')->with('success', 'Produit modifié avec succès');
+
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-produits')->with('error', 'Erreur lors de la modification du produit');
+        }
+    }
+
+    //// 4. Suppression d'un produit
+    public function SupprimerProduit($id)
+    {
+        try {
+            $produit = Produit::find($id);
+            $produit->delete();
+            return redirect()->route('liste-produits')->with('success', 'Produit supprimé avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-produits')->with('error', 'Erreur lors de la suppression du produit');
+        }
     }
 
     //// 1. Lecture des donnees de la liste des ventes

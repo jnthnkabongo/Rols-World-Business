@@ -42,75 +42,37 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
+                            @foreach($produits_electroniques as $produit)
                             <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#1</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">iPhone 15 Pro</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Apple</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">1 299 €</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">25</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $produit->id }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $produit->nom }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->marque->nom ?? '-' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} €</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->stock }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Disponible</span>
+                                    @if($produit->status == 'available')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Disponible</span>
+                                    @elseif($produit->status == 'low_stock')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Faible stock</span>
+                                    @else
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rupture</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="openViewElectronicsModal(2)" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
+                                        <button onclick="openViewElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button onclick="openEditElectronicsModal(2)" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
+                                        <button onclick="openEditElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button onclick="openDeleteElectronicsModal(2)" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
+                                        <button onclick="openDeleteElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#2</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">MacBook Pro 14"</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Apple</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">2 499 €</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Disponible</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <div class="flex items-center space-x-2">
-                                        <button onclick="openViewElectronicsModal(2)" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button onclick="openEditElectronicsModal(2)" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="openDeleteElectronicsModal(2)" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#3</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">Samsung Galaxy S24</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Samsung</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">899 €</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rupture</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <div class="flex items-center space-x-2">
-                                        <button onclick="openViewElectronicsModal(3)" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button onclick="openEditElectronicsModal(3)" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="openDeleteElectronicsModal(3)" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

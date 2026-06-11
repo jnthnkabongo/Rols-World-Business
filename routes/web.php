@@ -24,6 +24,9 @@ Route::get('liste-fournisseur', [DashboardController::class, 'fournisseurs'])->n
 
 //mecanique produits CRUD
 Route::get('liste-produit', [DashboardController::class, 'produits'])->name('liste-produits');
+Route::post('ajout-produit', [DashboardController::class, 'AjouterProduit'])->name('ajout-produit');
+Route::post('modifier-produit/{id}', [DashboardController::class, 'ModifierProduit'])->name('modifier-produit');
+Route::post('supprimer-produit/{id}', [DashboardController::class, 'SupprimerProduit'])->name('supprimer-produit');
 
 //mecanique ventes CRUD
 Route::get('liste-vente', [DashboardController::class, 'ventes'])->name('liste-ventes');
