@@ -20,6 +20,6 @@ class ApprovisionnementDetail extends Model
 
     public function produit()
     {
-        return $this->belongsTo(Produit::class);
+        return $this->belongsTo(Produits::class);
     }
 }

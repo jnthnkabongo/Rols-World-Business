@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Garantie extends Model
+class Garanties extends Model
 {
     protected $fillable = [
         'produit_unite_id', 

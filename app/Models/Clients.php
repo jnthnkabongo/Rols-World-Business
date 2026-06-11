@@ -19,6 +19,6 @@ class Client extends Model
 
     public function garanties()
     {
-        return $this->hasMany(Garantie::class);
+        return $this->hasMany(Garanties::class);
     }
 }

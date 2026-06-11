@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Produit extends Model
+class Produits extends Model
 {
     protected $fillable = [
         'nom', 
@@ -15,19 +15,18 @@ class Produit extends Model
         'prix_achat', 
         'prix_vente', 
         'stock_min',
-        'stock',
         'status',
         'taille'
     ];
 
     public function categorie()
     {
-        return $this->belongsTo(Categorie::class);
+        return $this->belongsTo(Categories::class);
     }
 
     public function marque()
     {
-        return $this->belongsTo(Marque::class);
+        return $this->belongsTo(Marques::class);
     }
 
     public function produitUnites()

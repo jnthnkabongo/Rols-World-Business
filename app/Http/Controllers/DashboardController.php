@@ -6,9 +6,13 @@ use App\Models\Roles;
 use App\Models\User;
 use App\Models\Produit;
 use App\Models\Categorie;
+use App\Models\Categories;
 use App\Models\Marque;
+use App\Models\Marques;
+use App\Models\Produits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -151,27 +155,40 @@ class DashboardController extends Controller
         }
     }
 
+    //*************** La mecanique concernant la gestion des founitures CRUD */ 
+
     //// 1. Lecture des donnees de la liste des fournisseurs
     public function fournisseurs()
     {
         return view('pages.liste-fournisseurs');
     }
+    
+    //*************** La mecanique concernant la gestion des produits CRUD */ 
 
     //// 1. Lecture des donnees de la liste des produits
     public function produits()
     {
-        $produits_electroniques = Produit::with(['categorie', 'marque'])
-            ->whereHas('categorie', function($query) {
-                $query->where('nom', 'like', '%électronique%');
-            })->get();
+        // Ensure categories exist
+        // $electronique = Categorie::firstOrCreate(
+        //     ['nom' => 'Électronique'],
+        //     ['description' => 'Catégorie pour les appareils électroniques']
+        // );
         
-        $chaussures = Produit::with(['categorie', 'marque'])
-            ->whereHas('categorie', function($query) {
-                $query->where('nom', 'like', '%chaussure%');
-            })->get();
+        // $chaussure = Categorie::firstOrCreate(
+        //     ['nom' => 'Chaussures'],
+        //     ['description' => 'Catégorie pour les chaussures']
+        // );
         
-        $categories = Categorie::all();
-        $marques = Marque::all();
+        $produits_electroniques = Produits::with(['categorie', 'marque'])
+            //->where('categorie_id', $electronique->id)
+            ->get();
+        
+        $chaussures = Produits::with(['categorie', 'marque'])
+            //->where('categorie_id', $chaussure->id)
+            ->get();
+        
+        $categories = Categories::all();
+        $marques = Marques::all();
         
         return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'categories', 'marques'));
     }
@@ -188,13 +205,12 @@ class DashboardController extends Controller
             'prix_achat' => 'nullable|numeric',
             'prix_vente' => 'required|numeric',
             'stock_min' => 'nullable|integer',
-            'stock' => 'required|integer',
             'status' => 'required|string|in:available,low_stock,out_of_stock',
             'taille' => 'nullable|string',
         ]);
 
         try {
-            $produit = new Produit();
+            $produit = new Produits();
             $produit->nom = $validated['nom'];
             $produit->categorie_id = $validated['categorie_id'];
             $produit->marque_id = $validated['marque_id'];
@@ -203,7 +219,6 @@ class DashboardController extends Controller
             $produit->prix_achat = $validated['prix_achat'] ?? null;
             $produit->prix_vente = $validated['prix_vente'];
             $produit->stock_min = $validated['stock_min'] ?? 1;
-            $produit->stock = $validated['stock'];
             $produit->status = $validated['status'];
             $produit->taille = $validated['taille'] ?? null;
             $produit->save();
@@ -233,7 +248,7 @@ class DashboardController extends Controller
         ]);
 
         try {
-            $produit = Produit::find($id);
+            $produit = Produits::find($id);
             $produit->nom = $validated['nom'];
             $produit->categorie_id = $validated['categorie_id'];
             $produit->marque_id = $validated['marque_id'];
@@ -258,11 +273,25 @@ class DashboardController extends Controller
     public function SupprimerProduit($id)
     {
         try {
-            $produit = Produit::find($id);
+            $produit = Produits::find($id);
             $produit->delete();
             return redirect()->route('liste-produits')->with('success', 'Produit supprimé avec succès');
         } catch (\Throwable $th) {
             return redirect()->route('liste-produits')->with('error', 'Erreur lors de la suppression du produit');
+        }
+    }
+
+    //// 5. Récupérer les données d'un produit pour les modals
+    public function getProductData($id)
+    {
+        try {
+            $produit = Produits::with(['categorie', 'marque'])->find($id);
+            if (!$produit) {
+                return response()->json(['error' => 'Produit non trouvé'], 404);
+            }
+            return response()->json($produit);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'Erreur lors de la récupération du produit'], 500);
         }
     }
 

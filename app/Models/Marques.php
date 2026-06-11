@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Marque extends Model
+class Marques extends Model
 {
     protected $fillable = [
         'nom', 
@@ -20,6 +20,6 @@ class Marque extends Model
 
     public function produits()
     {
-        return $this->hasMany(Produit::class);
+        return $this->hasMany(Produits::class);
     }
 }
