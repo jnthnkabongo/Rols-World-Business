@@ -141,53 +141,6 @@
         </div>
     </div>
 
-    <!-- Modal Voir Détails -->
-    <div id="viewRoleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-bold text-gray-800">Détails du Rôle</h3>
-                    <button onclick="closeModal('viewRoleModal')" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">ID</span>
-                    <span class="text-sm text-gray-800" id="viewRoleId">#1</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Nom</span>
-                    <span class="text-sm text-gray-800 font-semibold" id="viewRoleName">Administrateur</span>
-                </div>
-                <div class="py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600 block mb-1">Description</span>
-                    <p class="text-sm text-gray-800" id="viewRoleDescription">Accès complet au système</p>
-                </div>
-                <div class="py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600 block mb-1">Permissions</span>
-                    <div class="flex flex-wrap gap-1" id="viewRolePermissions">
-                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">CRUD</span>
-                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Settings</span>
-                        <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">Users</span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Utilisateurs</span>
-                    <span class="text-sm text-gray-800" id="viewRoleUsers">3</span>
-                </div>
-                <div class="flex justify-between items-center py-2">
-                    <span class="text-sm font-semibold text-gray-600">Statut</span>
-                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" id="viewRoleStatus">Actif</span>
-                </div>
-            </div>
-            <div class="p-6 border-t border-gray-200 flex justify-end">
-                <button onclick="closeModal('viewRoleModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Fermer</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal Modifier Rôle -->
     <div id="editRoleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">

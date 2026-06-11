@@ -114,7 +114,8 @@ class DashboardController extends Controller
         }
     }
     //// 3. Modification de l'utilisateur
-    public function ModifierUtilisateur(Request $request){
+    public function ModifierUtilisateur(Request $request, $id){
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -123,7 +124,7 @@ class DashboardController extends Controller
         ]);
         
         try {
-            $user = User::find($validated['id']);
+            $user = User::find($id);
             $user->name = $validated['name'];
             $user->email = $validated['email'];
             $user->password = bcrypt($validated['password']);
