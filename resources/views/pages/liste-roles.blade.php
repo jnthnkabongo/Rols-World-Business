@@ -66,9 +66,10 @@
             </div>
 
             <!-- Pagination -->
-            <div class="mt-6 pb-4 mr-2 flex justify-end bg-primary">
+            <div class="mt-6 pb-4 mr-4 flex justify-end bg-primary">
                 {{ $liste_roles->withQueryString()->links() }}
             </div>
+   
         </div>
     </div>
 

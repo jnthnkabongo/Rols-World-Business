@@ -34,6 +34,7 @@
         .dropdown-menu.show {
             display: block;
         }
+
     </style>
 </head>
 <body class="gradient-bg h-screen flex flex-col">
