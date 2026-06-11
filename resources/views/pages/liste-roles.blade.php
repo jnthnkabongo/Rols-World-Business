@@ -64,13 +64,11 @@
                     </tbody>
                 </table>
             </div>
-            <nav>
-                <ul class="pagination justify-content-center mt-2 pb-2">
-                    <li class="page-item disabled">
-                        {{ $liste_roles->withQueryString()->links() }}
-                    </li>
-                </ul>
-            </nav>
+
+            <!-- Pagination -->
+            <div class="mt-6 pb-4 mr-2 flex justify-end bg-primary">
+                {{ $liste_roles->withQueryString()->links() }}
+            </div>
         </div>
     </div>
 
