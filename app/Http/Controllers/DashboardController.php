@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Roles;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -21,10 +22,24 @@ class DashboardController extends Controller
         return view('pages.liste-roles', compact('liste_roles'));
     }
 
-    public function AjouterRole($)
+    public function AjouterRole(Request $request)
     {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
 
-        return view('pages.liste-roles');
+        try {
+            $role = new Roles();
+            $role->nom = $validated['nom'];
+            $role->description = $validated['description'] ?? null;
+            $role->save();
+            //dd($role);
+            return redirect()->route('liste-roles')->with('success', 'Rôle ajouté avec succès');
+
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-roles')->with('error', 'Erreur lors de l\'ajout du rôle');
+        }
     }
 
     public function utilisateurs()

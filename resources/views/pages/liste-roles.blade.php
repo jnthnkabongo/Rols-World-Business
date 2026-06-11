@@ -20,7 +20,6 @@
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nom</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Description</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Permissions</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Utilisateurs</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Statut</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                         </tr>
@@ -28,8 +27,8 @@
                     <tbody class="divide-y divide-gray-200">
                         @foreach($liste_roles as $role)
                             <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $role->id }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $role->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"># {{ ($liste_roles->perPage() * ($liste_roles->currentPage() - 1 ))+ $loop->iteration }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $role->nom }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $role->description }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">
                                     <div class="flex flex-wrap gap-1">
@@ -38,7 +37,6 @@
                                         <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">Users</span>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Actif</span>
                                 </td>
@@ -57,61 +55,6 @@
                                 </td>
                             </tr>
                         @endforeach
-                        {{-- <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#2</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">Manager</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">Gestion des ventes et clients</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">Read</span>
-                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Sales</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Actif</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="openViewModal(2)" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button onclick="openEditModal(2)" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="openDeleteModal(2)" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#3</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">Utilisateur</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">Accès limité aux ventes</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">Read</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Actif</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="openViewModal(3)" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button onclick="openEditModal(3)" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="openDeleteModal(3)" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr> --}}
                         <tr class="hover:bg-gray-50 transition">
                             <td colspan="7" class="px-6 py-4 text-center text-gray-500">
                                 Aucun rôle trouvé
@@ -134,21 +77,25 @@
                     </button>
                 </div>
             </div>
-            <form class="p-6 space-y-4" id="addRoleForm">
+            <form method="POST" action="{{ route('ajout-role') }}" class="p-6 space-y-4" id="addRoleForm">
+                @csrf
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du rôle</label>
-                    <input type="text" id="roleName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Administrateur" oninput="validateAddForm()">
+                    <input type="text" id="roleName" name="nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Administrateur" oninput="validateAddForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-                    <textarea id="roleDescription" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Description du rôle..." oninput="validateAddForm()"></textarea>
+                    <textarea id="roleDescription" name="description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Description du rôle..." oninput="validateAddForm()"></textarea>
                 </div>
-                
-            </form>
-            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                 <button onclick="closeModal('addRoleModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button id="addRoleBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
+                <button id="addRoleBtn" type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
             </div>
+            </form>
+            {{-- <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <button onclick="closeModal('addRoleModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                <button id="addRoleBtn" type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
+            </div> --}}
         </div>
     </div>
 
