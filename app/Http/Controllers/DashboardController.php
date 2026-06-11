@@ -21,7 +21,7 @@ class DashboardController extends Controller
     ///// 1. Lecture des donnees
     public function roles()
     {
-        $liste_roles = Roles::paginate(10);
+        $liste_roles = Roles::paginate(2);
         return view('pages.liste-roles', compact('liste_roles'));
     }
     ///// 2. La creation d'un role

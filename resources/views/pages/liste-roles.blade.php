@@ -25,8 +25,8 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        @foreach($liste_roles as $role)
-                            <tr class="hover:bg-gray-50 transition">
+                        @forelse($liste_roles as $role)
+                            <tr class="hover:bg-gray-50 transition" data-role-id="{{ $role->id }}" data-role-data='{{ json_encode(['nom' => $role->nom, 'description' => $role->description]) }}'>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"># {{ ($liste_roles->perPage() * ($liste_roles->currentPage() - 1 ))+ $loop->iteration }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $role->nom }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $role->description }}</td>
@@ -42,27 +42,35 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="openViewModal(1)" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
+                                        {{-- <button onclick="openViewModal({{ $role->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button onclick="openEditModal(1)" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
+                                        </button> --}}
+                                        <button onclick="openEditModal({{ $role->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button onclick="openDeleteModal(1)" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
+                                        <button onclick="openDeleteModal({{ $role->id }})" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
                         <tr class="hover:bg-gray-50 transition">
                             <td colspan="7" class="px-6 py-4 text-center text-gray-500">
                                 Aucun rôle trouvé
                             </td>
                         </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+            <nav>
+                <ul class="pagination justify-content-center mt-2 pb-2">
+                    <li class="page-item disabled">
+                        {{ $liste_roles->withQueryString()->links() }}
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 
@@ -153,14 +161,16 @@
                     </button>
                 </div>
             </div>
-            <form class="p-6 space-y-4">
+            <form action="{{ route('modifier-role', ['id' => ':id']) }}" method="POST" class="p-6 space-y-4" id="editRoleForm">
+                @csrf
+                <input type="hidden" id="editRoleId" name="id" value="">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du rôle</label>
-                    <input type="text" id="editRoleName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="Administrateur">
+                    <input type="text" id="editRoleName" name="nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="Administrateur">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-                    <textarea id="editRoleDescription" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3">Accès complet au système</textarea>
+                    <textarea id="editRoleDescription" name="description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3">Accès complet au système</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Permissions</label>
@@ -193,7 +203,7 @@
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                 <button onclick="closeModal('editRoleModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Modifier</button>
+                <button type="submit" form="editRoleForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Modifier</button>
             </div>
         </div>
     </div>
@@ -209,7 +219,11 @@
                 <p class="text-gray-600 mb-6">Êtes-vous sûr de vouloir supprimer ce rôle ? Cette action est irréversible.</p>
                 <div class="flex justify-center space-x-3">
                     <button onclick="closeModal('deleteRoleModal')" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                    <button class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Supprimer</button>
+                    <form action="{{ route('supprimer-role', ['id' => ':id']) }}" method="POST" id="deleteRoleForm">
+                        @csrf
+                        <input type="hidden" id="deleteRoleId" name="id" value="">
+                        <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Supprimer</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -273,22 +287,28 @@
         }
 
         function openEditModal(roleId) {
-            // Simuler le chargement des données pour l'édition
-            const roles = {
-                1: { name: 'Administrateur', description: 'Accès complet au système' },
-                2: { name: 'Manager', description: 'Gestion des ventes et clients' },
-                3: { name: 'Utilisateur', description: 'Accès limité aux ventes' },
-                4: { name: 'Invité', description: 'Accès en lecture seule' }
-            };
+            // Trouver le rôle dans les données de la vue
+            const roleElement = document.querySelector(`[data-role-id="${roleId}"]`);
+            if (roleElement) {
+                const roleData = JSON.parse(roleElement.getAttribute('data-role-data'));
+                document.getElementById('editRoleName').value = roleData.nom;
+                document.getElementById('editRoleDescription').value = roleData.description || '';
+            }
             
-            const role = roles[roleId];
-            document.getElementById('editRoleName').value = role.name;
-            document.getElementById('editRoleDescription').value = role.description;
+            // Mettre à jour l'action du formulaire avec l'ID réel
+            const form = document.getElementById('editRoleForm');
+            form.action = form.action.replace(':id', roleId);
+            document.getElementById('editRoleId').value = roleId;
             
             openModal('editRoleModal');
         }
 
         function openDeleteModal(roleId) {
+            // Mettre à jour l'action du formulaire avec l'ID réel
+            const form = document.getElementById('deleteRoleForm');
+            form.action = form.action.replace(':id', roleId);
+            document.getElementById('deleteRoleId').value = roleId;
+            
             openModal('deleteRoleModal');
         }
 
