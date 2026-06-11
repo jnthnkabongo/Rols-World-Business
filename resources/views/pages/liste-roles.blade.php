@@ -92,10 +92,6 @@
                 <button id="addRoleBtn" type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
             </div>
             </form>
-            {{-- <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
-                <button onclick="closeModal('addRoleModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button id="addRoleBtn" type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
-            </div> --}}
         </div>
     </div>
 

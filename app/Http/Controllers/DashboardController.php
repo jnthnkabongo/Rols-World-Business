@@ -16,12 +16,15 @@ class DashboardController extends Controller
         return view('pages.dashboard');
     }
 
+    //*************** La mecanique concernant la gestion des roles CRUD */ 
+    
+    ///// 1. Lecture des donnees
     public function roles()
     {
         $liste_roles = Roles::paginate(10);
         return view('pages.liste-roles', compact('liste_roles'));
     }
-
+    ///// 2. La creation d'un role
     public function AjouterRole(Request $request)
     {
         $validated = $request->validate([
@@ -39,6 +42,39 @@ class DashboardController extends Controller
 
         } catch (\Throwable $th) {
             return redirect()->route('liste-roles')->with('error', 'Erreur lors de l\'ajout du rôle');
+        }
+    }
+    ///// 3. La modification d'un role
+    public function ModifierRole(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        try {
+            $role = Roles::find($id);
+            $role->nom = $validated['nom'];
+            $role->description = $validated['description'] ?? null;
+            $role->save();
+            //dd($role);
+            return redirect()->route('liste-roles')->with('success', 'Rôle modifié avec succès');
+
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-roles')->with('error', 'Erreur lors de la modification du rôle');
+        }
+    }
+    ///// 4. La suppression d'un role
+    public function SupprimerRole($id)
+    {
+        try {
+            $role = Roles::find($id);
+            $role->delete();
+            //dd($role);
+            return redirect()->route('liste-roles')->with('success', 'Rôle supprimé avec succès');
+
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-roles')->with('error', 'Erreur lors de la suppression du rôle');
         }
     }
 
