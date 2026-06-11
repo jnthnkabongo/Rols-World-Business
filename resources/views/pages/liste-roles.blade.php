@@ -1,5 +1,44 @@
 @extends('pages.entete')
 @section('content')
+    <style>
+        .pagination {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #4b5563;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .pagination a:hover {
+            background-color: #dbeafe;
+            color: #2563eb;
+            border-color: #3b82f6;
+        }
+
+        .pagination .active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .pagination .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination .disabled:hover {
+            background-color: transparent;
+            color: #4b5563;
+            border-color: #e5e7eb;
+        }
+    </style>
     <div class="p-8 overflow-y-auto flex-1">
         <!-- En-tête avec bouton d'ajout -->
         <div class="flex justify-between items-center mb-6">
@@ -218,7 +257,7 @@
                 <p class="text-gray-600 mb-6">Êtes-vous sûr de vouloir supprimer ce rôle ? Cette action est irréversible.</p>
                 <div class="flex justify-center space-x-3">
                     <button onclick="closeModal('deleteRoleModal')" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                    <form action="{{ route('supprimer-role', ['id' => ':id']) }}" method="POST" id="deleteRoleForm">
+                    <form action="{{ route('delete-role', ['id' => ':id']) }}" method="POST" id="deleteRoleForm">
                         @csrf
                         <input type="hidden" id="deleteRoleId" name="id" value="">
                         <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Supprimer</button>

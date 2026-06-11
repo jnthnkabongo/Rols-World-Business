@@ -11,10 +11,13 @@ Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard'
 Route::get('liste-role', [DashboardController::class, 'roles'])->name('liste-roles');
 Route::post('ajout-role', [DashboardController::class, 'AjouterRole'])->name('ajout-role');
 Route::post('modifier-role/{id}', [DashboardController::class, 'ModifierRole'])->name('modifier-role');
-Route::post('supprimer-role/{id}', [DashboardController::class, 'SupprimerRole'])->name('supprimer-role');
+Route::post('supprimer-role/{id}', [DashboardController::class, 'SupprimerRole'])->name('delete-role');
 
 //mecanique utilisateurs CRUD
 Route::get('liste-utilisateur', [DashboardController::class, 'utilisateurs'])->name('liste-utilisateurs');
+Route::post('ajout-utilisateur', [DashboardController::class, 'AjouterUtilisateur'])->name('ajout-utilisateur');
+Route::post('modifier-utilisateur/{id}', [DashboardController::class, 'ModifierUtilisateur'])->name('modifier-utilisateur');
+Route::post('supprimer-utilisateur/{id}', [DashboardController::class, 'SupprimerUtilisateur'])->name('supprimer-utilisateur');
 
 //mecanique fournisseurs CRUD
 Route::get('liste-fournisseur', [DashboardController::class, 'fournisseurs'])->name('liste-fournisseurs');

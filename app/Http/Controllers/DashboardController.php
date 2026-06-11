@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Roles;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,9 +17,10 @@ class DashboardController extends Controller
         return view('pages.dashboard');
     }
 
+
     //*************** La mecanique concernant la gestion des roles CRUD */ 
     
-    ///// 1. Lecture des donnees
+    ///// 1. Lecture des donnees de la liste de roles
     public function roles()
     {
         $liste_roles = Roles::paginate(2);
@@ -78,21 +80,86 @@ class DashboardController extends Controller
         }
     }
 
+
+    //*************** La mecanique concernant la gestion des roles CRUD */ 
+    
+    //// 1. Lecture des donnees de la liste des utilisateurs
     public function utilisateurs()
     {
-        return view('pages.liste-utilisateurs');
+        $liste_utilisateurs = User::with('role')->paginate(2);
+        $liste_roles = Roles::orderBy('nom', 'asc')->get();
+        return view('pages.liste-utilisateurs', compact('liste_utilisateurs', 'liste_roles'));
+    }
+    //// 2. Creation de l'utilisateur
+    public function AjouterUtilisateur(Request $request){
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'role_id' => 'required|exists:roles,id',
+        ]);
+        
+        try {
+            $user = new User();
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            $user->password = bcrypt($validated['password']);
+            $user->role_id = $validated['role_id'];
+            $user->save();
+            //dd($user);
+            return redirect()->route('liste-utilisateurs')->with('success', 'Utilisateur ajouté avec succès');
+
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-utilisateurs')->with('error', 'Erreur lors de l\'ajout de l\'utilisateur');
+        }
+    }
+    //// 3. Modification de l'utilisateur
+    public function ModifierUtilisateur(Request $request){
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'role_id' => 'required|exists:roles,id',
+        ]);
+        
+        try {
+            $user = User::find($validated['id']);
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            $user->password = bcrypt($validated['password']);
+            $user->role_id = $validated['role_id'];
+            $user->save();
+            //dd($user);
+            return redirect()->route('liste-utilisateurs')->with('success', 'Utilisateur modifié avec succès');
+
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-utilisateurs')->with('error', 'Erreur lors de la modification de l\'utilisateur');
+        }
+    }
+    //// 4. Suppression de l'utilisateur
+    public function SupprimerUtilisateur($id){
+        try {
+            $user = User::find($id);
+            $user->delete();
+            return redirect()->route('liste-utilisateurs')->with('success', 'Utilisateur supprimé avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-utilisateurs')->with('error', 'Erreur lors de la suppression de l\'utilisateur');
+        }
     }
 
+    //// 1. Lecture des donnees de la liste des fournisseurs
     public function fournisseurs()
     {
         return view('pages.liste-fournisseurs');
     }
 
+    //// 1. Lecture des donnees de la liste des produits
     public function produits()
     {
         return view('pages.liste-produits');
     }
 
+    //// 1. Lecture des donnees de la liste des ventes
     public function ventes()
     {
         return view('pages.liste-ventes');

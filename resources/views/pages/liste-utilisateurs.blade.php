@@ -26,12 +26,13 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
+                        @forelse ($liste_utilisateurs as $utilisateur)
                         <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#1</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">Jean Dupont</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">jean.dupont@email.com</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"># {{ ($liste_utilisateurs->perPage() * ($liste_utilisateurs->currentPage() - 1 ))+ $loop->iteration }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $utilisateur->name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $utilisateur->email }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Administrateur</span>
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">{{ $utilisateur->role->nom }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">01/06/2026</td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -39,9 +40,9 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <div class="flex items-center space-x-2">
-                                    <button onclick="openViewModal(1)" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
+                                    {{-- <button onclick="openViewModal(1)" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                         <i class="fas fa-eye"></i>
-                                    </button>
+                                    </button> --}}
                                     <button onclick="openEditModal(1)" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -51,7 +52,14 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr class="hover:bg-gray-50 transition">
+                        @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                                Aucun utilisateur trouvé
+                            </td>
+                        </tr>
+                        @endforelse
+                        {{-- <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#2</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">Marie Martin</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">marie.martin@email.com</td>
@@ -125,7 +133,7 @@
                                     </button>
                                 </div>
                             </td>
-                        </tr>
+                        </tr> --}}
                     </tbody>
                 </table>
             </div>
@@ -143,45 +151,39 @@
                     </button>
                 </div>
             </div>
-            <form class="p-6 space-y-4" id="addUserForm">
+            <form method="POST" action="{{ route('ajout-utilisateur')}}" class="p-6 space-y-4" id="addUserForm">
+                @csrf
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom complet</label>
-                    <input type="text" id="userName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Jean Dupont" oninput="validateAddForm()">
+                    <input type="text" id="userName" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Jean Dupont" oninput="validateAddForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-                    <input type="email" id="userEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: jean.dupont@email.com" oninput="validateAddForm()">
+                    <input type="email" id="userEmail" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: jean.dupont@email.com" oninput="validateAddForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Mot de passe</label>
-                    <input type="password" id="userPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Mot de passe" oninput="validateAddForm()">
+                    <input type="password" id="userPassword" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Mot de passe" oninput="validateAddForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Confirmer le mot de passe</label>
-                    <input type="password" id="userPasswordConfirm" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Confirmer le mot de passe" oninput="validateAddForm()">
+                    <input type="password" id="userPasswordConfirm" name="passwordConfirm" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Confirmer le mot de passe" oninput="validateAddForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Rôle</label>
-                    <select id="userRole" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="validateAddForm()">
+                    <select id="userRole" name="role_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="validateAddForm()">
                         <option value="">Sélectionner...</option>
-                        <option value="admin">Administrateur</option>
-                        <option value="manager">Manager</option>
-                        <option value="user">Utilisateur</option>
+                        @foreach($liste_roles as $role)
+                            <option value="{{ $role->id }}">{{ $role->nom }}</option>
+                        @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
-                    <select id="userStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="validateAddForm()">
-                        <option value="">Sélectionner...</option>
-                        <option value="active">Actif</option>
-                        <option value="inactive">Inactif</option>
-                    </select>
+
+                <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                    <button onclick="closeModal('addUserModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                    <button id="addUserBtn" type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
                 </div>
             </form>
-            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
-                <button onclick="closeModal('addUserModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button id="addUserBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
-            </div>
         </div>
     </div>
 
@@ -313,11 +315,9 @@
             const userPassword = document.getElementById('userPassword').value;
             const userPasswordConfirm = document.getElementById('userPasswordConfirm').value;
             const userRole = document.getElementById('userRole').value;
-            const userStatus = document.getElementById('userStatus').value;
-            
             const addBtn = document.getElementById('addUserBtn');
             
-            if (userName && userEmail && userPassword && userPasswordConfirm && userRole && userStatus && userPassword === userPasswordConfirm) {
+            if (userName && userEmail && userPassword && userPasswordConfirm && userRole && userPassword === userPasswordConfirm) {
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
