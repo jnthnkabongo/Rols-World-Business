@@ -29,10 +29,10 @@
                         @forelse ($liste_utilisateurs as $utilisateur)
                         <tr class="hover:bg-gray-50 transition" data-utilisateur-id="{{ $utilisateur->id }}" data-utilisateur-data='{{ json_encode(['name' => $utilisateur->name, 'email' => $utilisateur->email, 'role_id' => $utilisateur->role_id]) }}'>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"># {{ ($liste_utilisateurs->perPage() * ($liste_utilisateurs->currentPage() - 1 ))+ $loop->iteration }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $utilisateur->name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $utilisateur->email }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ ucfirst($utilisateur->name) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($utilisateur->email) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">{{ $utilisateur->role->nom }}</span>
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ ucfirst($utilisateur->role->nom) }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $utilisateur->created_at ? $utilisateur->created_at->format('d/m/Y') : 'N/A' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -40,9 +40,6 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <div class="flex items-center space-x-2">
-                                    {{-- <button onclick="openViewModal(1)" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
-                                        <i class="fas fa-eye"></i>
-                                    </button> --}}
                                     <button onclick="openEditModal({{ $utilisateur->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -62,6 +59,10 @@
                         
                     </tbody>
                 </table>
+            </div>
+             <!-- Pagination -->
+            <div class="mt-6 pb-4 mr-4 flex justify-end bg-primary">
+                {{ $liste_utilisateurs->withQueryString()->links() }}
             </div>
         </div>
     </div>

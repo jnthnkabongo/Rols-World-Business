@@ -67,8 +67,8 @@
                         @forelse($liste_roles as $role)
                             <tr class="hover:bg-gray-50 transition" data-role-id="{{ $role->id }}" data-role-data='{{ json_encode(['nom' => $role->nom, 'description' => $role->description]) }}'>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"># {{ ($liste_roles->perPage() * ($liste_roles->currentPage() - 1 ))+ $loop->iteration }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $role->nom }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $role->description }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ ucfirst($role->nom) }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($role->description) }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">
                                     <div class="flex flex-wrap gap-1">
                                         <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">CRUD</span>
