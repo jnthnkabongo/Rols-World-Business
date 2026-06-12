@@ -25,6 +25,10 @@ Route::get('liste-fournisseur', [DashboardController::class, 'fournisseurs'])->n
 //mecanique marques CRUD
 Route::post('ajout-marque', [DashboardController::class, 'AjouterMarque'])->name('ajout-marque');
 
+//mecanique categories CRUD
+Route::post('ajout-categorie', [DashboardController::class, 'AjouterCategorie'])->name('ajout-categorie');
+
+
 //mecanique produits CRUD
 Route::get('liste-produit', [DashboardController::class, 'produits'])->name('liste-produits');
 Route::post('ajout-produit', [DashboardController::class, 'AjouterProduit'])->name('ajout-produit');

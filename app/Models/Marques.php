@@ -9,6 +9,7 @@ class Marques extends Model
     protected $fillable = [
         'nom', 
         'description',
+        'categorie_id',
     ];
 
     protected $casts = [

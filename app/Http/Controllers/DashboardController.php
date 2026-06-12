@@ -173,6 +173,7 @@ class DashboardController extends Controller
 
         try {
             $marque = new Marques();
+            $marque->categorie_id = $validated['categorie_id'];
             $marque->nom = $validated['nom'];
             $marque->description = $validated['description'] ?? null;
             $marque->save();
@@ -189,29 +190,20 @@ class DashboardController extends Controller
     //// 1. Lecture des donnees de la liste des produits
     public function produits()
     {
-        // Ensure categories exist
-        // $electronique = Categorie::firstOrCreate(
-        //     ['nom' => 'Électronique'],
-        //     ['description' => 'Catégorie pour les appareils électroniques']
-        // );
-        
-        // $chaussure = Categorie::firstOrCreate(
-        //     ['nom' => 'Chaussures'],
-        //     ['description' => 'Catégorie pour les chaussures']
-        // );
         
         $produits_electroniques = Produits::with(['categorie', 'marque'])
-            //->where('categorie_id', $electronique->id)
-            ->get();
+            ->where('categorie_id', '=', 1)
+            ->paginate(10);
         
         $chaussures = Produits::with(['categorie', 'marque'])
-            //->where('categorie_id', $chaussure->id)
-            ->get();
+            ->where('categorie_id', '=', 2)
+            ->paginate(10);
         
         $categories = Categories::all();
-        $marques = Marques::all();
+        $marques_electroniques = Marques::where('categorie_id', '=', 1)->get();
+        $marques_chaussures = Marques::where('categorie_id', '=', 2)->get();
         
-        return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'categories', 'marques'));
+        return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'categories', 'marques_electroniques', 'marques_chaussures'));
     }
 
     //// 2. Ajout d'un produit

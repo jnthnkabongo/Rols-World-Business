@@ -156,60 +156,6 @@
         </div>
     </div>
 
-    <!-- Modal Ajout Appareil Électronique -->
-    {{-- <div id="addElectronicsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-bold text-gray-800">Ajouter un Appareil Électronique</h3>
-                    <button onclick="closeModal('addElectronicsModal')" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            <form action="{{ route('ajout-produit') }}" method="POST" class="p-6 space-y-4" id="addElectronicsForm">
-                @csrf
-                <input type="hidden" name="categorie_id" value="{{ $categories->where('nom', 'Électronique')->first()->id ?? 1 }}">
-                <div class="row">
-                    <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du produit</label>
-                            <input type="text" name="nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: iPhone 15 Pro" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Marque</label>
-                            <select name="marque_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                                <option value="">Sélectionner...</option>
-                                @foreach($marques as $marque)
-                                    <option value="{{ $marque->id }}">{{ $marque->nom }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente (€)</label>
-                        <input type="number" name="prix_vente" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 1299" required>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
-                    <input type="number" name="stock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 25" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
-                    <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                        <option value="">Sélectionner...</option>
-                        <option value="available">Disponible</option>
-                        <option value="low_stock">Faible stock</option>
-                        <option value="out_of_stock">Rupture</option>
-                    </select>
-                </div>
-            </form>
-            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
-                <button onclick="closeModal('addElectronicsModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button type="submit" form="addElectronicsForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Ajouter</button>
-            </div>
-        </div>
-    </div> --}}
     <div id="addElectronicsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
             <div class="p-6 border-b border-gray-200">
@@ -224,7 +170,7 @@
                 @csrf
 
                 <input type="hidden" name="categorie_id"
-                    value="{{ $categories->where('nom', 'Électronique')->first()->id ?? 1 }}">
+                    value="{{ $categories->where('nom', 'electrniques')->first()->id ?? 1 }}">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -236,9 +182,11 @@
                         <input
                             type="text"
                             name="nom"
+                            id="addElectronicsName"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Ex: iPhone 15 Pro"
-                            required>
+                            required
+                            oninput="validateAddElectronicsForm()">
                     </div>
 
                     <!-- Marque -->
@@ -248,10 +196,12 @@
                         </label>
                         <select
                             name="marque_id"
+                            id="addElectronicsBrand"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required>
+                            required
+                            onchange="validateAddElectronicsForm()">
                             <option value="">Sélectionner...</option>
-                            @foreach($marques as $marque)
+                            @foreach($marques_electroniques as $marque)
                                 <option value="{{ $marque->id }}">
                                     {{ $marque->nom }}
                                 </option>
@@ -264,9 +214,12 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2" for="">Modèle</label>
                         <input 
                             type="text" 
-                            name="" 
+                            name="modele" 
+                            id="addElectronicsModele"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             placeholder="Ex: A465DF67"
+                            required
+                            oninput="validateAddElectronicsForm()"
                         >
                     </div>
 
@@ -275,9 +228,12 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2" for="">Numéro série</label>
                         <input 
                             type="text" 
-                            name="" 
+                            name="numero_serie" 
+                            id="addElectronicsNumberSerie"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             placeholder="Ex: A465DF67"
+                            required
+                            oninput="validateAddElectronicsForm()"
                         >
                     </div>
 
@@ -289,10 +245,12 @@
                         <input
                             type="number"
                             name="prix_achat"
+                            id="addElectronicsPurchasePrice"
                             step="0.01"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Ex: 1299"
-                            required>
+                            required
+                            oninput="validateAddElectronicsForm()">
                     </div>
 
                     <!-- Prix de vente -->
@@ -303,10 +261,12 @@
                         <input
                             type="number"
                             name="prix_vente"
+                            id="addElectronicsSalePrice"
                             step="0.01"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Ex: 1299"
-                            required>
+                            required
+                            oninput="validateAddElectronicsForm()">
                     </div>
 
                     <!-- Stock -->
@@ -316,10 +276,12 @@
                         </label>
                         <input
                             type="number"
-                            name="stock"
+                            name="stock_min"
+                            id="addElectronicsMinStock"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Ex: 25"
-                            required>
+                            required
+                            oninput="validateAddElectronicsForm()">
                     </div>
 
                      <!-- Quantité -->
@@ -328,37 +290,22 @@
                         <input 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             type="number" 
-                            name="" id=""
+                            name="quantite" 
+                            id="addElectronicsQuantity"
                             placeholder="Ex: 12 Appareils"
-                        >
+                            required
+                            oninput="validateAddElectronicsForm()">
                     </div>
-
-                    {{-- <!-- Statut -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Statut
-                        </label>
-                        <select
-                            name="status"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required>
-                            <option value="">Sélectionner...</option>
-                            <option value="available">Disponible</option>
-                            <option value="low_stock">Faible stock</option>
-                            <option value="out_of_stock">Rupture</option>
-                        </select>
-                    </div> --}}
-
                 </div>
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                 <button onclick="closeModal('addElectronicsModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button type="submit" form="addElectronicsForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Ajouter</button>
+                <button type="submit" form="addElectronicsForm" id="addElectronicsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
             </div>
         </div>
     </div> 
     <!-- Modal Voir Appareil Électronique -->
-    <div id="viewElectronicsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    {{-- <div id="viewElectronicsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
@@ -398,7 +345,7 @@
                 <button onclick="closeModal('viewElectronicsModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Fermer</button>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Modal Modifier Appareil Électronique -->
     <div id="editElectronicsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -417,28 +364,28 @@
                 <input type="hidden" name="categorie_id" value="{{ $categories->where('nom', 'Électronique')->first()->id ?? 1 }}">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du produit</label>
-                    <input type="text" name="nom" id="editElectronicsName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="text" name="nom" id="editElectronicsName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditElectronicsForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Marque</label>
-                    <select name="marque_id" id="editElectronicsBrand" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <select name="marque_id" id="editElectronicsBrand" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditElectronicsForm()">
                         <option value="">Sélectionner...</option>
-                        @foreach($marques as $marque)
+                        @foreach($marques_electroniques as $marque)
                             <option value="{{ $marque->id }}">{{ $marque->nom }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente (€)</label>
-                    <input type="number" name="prix_vente" step="0.01" id="editElectronicsPrice" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="number" name="prix_vente" step="0.01" id="editElectronicsPrice" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditElectronicsForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
-                    <input type="number" name="stock" id="editElectronicsStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="number" name="stock" id="editElectronicsStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditElectronicsForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
-                    <select name="status" id="editElectronicsStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <select name="status" id="editElectronicsStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditElectronicsForm()">
                         <option value="available">Disponible</option>
                         <option value="low_stock">Faible stock</option>
                         <option value="out_of_stock">Rupture</option>
@@ -447,7 +394,7 @@
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                 <button onclick="closeModal('editElectronicsModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button type="submit" form="editElectronicsForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Modifier</button>
+                <button type="submit" form="editElectronicsForm" id="editElectronicsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Modifier</button>
             </div>
         </div>
     </div>
@@ -490,56 +437,47 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div >
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la chaussure</label>
-                        <input type="text" name="nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Air Max 90" required>
+                        <input type="text" name="nom" id="addShoesName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Air Max 90" required oninput="validateAddShoesForm()">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Marque de la chaussure</label>
-                        <select name="marque_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <select name="marque_id" id="addShoesBrand" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateAddShoesForm()">
                             <option value="">Sélectionner...</option>
-                            @foreach($marques as $marque)
+                            @foreach($marques_chaussures as $marque)
                                 <option value="{{ $marque->id }}">{{ $marque->nom }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Modèle de la chaussure</label>
-                        <input type="text" name="taille" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Ralph lauren">
+                        <input type="text" name="modele" id="addShoesSaleModele" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Ralph lauren" required oninput="validateAddShoesForm()">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Taille de la chaussure</label>
-                        <input type="text" name="taille" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 42">
+                        <input type="number" name="taille" id="addShoesSaleTaille" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 42" required oninput="validateAddShoesForm()">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Prix d'achat ($)</label>
-                        <input type="number" name="prix_vente" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 100" required>
+                        <input type="number" name="prix_achat" id="addShoesSalePurchasePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 100" required oninput="validateAddShoesForm()">
                     </div>
                      <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente ($)</label>
-                        <input type="number" name="prix_vente" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 149" required>
+                        <input type="number" name="prix_vente" id="addShoesSalePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 149" required oninput="validateAddShoesForm()">
                     </div>
                     
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Stock minimum</label>
-                        <input type="number" name="stock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 5" required>
+                        <input type="number" name="stock_min" id="addShoesSaleStockMin" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 5" required oninput="validateAddShoesForm()">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
-                        <input type="number" name="stock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 30" required>
+                        <input type="number" name="stock" id="addShoesSaleQuantity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 30" required oninput="validateAddShoesForm()">
                     </div>
-                    {{-- <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
-                        <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                            <option value="">Sélectionner...</option>
-                            <option value="available">Disponible</option>
-                            <option value="low_stock">Faible stock</option>
-                            <option value="out_of_stock">Rupture</option>
-                        </select>
-                    </div> --}}
                 </div>
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                 <button onclick="closeModal('addShoesModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button type="submit" form="addShoesForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Ajouter</button>
+                <button type="submit" form="addShoesForm" id="addShoesBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
             </div>
         </div>
     </div>
@@ -608,32 +546,32 @@
                 <input type="hidden" name="categorie_id" value="{{ $categories->where('nom', 'Chaussures')->first()->id ?? 2 }}">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du produit</label>
-                    <input type="text" name="nom" id="editShoesName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="text" name="nom" id="editShoesName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditShoesForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Marque</label>
-                    <select name="marque_id" id="editShoesBrand" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <select name="marque_id" id="editShoesBrand" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditShoesForm()">
                         <option value="">Sélectionner...</option>
-                        @foreach($marques as $marque)
+                        @foreach($marques_chaussures as $marque)
                             <option value="{{ $marque->id }}">{{ $marque->nom }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Taille</label>
-                    <input type="text" name="taille" id="editShoesSize" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" name="taille" id="editShoesSize" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="validateEditShoesForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente (€)</label>
-                    <input type="number" name="prix_vente" step="0.01" id="editShoesPrice" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="number" name="prix_vente" step="0.01" id="editShoesPrice" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditShoesForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
-                    <input type="number" name="stock" id="editShoesStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="number" name="stock" id="editShoesStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditShoesForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
-                    <select name="status" id="editShoesStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <select name="status" id="editShoesStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditShoesForm()">
                         <option value="available">Disponible</option>
                         <option value="low_stock">Faible stock</option>
                         <option value="out_of_stock">Rupture</option>
@@ -642,7 +580,7 @@
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                 <button onclick="closeModal('editShoesModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button type="submit" form="editShoesForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Modifier</button>
+                <button type="submit" form="editShoesForm" id="editShoesBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Modifier</button>
             </div>
         </div>
     </div>
@@ -681,19 +619,21 @@
             </div>
             <form action="{{ route('ajout-marque') }}" method="POST" class="p-6 space-y-4" id="addPhoneBrandForm">
                 @csrf
+                <input type="number" name="categorie_id" value="1">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la marque</label>
-                    <input type="text" name="nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Apple, Samsung, Xiaomi" required>
+                    <input type="text" name="nom" id="addPhoneBrandName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Apple, Samsung, Xiaomi" required oninput="validateAddPhoneBrandForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Description (optionnel)</label>
-                    <textarea name="description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Description de la marque..."></textarea>
+                    <textarea name="description" id="addPhoneBrandDescription" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Description de la marque..." required oninput="validateAddPhoneBrandForm()"></textarea>
+                </div>
+
+                <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                    <button onclick="closeModal('addPhoneBrandModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                    <button type="submit" form="addPhoneBrandForm" id="addPhoneBrandBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
                 </div>
             </form>
-            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
-                <button onclick="closeModal('addPhoneBrandModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button type="submit" form="addPhoneBrandForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Ajouter</button>
-            </div>
         </div>
     </div>
 
@@ -710,19 +650,21 @@
             </div>
             <form action="{{ route('ajout-marque') }}" method="POST" class="p-6 space-y-4" id="addShoeBrandForm">
                 @csrf
+                <input type="number" name="categorie_id" id="categorie_id" value="2" hidden>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la marque</label>
-                    <input type="text" name="nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Nike, Adidas, Puma" required>
+                    <input type="text" name="nom" id="addShoeBrandName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Nike, Adidas, Puma" required oninput="validateAddShoeBrandForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Description (optionnel)</label>
-                    <textarea name="description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Description de la marque..."></textarea>
+                    <textarea name="description" id="addShoeBrandDescription" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Description de la marque..." oninput="validateAddShoeBrandForm()"></textarea>
+                </div>
+
+                <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                    <button onclick="closeModal('addShoeBrandModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                    <button type="submit" form="addShoeBrandForm" id="addShoeBrandBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
                 </div>
             </form>
-            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
-                <button onclick="closeModal('addShoeBrandModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button type="submit" form="addShoeBrandForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Ajouter</button>
-            </div>
         </div>
     </div>
 
@@ -756,12 +698,16 @@
             // Réinitialiser le formulaire d'ajout quand on ouvre le modal
             if (modalId === 'addElectronicsModal') {
                 document.getElementById('addElectronicsForm').reset();
+                validateAddElectronicsForm();
             } else if (modalId === 'addShoesModal') {
                 document.getElementById('addShoesForm').reset();
+                validateAddShoesForm();
             } else if (modalId === 'addPhoneBrandModal') {
                 document.getElementById('addPhoneBrandForm').reset();
+                validateAddPhoneBrandForm();
             } else if (modalId === 'addShoeBrandModal') {
                 document.getElementById('addShoeBrandForm').reset();
+                validateAddShoeBrandForm();
             }
         }
 
@@ -769,6 +715,115 @@
             const modal = document.getElementById(modalId);
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+        }
+
+        // Validation formulaire Appareils Électroniques
+        function validateAddElectronicsForm() {
+            const name = document.getElementById('addElectronicsName').value.trim();
+            const brand = document.getElementById('addElectronicsBrand').value;
+            const modele = document.getElementById('addElectronicsModele').value.trim();
+            const numberSerie = document.getElementById('addElectronicsNumberSerie').value;
+            const purchasePrice = document.getElementById('addElectronicsPurchasePrice').value;
+            const salePrice = document.getElementById('addElectronicsSalePrice').value;
+            const minStock = document.getElementById('addElectronicsMinStock').value;
+            const quantity = document.getElementById('addElectronicsQuantity').value;
+            const addBtn = document.getElementById('addElectronicsBtn');
+            
+            if (name && brand && modele && numberSerie && salePrice && purchasePrice && minStock && quantity) {
+                addBtn.disabled = false;
+                addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                addBtn.disabled = true;
+                addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Validation formulaire Chaussures
+        function validateAddShoesForm() {
+            const name = document.getElementById('addShoesName').value.trim();
+            const modele = document.getElementById('addShoesSaleModele').value.trim();
+            const brand = document.getElementById('addShoesBrand').value;
+            const taille = document.getElementById('addShoesSaleTaille').value;
+            const purchasePrice = document.getElementById('addShoesSalePurchasePrice').value;
+            const salePrice = document.getElementById('addShoesSalePrice').value;
+            const stockMin = document.getElementById('addShoesSaleStockMin').value;
+            const quantity = document.getElementById('addShoesSaleQuantity').value;
+            const addBtn = document.getElementById('addShoesBtn');
+            
+            if (name && brand && modele && taille && purchasePrice && salePrice && stockMin && quantity) {
+                addBtn.disabled = false;
+                addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                addBtn.disabled = true;
+                addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Validation formulaire Marque Téléphone
+        function validateAddPhoneBrandForm() {
+            const name = document.getElementById('addPhoneBrandName').value.trim();
+            const description = document.getElementById('addPhoneBrandDescription').value.trim();
+            const addBtn = document.getElementById('addPhoneBrandBtn');
+            
+            if (name && description) {
+                addBtn.disabled = false;
+                addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                addBtn.disabled = true;
+                addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Validation formulaire Marque Chaussure
+        function validateAddShoeBrandForm() {
+            const name = document.getElementById('addShoeBrandName').value.trim();
+            const description = document.getElementById('addShoeBrandDescription').value.trim();
+            const addBtn = document.getElementById('addShoeBrandBtn');
+            
+            if (name && description) {
+                addBtn.disabled = false;
+                addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                addBtn.disabled = true;
+                addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Validation formulaire Modifier Appareil Électronique
+        function validateEditElectronicsForm() {
+            const name = document.getElementById('editElectronicsName').value.trim();
+            const brand = document.getElementById('editElectronicsBrand').value;
+            const price = document.getElementById('editElectronicsPrice').value;
+            const stock = document.getElementById('editElectronicsStock').value;
+            const status = document.getElementById('editElectronicsStatus').value;
+            const editBtn = document.getElementById('editElectronicsBtn');
+            
+            if (name && brand && price && stock && status) {
+                editBtn.disabled = false;
+                editBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                editBtn.disabled = true;
+                editBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Validation formulaire Modifier Chaussure
+        function validateEditShoesForm() {
+            const name = document.getElementById('editShoesName').value.trim();
+            const brand = document.getElementById('editShoesBrand').value;
+            const size = document.getElementById('editShoesSize').value;
+            const price = document.getElementById('editShoesPrice').value;
+            const stock = document.getElementById('editShoesStock').value;
+            const status = document.getElementById('editShoesStatus').value;
+            const editBtn = document.getElementById('editShoesBtn');
+            
+            if (name && brand && size && price && stock && status) {
+                editBtn.disabled = false;
+                editBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                editBtn.disabled = true;
+                editBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
         }
 
         // Fonctions pour les Appareils Électroniques
@@ -818,6 +873,7 @@
                     form.action = form.action.replace('__id__', id);
                     
                     openModal('editElectronicsModal');
+                    validateEditElectronicsForm();
                 })
                 .catch(error => console.error('Error fetching product:', error));
         }
@@ -878,6 +934,7 @@
                     form.action = form.action.replace('__id__', id);
                     
                     openModal('editShoesModal');
+                    validateEditShoesForm();
                 })
                 .catch(error => console.error('Error fetching product:', error));
         }
