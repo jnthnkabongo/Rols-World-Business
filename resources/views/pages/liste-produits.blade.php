@@ -271,9 +271,7 @@
 
                     <!-- Quantité -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Description
-                        </label>
+                       
                         <input type="text" name="description" id="">
                         <input
                             type="number"
@@ -283,7 +281,7 @@
                             placeholder="Ex: 10"
                             required
                             oninput="validateAddElectronicsForm()" hidden value="1">
-                    </div>
+                        </div>
 
                 </div>
             </form>
@@ -412,8 +410,7 @@
                         <input type="number" name="prix_vente" id="addShoesSalePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 149" required oninput="validateAddShoesForm()">
                     </div>
                     <div>
-                        <label for="">Description</label>
-                        <input type="text" name="description" id="addShoesDescription" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Chaussure en cuir" required oninput="validateAddShoesForm()">
+                        <input type="text" name="numero_serie" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 123456" hidden value="CHAUSSURE-001">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
