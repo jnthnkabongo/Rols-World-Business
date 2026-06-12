@@ -14,7 +14,6 @@ class Produits extends Model
         'description', 
         'prix_achat', 
         'prix_vente', 
-        'stock_min',
         'status',
         'taille'
     ];
@@ -31,7 +30,7 @@ class Produits extends Model
 
     public function produitUnites()
     {
-        return $this->hasMany(ProduitUnite::class);
+        return $this->hasMany(ProduitUnites::class);
     }
 
     public function approvisionnementDetails()

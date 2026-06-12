@@ -62,7 +62,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $produit->id }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $produit->nom }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->marque->nom ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} €</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} $</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->stock }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($produit->status == 'available')
@@ -75,9 +75,9 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="openViewElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
+                                        {{-- <button onclick="openViewElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-eye"></i>
-                                        </button>
+                                        </button> --}}
                                         <button onclick="openEditElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -123,8 +123,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $produit->nom }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->marque->nom ?? '-' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->taille ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} €</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->stock }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} $</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($produit->status == 'available')
                                         <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Disponible</span>
@@ -136,9 +135,9 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="openViewShoesModal({{ $produit->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
+                                        {{-- <button onclick="openViewShoesModal({{ $produit->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-eye"></i>
-                                        </button>
+                                        </button> --}}
                                         <button onclick="openEditShoesModal({{ $produit->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -156,6 +155,7 @@
         </div>
     </div>
 
+    <!-- Modal Ajout Appareil Electronique -->
     <div id="addElectronicsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
             <div class="p-6 border-b border-gray-200">
@@ -269,33 +269,6 @@
                             oninput="validateAddElectronicsForm()">
                     </div>
 
-                    <!-- Stock -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Stock minimum
-                        </label>
-                        <input
-                            type="number"
-                            name="stock_min"
-                            id="addElectronicsMinStock"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Ex: 25"
-                            required
-                            oninput="validateAddElectronicsForm()">
-                    </div>
-
-                     <!-- Quantité -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2" for="">Quantité</label>
-                        <input 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                            type="number" 
-                            name="quantite" 
-                            id="addElectronicsQuantity"
-                            placeholder="Ex: 12 Appareils"
-                            required
-                            oninput="validateAddElectronicsForm()">
-                    </div>
                 </div>
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
@@ -304,48 +277,6 @@
             </div>
         </div>
     </div> 
-    <!-- Modal Voir Appareil Électronique -->
-    {{-- <div id="viewElectronicsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-bold text-gray-800">Détails de l'Appareil</h3>
-                    <button onclick="closeModal('viewElectronicsModal')" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">ID</span>
-                    <span class="text-sm text-gray-800" id="viewElectronicsId">#1</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Nom</span>
-                    <span class="text-sm text-gray-800 font-semibold" id="viewElectronicsName">iPhone 15 Pro</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Marque</span>
-                    <span class="text-sm text-gray-800" id="viewElectronicsBrand">Apple</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Prix</span>
-                    <span class="text-sm text-gray-800 font-semibold" id="viewElectronicsPrice">1 299 €</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Stock</span>
-                    <span class="text-sm text-gray-800" id="viewElectronicsStock">25</span>
-                </div>
-                <div class="flex justify-between items-center py-2">
-                    <span class="text-sm font-semibold text-gray-600">Statut</span>
-                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" id="viewElectronicsStatus">Disponible</span>
-                </div>
-            </div>
-            <div class="p-6 border-t border-gray-200 flex justify-end">
-                <button onclick="closeModal('viewElectronicsModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Fermer</button>
-            </div>
-        </div>
-    </div> --}}
 
     <!-- Modal Modifier Appareil Électronique -->
     <div id="editElectronicsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -457,10 +388,6 @@
                         <input type="number" name="taille" id="addShoesSaleTaille" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 42" required oninput="validateAddShoesForm()">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Numéro série</label>
-                        <input type="text" name="numero_serie" id="addShoesNumberSerie" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: SN12345" required oninput="validateAddShoesForm()">
-                    </div>
-                    <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Prix d'achat ($)</label>
                         <input type="number" name="prix_achat" id="addShoesSalePurchasePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 100" required oninput="validateAddShoesForm()">
                     </div>
@@ -469,66 +396,11 @@
                         <input type="number" name="prix_vente" id="addShoesSalePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 149" required oninput="validateAddShoesForm()">
                     </div>
                     
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Stock minimum</label>
-                        <input type="number" name="stock_min" id="addShoesSaleStockMin" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 5" required oninput="validateAddShoesForm()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
-                        <input type="number" name="quantite" id="addShoesSaleQuantity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 30" required oninput="validateAddShoesForm()">
-                    </div>
                 </div>
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                 <button onclick="closeModal('addShoesModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
                 <button type="submit" form="addShoesForm" id="addShoesBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Voir Chaussure -->
-    <div id="viewShoesModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-bold text-gray-800">Détails de la Chaussure</h3>
-                    <button onclick="closeModal('viewShoesModal')" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">ID</span>
-                    <span class="text-sm text-gray-800" id="viewShoesId">#1</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Nom</span>
-                    <span class="text-sm text-gray-800 font-semibold" id="viewShoesName">Air Max 90</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Marque</span>
-                    <span class="text-sm text-gray-800" id="viewShoesBrand">Nike</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Taille</span>
-                    <span class="text-sm text-gray-800" id="viewShoesSize">42</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Prix</span>
-                    <span class="text-sm text-gray-800 font-semibold" id="viewShoesPrice">149 €</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">Stock</span>
-                    <span class="text-sm text-gray-800" id="viewShoesStock">30</span>
-                </div>
-                <div class="flex justify-between items-center py-2">
-                    <span class="text-sm font-semibold text-gray-600">Statut</span>
-                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" id="viewShoesStatus">Disponible</span>
-                </div>
-            </div>
-            <div class="p-6 border-t border-gray-200 flex justify-end">
-                <button onclick="closeModal('viewShoesModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Fermer</button>
             </div>
         </div>
     </div>
@@ -729,11 +601,9 @@
             const numberSerie = document.getElementById('addElectronicsNumberSerie').value;
             const purchasePrice = document.getElementById('addElectronicsPurchasePrice').value;
             const salePrice = document.getElementById('addElectronicsSalePrice').value;
-            const minStock = document.getElementById('addElectronicsMinStock').value;
-            const quantity = document.getElementById('addElectronicsQuantity').value;
             const addBtn = document.getElementById('addElectronicsBtn');
             
-            if (name && brand && modele && numberSerie && salePrice && purchasePrice && minStock && quantity) {
+            if (name && brand && modele && numberSerie && salePrice && purchasePrice) {
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
@@ -748,14 +618,11 @@
             const modele = document.getElementById('addShoesSaleModele').value.trim();
             const brand = document.getElementById('addShoesBrand').value;
             const taille = document.getElementById('addShoesSaleTaille').value;
-            const numberSerie = document.getElementById('addShoesNumberSerie').value;
             const purchasePrice = document.getElementById('addShoesSalePurchasePrice').value;
             const salePrice = document.getElementById('addShoesSalePrice').value;
-            const stockMin = document.getElementById('addShoesSaleStockMin').value;
-            const quantity = document.getElementById('addShoesSaleQuantity').value;
             const addBtn = document.getElementById('addShoesBtn');
             
-            if (name && brand && modele && taille && numberSerie && purchasePrice && salePrice && stockMin && quantity) {
+            if (name && brand && modele && taille && purchasePrice && salePrice ) {
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {

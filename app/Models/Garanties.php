@@ -15,7 +15,7 @@ class Garanties extends Model
 
     public function produitUnite()
     {
-        return $this->belongsTo(ProduitUnite::class);
+        return $this->belongsTo(ProduitUnites::class);
     }
 
     public function client()
