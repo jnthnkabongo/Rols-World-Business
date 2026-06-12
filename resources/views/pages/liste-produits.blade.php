@@ -457,6 +457,10 @@
                         <input type="number" name="taille" id="addShoesSaleTaille" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 42" required oninput="validateAddShoesForm()">
                     </div>
                     <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Numéro série</label>
+                        <input type="text" name="numero_serie" id="addShoesNumberSerie" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: SN12345" required oninput="validateAddShoesForm()">
+                    </div>
+                    <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Prix d'achat ($)</label>
                         <input type="number" name="prix_achat" id="addShoesSalePurchasePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 100" required oninput="validateAddShoesForm()">
                     </div>
@@ -470,8 +474,8 @@
                         <input type="number" name="stock_min" id="addShoesSaleStockMin" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 5" required oninput="validateAddShoesForm()">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
-                        <input type="number" name="stock" id="addShoesSaleQuantity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 30" required oninput="validateAddShoesForm()">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
+                        <input type="number" name="quantite" id="addShoesSaleQuantity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 30" required oninput="validateAddShoesForm()">
                     </div>
                 </div>
             </form>
@@ -744,13 +748,14 @@
             const modele = document.getElementById('addShoesSaleModele').value.trim();
             const brand = document.getElementById('addShoesBrand').value;
             const taille = document.getElementById('addShoesSaleTaille').value;
+            const numberSerie = document.getElementById('addShoesNumberSerie').value;
             const purchasePrice = document.getElementById('addShoesSalePurchasePrice').value;
             const salePrice = document.getElementById('addShoesSalePrice').value;
             const stockMin = document.getElementById('addShoesSaleStockMin').value;
             const quantity = document.getElementById('addShoesSaleQuantity').value;
             const addBtn = document.getElementById('addShoesBtn');
             
-            if (name && brand && modele && taille && purchasePrice && salePrice && stockMin && quantity) {
+            if (name && brand && modele && taille && numberSerie && purchasePrice && salePrice && stockMin && quantity) {
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {

@@ -10,6 +10,7 @@ use App\Models\Categories;
 use App\Models\Marque;
 use App\Models\Marques;
 use App\Models\Produits;
+use App\Models\ProduitUnite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -218,8 +219,10 @@ class DashboardController extends Controller
             'prix_achat' => 'nullable|numeric',
             'prix_vente' => 'required|numeric',
             'stock_min' => 'nullable|integer',
-            'status' => 'required|string|in:available,low_stock,out_of_stock',
+            //'status' => 'required|string|in:available,low_stock,out_of_stock',
             'taille' => 'nullable|string',
+            'quantite' => 'required|integer',
+            'numero_serie' => 'required|string',
         ]);
 
         try {
@@ -232,9 +235,17 @@ class DashboardController extends Controller
             $produit->prix_achat = $validated['prix_achat'] ?? null;
             $produit->prix_vente = $validated['prix_vente'];
             $produit->stock_min = $validated['stock_min'] ?? 1;
-            $produit->status = $validated['status'];
+            //$produit->status = $validated['status'];
             $produit->taille = $validated['taille'] ?? null;
             $produit->save();
+            
+            // Ajouter les unités dans la table produit_unites
+            $produitUnite = new ProduitUnite();
+            $produitUnite->produit_id = $produit->id;
+            $produitUnite->numero_serie = $validated['numero_serie'];
+            $produitUnite->quantite = $validated['quantite'];
+            $produitUnite->statut = 'available';
+            $produitUnite->save();
             
             return redirect()->route('liste-produits')->with('success', 'Produit ajouté avec succès');
 
@@ -256,7 +267,7 @@ class DashboardController extends Controller
             'prix_vente' => 'required|numeric',
             'stock_min' => 'nullable|integer',
             'stock' => 'required|integer',
-            'status' => 'required|string|in:available,low_stock,out_of_stock',
+            //'status' => 'required|string|in:available,low_stock,out_of_stock',
             'taille' => 'nullable|string',
         ]);
 
@@ -271,7 +282,7 @@ class DashboardController extends Controller
             $produit->prix_vente = $validated['prix_vente'];
             $produit->stock_min = $validated['stock_min'] ?? 1;
             $produit->stock = $validated['stock'];
-            $produit->status = $validated['status'];
+            //$produit->status = $validated['status'];
             $produit->taille = $validated['taille'] ?? null;
             $produit->save();
             
