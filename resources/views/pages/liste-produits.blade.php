@@ -269,6 +269,22 @@
                             oninput="validateAddElectronicsForm()">
                     </div>
 
+                    <!-- Quantité -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Description
+                        </label>
+                        <input type="text" name="description" id="">
+                        <input
+                            type="number"
+                            name="quantite"
+                            id="addElectronicsQuantity"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Ex: 10"
+                            required
+                            oninput="validateAddElectronicsForm()" hidden value="1">
+                    </div>
+
                 </div>
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
@@ -395,13 +411,21 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente ($)</label>
                         <input type="number" name="prix_vente" id="addShoesSalePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 149" required oninput="validateAddShoesForm()">
                     </div>
-                    
+                    <div>
+                        <label for="">Description</label>
+                        <input type="text" name="description" id="addShoesDescription" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Chaussure en cuir" required oninput="validateAddShoesForm()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
+                        <input type="number" name="quantite" id="addShoesSaleQuantity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 10" required oninput="validateAddShoesForm()">
+                    </div>
+                </div>
+
+                <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                    <button onclick="closeModal('addShoesModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                    <button type="submit" form="addShoesForm" id="addShoesBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
                 </div>
             </form>
-            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
-                <button onclick="closeModal('addShoesModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button type="submit" form="addShoesForm" id="addShoesBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
-            </div>
         </div>
     </div>
 

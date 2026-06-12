@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProduitUnites extends Model
 {
+    protected $table = 'produit_unites';
+
     protected $fillable = [
         'produit_id',
         'numero_serie', 
         'quantite',
+        'statut',
     ];
 
     public function produit()

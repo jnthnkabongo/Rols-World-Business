@@ -11,6 +11,7 @@ use App\Models\ProduitUnites;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -258,6 +259,7 @@ class DashboardController extends Controller
         'prix_vente'     => 'required|numeric|min:0',
         'taille'         => 'nullable|string|max:50',
         'numero_serie'   => 'required|string|max:255|unique:produit_unites,numero_serie',
+        'quantite'       => 'required|numeric|min:0',
     ]);
 
     try {
@@ -277,8 +279,8 @@ class DashboardController extends Controller
             ProduitUnites::create([
                 'produit_id'   => $produit->id,
                 'numero_serie' => $validated['numero_serie'],
-                'quantite'     => 1,
                 'statut'       => 'en_stock',
+                'quantite'     => $validated['quantite'] ?? null,
             ]);
 
             return $produit;
@@ -303,7 +305,7 @@ class DashboardController extends Controller
             ->withInput()
             ->with(
                 'error',
-                "Une erreur est survenue lors de l'enregistrement du produit."
+                "Une erreur est survenue: " . $e->getMessage()
             );
     }
 }
