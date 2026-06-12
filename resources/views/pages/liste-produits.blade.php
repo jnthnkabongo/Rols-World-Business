@@ -2,8 +2,23 @@
 @section('content')
     <div class="p-8 overflow-y-auto flex-1">
         <!-- En-tête -->
-        <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Liste des Produits</h2>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <h2 class= "
+            text-2xl font-bold text-gray-800"
+            >Liste des Produits</h2>
+
+            
+            <div class="flex gap-3">
+                <button onclick="openModal('addPhoneBrandModal')"
+                    class="inline-flex items-center justify-center w-12 h-12 text-white rounded-full shadow-lg bg-blue-700 hover:bg-blue-800 transition">
+                    <i class="fas fa-mobile-screen-button"></i>
+                </button>
+
+                <button onclick="openModal('addShoeBrandModal')"
+                    class="inline-flex items-center justify-center w-12 h-12 text-white rounded-full shadow-lg bg-blue-700 hover:bg-blue-800 transition">
+                    <i class="fas fa-shoe-prints"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Onglets -->
@@ -25,7 +40,7 @@
                     <h3 class="text-lg font-semibold text-gray-800">Appareils Électroniques</h3>
                     <button onclick="openModal('addElectronicsModal')" class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg">
                         <i class="fas fa-plus"></i>
-                        <span>Ajouter</span>
+                        <span>Ajouter appareil</span>
                     </button>
                 </div>
                 <div class="overflow-x-auto">
@@ -84,7 +99,7 @@
                     <h3 class="text-lg font-semibold text-gray-800">Chaussures</h3>
                     <button onclick="openModal('addShoesModal')" class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg">
                         <i class="fas fa-plus"></i>
-                        <span>Ajouter</span>
+                        <span>Ajouter chaussure</span>
                     </button>
                 </div>
                 <div class="overflow-x-auto">
@@ -474,11 +489,11 @@
                 <input type="hidden" name="categorie_id" value="{{ $categories->where('nom', 'Chaussures')->first()->id ?? 2 }}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div >
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du produit</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la chaussure</label>
                         <input type="text" name="nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Air Max 90" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Marque</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Marque de la chaussure</label>
                         <select name="marque_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                             <option value="">Sélectionner...</option>
                             @foreach($marques as $marque)
@@ -487,16 +502,16 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Modèle</label>
-                        <input type="text" name="taille" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 42">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Modèle de la chaussure</label>
+                        <input type="text" name="taille" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Ralph lauren">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Taille</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Taille de la chaussure</label>
                         <input type="text" name="taille" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 42">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Prix d'achat ($)</label>
-                        <input type="number" name="prix_vente" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 149" required>
+                        <input type="number" name="prix_vente" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 100" required>
                     </div>
                      <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente ($)</label>
@@ -505,7 +520,7 @@
                     
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Stock minimum</label>
-                        <input type="number" name="stock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 30" required>
+                        <input type="number" name="stock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 5" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
@@ -653,6 +668,64 @@
         </div>
     </div>
 
+    <!-- Modal Ajouter Marque Téléphone -->
+    <div id="addPhoneBrandModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">Ajouter une Marque de Téléphone</h3>
+                    <button onclick="closeModal('addPhoneBrandModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form action="{{ route('ajout-marque') }}" method="POST" class="p-6 space-y-4" id="addPhoneBrandForm">
+                @csrf
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la marque</label>
+                    <input type="text" name="nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Apple, Samsung, Xiaomi" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Description (optionnel)</label>
+                    <textarea name="description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Description de la marque..."></textarea>
+                </div>
+            </form>
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <button onclick="closeModal('addPhoneBrandModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                <button type="submit" form="addPhoneBrandForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Ajouter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ajouter Marque Chaussure -->
+    <div id="addShoeBrandModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">Ajouter une Marque de Chaussure</h3>
+                    <button onclick="closeModal('addShoeBrandModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form action="{{ route('ajout-marque') }}" method="POST" class="p-6 space-y-4" id="addShoeBrandForm">
+                @csrf
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la marque</label>
+                    <input type="text" name="nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Nike, Adidas, Puma" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Description (optionnel)</label>
+                    <textarea name="description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Description de la marque..."></textarea>
+                </div>
+            </form>
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <button onclick="closeModal('addShoeBrandModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                <button type="submit" form="addShoeBrandForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Ajouter</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function switchTab(tabName) {
             // Cacher tout le contenu des onglets
@@ -685,6 +758,10 @@
                 document.getElementById('addElectronicsForm').reset();
             } else if (modalId === 'addShoesModal') {
                 document.getElementById('addShoesForm').reset();
+            } else if (modalId === 'addPhoneBrandModal') {
+                document.getElementById('addPhoneBrandForm').reset();
+            } else if (modalId === 'addShoeBrandModal') {
+                document.getElementById('addShoeBrandForm').reset();
             }
         }
 

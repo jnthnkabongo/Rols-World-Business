@@ -162,6 +162,27 @@ class DashboardController extends Controller
     {
         return view('pages.liste-fournisseurs');
     }
+
+    //// Ajout d'une marque
+    public function AjouterMarque(Request $request)
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255|unique:marques,nom',
+            'description' => 'nullable|string',
+        ]);
+
+        try {
+            $marque = new Marques();
+            $marque->nom = $validated['nom'];
+            $marque->description = $validated['description'] ?? null;
+            $marque->save();
+            
+            return redirect()->route('liste-produits')->with('success', 'Marque ajoutée avec succès');
+
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-produits')->with('error', 'Erreur lors de l\'ajout de la marque');
+        }
+    }
     
     //*************** La mecanique concernant la gestion des produits CRUD */ 
 

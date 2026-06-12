@@ -9,11 +9,9 @@ class Marques extends Model
     protected $fillable = [
         'nom', 
         'description',
-        'logo'
     ];
 
     protected $casts = [
-        'logo' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];

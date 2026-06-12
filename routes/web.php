@@ -22,6 +22,9 @@ Route::post('supprimer-utilisateur/{id}', [DashboardController::class, 'Supprime
 //mecanique fournisseurs CRUD
 Route::get('liste-fournisseur', [DashboardController::class, 'fournisseurs'])->name('liste-fournisseurs');
 
+//mecanique marques CRUD
+Route::post('ajout-marque', [DashboardController::class, 'AjouterMarque'])->name('ajout-marque');
+
 //mecanique produits CRUD
 Route::get('liste-produit', [DashboardController::class, 'produits'])->name('liste-produits');
 Route::post('ajout-produit', [DashboardController::class, 'AjouterProduit'])->name('ajout-produit');
