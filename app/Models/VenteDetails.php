@@ -23,4 +23,5 @@ class VenteDetails extends Model
     {
         return $this->belongsTo(ProduitUnites::class);
     }
+    
 }

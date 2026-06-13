@@ -9,6 +9,7 @@ use App\Models\Marques;
 use App\Models\Produits;
 use App\Models\ProduitUnites;
 use App\Models\Clients;
+use App\Models\Remises;
 use App\Models\VenteDetails;
 use App\Models\Ventes;
 use Illuminate\Http\Request;
@@ -352,75 +353,6 @@ class DashboardController extends Controller
     }
 
     //// Changer le statut du produit en vendu
-    // public function changerStatutVendu(Request $request, $id)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'nom_client' => 'required|string|max:255',
-    //             'telephone' => 'nullable|string|max:50',
-    //             'email' => 'nullable|email|max:150',
-    //             'adresse' => 'nullable|string',
-    //             'quantite' => 'required|integer|min:1',
-    //         ]);
-
-    //         $produitUnite = ProduitUnites::where('produit_id', $id)->first();
-    //         if (!$produitUnite) {
-    //             return redirect()->route('liste-produits')->with('error', 'Unité de produit non trouvée');
-    //         }
-
-    //         // Vérifier si la quantité demandée est disponible
-    //         if ((int)$produitUnite->quantite < $validated['quantite']) {
-    //             return redirect()->route('liste-produits')->with('error', 'Quantité insuffisante en stock');
-    //         }
-
-    //         // Trouver ou créer le client
-    //         $client = Client::firstOrCreate(
-    //             ['nom_client' => $validated['nom_client']],
-    //             [
-    //                 'telephone' => $validated['telephone'] ?? null,
-    //                 'email' => $validated['email'] ?? null,
-    //                 'adresse' => $validated['adresse'] ?? null,
-    //             ]
-    //         );
-
-    //         // Récupérer le produit pour obtenir le prix
-    //         $produit = Produits::find($id);
-    //         if (!$produit) {
-    //             return redirect()->route('liste-produits')->with('error', 'Produit non trouvé');
-    //         }
-
-    //         // Créer la vente
-    //         $vente = Vente::create([
-    //             'client_id' => $client->id,
-    //             'user_id' => Auth::id(),
-    //             'date_vente' => now(),
-    //             'total' => $produit->prix_vente * $validated['quantite'],
-    //             'statut' => 'paye',
-    //         ]);
-
-    //         // Créer le détail de la vente
-    //         VenteDetail::create([
-    //             'vente_id' => $vente->id,
-    //             'produit_unite_id' => $produitUnite->id,
-    //             'prix_unitaire' => $produit->prix_vente,
-    //             'total' => $produit->prix_vente * $validated['quantite'],
-    //         ]);
-
-    //         // Diminuer la quantité
-    //         $produitUnite->quantite = (int)$produitUnite->quantite - $validated['quantite'];
-
-    //         // Changer le statut en vendu si la quantité est à 0
-    //         if ($produitUnite->quantite == 0) {
-    //             $produitUnite->statut = 'vendu';
-    //         }
-
-    //         $produitUnite->save();
-
-    //         return redirect()->route('liste-produits')->with('success', 'Vente enregistrée avec succès');
-    //     } catch (\Throwable $th) {
-    //         return redirect()->route('liste-produits')->with('error', 'Erreur lors de l\'enregistrement de la vente: ' . $th->getMessage());
-    //     }
-    // }
     public function changerStatutVendu(Request $request, $id)
     {
         $validated = $request->validate([
@@ -505,12 +437,14 @@ class DashboardController extends Controller
     //// 1. Lecture des donnees de la liste des ventes
     public function ventes()
     {
-        return view('pages.liste-ventes');
+        $liste_ventes = ventes::with('client', 'user', 'ventedetails', 'paiements')->paginate(10);
+        return view('pages.liste-ventes', compact('liste_ventes'));
     }
 
     public function remises()
     {
-        return view('pages.liste-remises');
+        $liste_remises = Remises::with('')->paginate(10);
+        return view('pages.liste-remises', compact('liste_remises'));
     }
 
     public function rapports(){

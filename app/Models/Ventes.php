@@ -25,13 +25,13 @@ class Ventes extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function venteDetails()
+    public function ventedetails()
     {
-        return $this->hasMany(VenteDetails::class);
+        return $this->hasMany(VenteDetails::class, 'vente_id');
     }
 
     public function paiements()
     {
-        return $this->hasMany(Paiement::class);
+        return $this->hasMany(Paiements::class, 'vente_id');
     }
 }
