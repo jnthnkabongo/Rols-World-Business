@@ -122,6 +122,10 @@
                     <i class="fas fa-shopping-cart w-5"></i>
                     <span>Ventes</span>
                 </a>
+                <a href="{{ route('liste-clients') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
+                    <i class="fas fa-person"></i>
+                    <span>Clients</span>
+                </a>
                 <a href="{{ route('liste-remises') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
                     <i class="fas fa-tags w-5"></i>
                     <span>Remises</span>

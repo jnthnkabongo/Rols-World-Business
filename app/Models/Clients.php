@@ -14,11 +14,11 @@ class Clients extends Model
 
     public function ventes()
     {
-        return $this->hasMany(Ventes::class);
+        return $this->hasMany(Ventes::class, 'client_id');
     }
 
     public function garanties()
     {
-        return $this->hasMany(Garanties::class);
+        return $this->hasMany(Garanties::class, 'client_id');
     }
 }

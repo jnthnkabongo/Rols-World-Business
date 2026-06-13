@@ -42,6 +42,9 @@ Route::post('changer-statut-vendu/{id}', [DashboardController::class, 'changerSt
 //mecanique ventes CRUD
 Route::get('liste-vente', [DashboardController::class, 'ventes'])->name('liste-ventes');
 
+//mecanique clients CRUD
+Route::get('liste-clients', [DashboardController::class, 'clients'])->name('liste-clients');
+
 //mecanique remises CRUD
 Route::get('liste-remise', [DashboardController::class, 'remises'])->name('liste-remises');
 

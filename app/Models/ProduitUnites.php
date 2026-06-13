@@ -22,7 +22,7 @@ class ProduitUnites extends Model
 
     public function venteDetails()
     {
-        return $this->hasMany(VenteDetail::class);
+        return $this->hasMany(VenteDetails::class);
     }
 
     public function garanties()

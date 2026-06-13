@@ -437,8 +437,19 @@ class DashboardController extends Controller
     //// 1. Lecture des donnees de la liste des ventes
     public function ventes()
     {
-        $liste_ventes = ventes::with('client', 'user', 'ventedetails', 'paiements')->paginate(10);
-        return view('pages.liste-ventes', compact('liste_ventes'));
+        $liste_ventes = Ventes::with('client', 'user', 'ventedetails', 'paiements')->paginate(10);
+
+        // Statistiques des ventes
+        $ventes_aujourdhui = Ventes::whereDate('date_vente', today())->count();
+        $total_ventes = Ventes::count();
+        $somme_ventes = Ventes::sum('total');
+
+        return view('pages.liste-ventes', compact('liste_ventes', 'ventes_aujourdhui', 'total_ventes', 'somme_ventes'));
+    }
+
+    public function clients(){
+        $liste_clients = Clients::with('ventes', 'garanties')->paginate(10);
+        return view('pages.liste-clients', compact('liste_clients'));
     }
 
     public function remises()
