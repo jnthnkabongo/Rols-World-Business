@@ -37,7 +37,7 @@
             <p class="text-gray-500 text-sm">Connectez-vous pour continuer</p>
         </div>
         
-        <form method="POST" action="/login" class="space-y-6">
+        <form method="POST" action="{{ route('connexion')}}" class="space-y-6">
             @csrf
             
             <div class="relative">

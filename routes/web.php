@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index'])->name('page-auth');
+Route::post('/', [AuthController::class, 'create'])->name('connexion');
 
 Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 //mecanique roles CRUD
