@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Client extends Model
+class Clients extends Model
 {
     protected $fillable = [
         'nom_client', 
@@ -14,7 +14,7 @@ class Client extends Model
 
     public function ventes()
     {
-        return $this->hasMany(Vente::class);
+        return $this->hasMany(Ventes::class);
     }
 
     public function garanties()

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -11,6 +13,14 @@ class AuthController extends Controller
      */
     public function index()
     {
+        // User::create([
+        //     'name' => 'Jonathan kabongo',
+        //     'email' => 'jnthnkabongo@gmail.com',
+        //     'role_id' => 1,
+        //     'password' => Hash::make('1234567'),
+
+        // ]);
+
         return view('auth');
     }
 
@@ -19,7 +29,7 @@ class AuthController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**

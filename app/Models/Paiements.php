@@ -15,6 +15,6 @@ class Paiement extends Model
 
     public function vente()
     {
-        return $this->belongsTo(Vente::class);
+        return $this->belongsTo(Ventes::class);
     }
 }

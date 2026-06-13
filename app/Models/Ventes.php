@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Vente extends Model
+class Ventes extends Model
 {
     protected $fillable = [
         'client_id',
@@ -17,7 +17,7 @@ class Vente extends Model
 
     public function client()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Clients::class);
     }
 
     public function user()
@@ -27,7 +27,7 @@ class Vente extends Model
 
     public function venteDetails()
     {
-        return $this->hasMany(VenteDetail::class);
+        return $this->hasMany(VenteDetails::class);
     }
 
     public function paiements()

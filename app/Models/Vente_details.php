@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VenteDetail extends Model
+class VenteDetails extends Model
 {
     protected $fillable = [
         'vente_id', 
@@ -15,7 +15,7 @@ class VenteDetail extends Model
 
     public function vente()
     {
-        return $this->belongsTo(Vente::class);
+        return $this->belongsTo(Ventes::class);
     }
 
     public function produitUnite()

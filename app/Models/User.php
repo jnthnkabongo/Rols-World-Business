@@ -50,7 +50,7 @@ class User extends Authenticatable
 
     public function ventes()
     {
-        return $this->hasMany(Vente::class);
+        return $this->hasMany(Ventes::class);
     }
 
     public function historiqueActions()
