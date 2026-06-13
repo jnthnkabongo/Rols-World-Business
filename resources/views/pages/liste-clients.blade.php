@@ -35,9 +35,9 @@
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $client->email }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $client->telephone }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $client->adresse }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()->ventedetails->produitUnite->produit->nom }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()->total }} $</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()->user->name }} </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()?->ventedetails->first()?->produitUnite->produit->nom ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()?->total ?? '-' }} $</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()?->user->name ?? '-' }} </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
                                         <button onclick="openEditModal({{ $client->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
