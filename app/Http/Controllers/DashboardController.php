@@ -195,7 +195,10 @@ class DashboardController extends Controller
     //// 1. Lecture des donnees de la liste des produits
     public function produits()
     {
-        
+        $dernierId = ProduitUnites::max('id');
+        $numeros = ($dernierId ?? 0) + 1;
+        $reference = 'CHAUSSURE-' .str_pad($numeros, 3, '0', STR_PAD_LEFT);
+
         $produits_electroniques = Produits::with(['categorie', 'marque','produitUnites'])
             ->where('categorie_id', '=', 1)
             ->paginate(5);
@@ -208,8 +211,16 @@ class DashboardController extends Controller
         $marques_electroniques = Marques::where('categorie_id', '=', 1)->get();
         $marques_chaussures = Marques::where('categorie_id', '=', 2)->get();
         
-        return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'categories', 'marques_electroniques', 'marques_chaussures'));
+        return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'categories', 'marques_electroniques', 'marques_chaussures', 'reference'));
     }
+
+    // public function numeroSerieChaussure(){
+    //     $numero = random_int(1,100000000000000000);
+    //     $dernierId = ProduitUnites::max('id');
+    //     $numeros = ($dernierId ?? 0) + 1;
+    //     $reference = 'CHAUSSURE-' .str_pad($numeros, 3, '0', STR_PAD_LEFT);
+
+    // }
 
     public function AjouterProduit(Request $request)
     {
@@ -259,10 +270,10 @@ class DashboardController extends Controller
 
         } catch (\Exception $e) {
 
-            // \Log::error('Erreur lors de l\'ajout du produit', [
-            //     'message' => $e->getMessage(),
-            //     'trace'   => $e->getTraceAsString(),
-            // ]);
+            \Log::error('Erreur lors de l\'ajout du produit', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
 
             return redirect()
                 ->back()
@@ -443,10 +454,21 @@ class DashboardController extends Controller
 
         // Statistiques des ventes
         $ventes_aujourdhui = Ventes::whereDate('date_vente', today())->count();
+        $ventes_aujourdhui_quantites = Ventes::with('ventedetails')->whereDate('date_vente', today())->where('quantite','>', 0)->sum('quantite');
+        $ventes_aujourdhui_quantitesss = Ventes::whereDate('date_vente', today())
+        ->withSum('ventedetails as somme_quantite', 'quantite')
+        ->get()
+        ->sum('somme_quantite');
+
+        $ventes_aujourdhui_quantite = DB::table('ventes')
+            ->join('vente_details', 'vente_details.vente_id', '=', 'ventes.id')
+            ->whereDate('ventes.date_vente', today())
+            ->where('vente_details.quantite', '>', 0)
+            ->sum('vente_details.quantite');
         $total_ventes = Ventes::count();
         $somme_ventes = Ventes::sum('total');
 
-        return view('pages.liste-ventes', compact('liste_ventes', 'ventes_aujourdhui', 'total_ventes', 'somme_ventes'));
+        return view('pages.liste-ventes', compact('liste_ventes', 'ventes_aujourdhui', 'total_ventes', 'somme_ventes','ventes_aujourdhui_quantite'));
     }
 
     public function clients(){

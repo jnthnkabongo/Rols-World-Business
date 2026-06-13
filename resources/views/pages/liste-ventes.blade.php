@@ -17,7 +17,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Ventes aujourd'hui</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $ventes_aujourdhui }}</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $ventes_aujourdhui }} | {{ $ventes_aujourdhui_quantite}}</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-calendar-day text-blue-600 text-xl"></i>
@@ -30,7 +30,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Total des ventes</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $total_ventes }}</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $total_ventes }} | </p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-shopping-cart text-green-600 text-xl"></i>
@@ -61,10 +61,11 @@
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Produit</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Client</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantité</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix unitaire</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix total</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Vendu par</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date de vente</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase truncate">Total</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -72,14 +73,14 @@
                         @forelse($liste_ventes as $vente)
                             <tr class="hover:bg-gray-50 transition" data-role-id="{{ $vente->id }}" data-role-data='{{ json_encode(['nom' => $vente->nom, 'description' => $vente->description]) }}'>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"># {{ ($liste_ventes->perPage() * ($liste_ventes->currentPage() - 1 ))+ $loop->iteration }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $vente->ventedetails->first()?->produit_unite_id->produitUnite->produit_id ?? '0' }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($vente->ventedetails->first()?->produitUnite->produit->nom ?? '-') }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($vente->client->nom_client) }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->prix_unitaire ?? '0' }} 
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->quantite ?? '0' }} Pcs</td>   
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->prix_unitaire ?? '0' }} $</td>   
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->total ?? '0' }} $</td>   
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->user->name }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->date_vente }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Actif</span>
-                                </td>
+                              
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
                                         {{-- <button onclick="openViewModal({{ $role->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
