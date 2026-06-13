@@ -35,6 +35,8 @@ Route::post('ajout-produit', [DashboardController::class, 'AjouterProduit'])->na
 Route::post('modifier-produit/{id}', [DashboardController::class, 'ModifierProduit'])->name('modifier-produit');
 Route::post('supprimer-produit/{id}', [DashboardController::class, 'SupprimerProduit'])->name('supprimer-produit');
 Route::get('api/products/{id}', [DashboardController::class, 'getProductData'])->name('get-product-data');
+Route::post('changer-statut-remise/{id}', [DashboardController::class, 'changerStatutRemise'])->name('changer-statut-remise');
+Route::post('changer-statut-vendu/{id}', [DashboardController::class, 'changerStatutVendu'])->name('changer-statut-vendu');
 
 //mecanique ventes CRUD
 Route::get('liste-vente', [DashboardController::class, 'ventes'])->name('liste-ventes');

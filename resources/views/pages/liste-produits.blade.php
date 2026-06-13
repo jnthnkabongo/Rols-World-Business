@@ -3,9 +3,7 @@
     <div class="p-8 overflow-y-auto flex-1">
         <!-- En-tête -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-            <h2 class= "
-            text-2xl font-bold text-gray-800"
-            >Liste des Produits</h2>
+            <h2 class="text-2xl font-bold text-gray-800">Liste des Produits</h2>
 
             
             <div class="flex gap-3">
@@ -50,8 +48,10 @@
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nom</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Marque</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Stock</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Modele</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Numéro série</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix d'achat</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix vente</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Statut</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -59,26 +59,58 @@
                         <tbody class="divide-y divide-gray-200">
                             @foreach($produits_electroniques as $produit)
                             <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $produit->id }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $produit->nom }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->marque->nom ?? '-' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ ($produits_electroniques->perPage() * ($produits_electroniques->currentPage() - 1 ))+ $loop->iteration }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ ucfirst($produit->nom) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($produit->marque->nom ?? '-') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($produit->modele ?? '-') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->produitUnites->first()->numero_serie ?? '-' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_achat, 2, ',', ' ') }} $</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} $</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->stock }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($produit->status == 'available')
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Disponible</span>
-                                    @elseif($produit->status == 'low_stock')
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Faible stock</span>
+                                    @php
+                                        $unite = $produit->produitUnites->first();
+                                    @endphp
+
+                                    @if($unite && $unite->statut == 'en_stock')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                            Disponible
+                                        </span>
+                                    @elseif($unite && $unite->statut == 'vendu')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Vendu
+                                        </span>
+                                    @elseif($unite && $unite->statut == 'remise')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            Remise
+                                        </span>
+                                    @elseif($unite && $unite->statut == 'defecteux')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Défectueux
+                                        </span>
                                     @else
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rupture</span>
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Rupture
+                                        </span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
-                                        {{-- <button onclick="openViewElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
-                                            <i class="fas fa-eye"></i>
-                                        </button> --}}
-                                        <button onclick="openEditElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
+                                        <div class="relative">
+                                            <button onclick="toggleDropdownMore('dropdown-electronics-{{ $produit->id }}')" class="px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-all duration-200">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                            <div id="dropdown-electronics-{{ $produit->id }}" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                                <ul class="py-1">
+                                                    <li>
+                                                        <a href="#" onclick="toggleDropdownMore('dropdown-electronics-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" onclick="openVenteModal({{ $produit->id }}); toggleDropdownMore('dropdown-electronics-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <button onclick="openEditElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button onclick="openDeleteElectronicsModal({{ $produit->id }})" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
@@ -90,6 +122,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+                 <div class="mt-6 pb-4 mr-4 flex justify-end bg-primary">
+                    {{ $produits_electroniques->withQueryString()->links() }}
                 </div>
             </div>
 
@@ -109,36 +144,74 @@
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nom</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Marque</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Modéle</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Taille</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Stock</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix d'achat</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix de vente</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Stock de vente</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Statut</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            @foreach($chaussures as $produit)
+                            @forelse($chaussures as $produit)
                             <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $produit->id }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $produit->nom }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->marque->nom ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->taille ?? '-' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ ($chaussures->perPage() * ($chaussures->currentPage() - 1 ))+ $loop->iteration }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ ucfirst($produit->nom) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($produit->marque->nom ?? '-') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($produit->modele ?? '-') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">N {{ $produit->taille ?? '-' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_achat, 2, ',', ' ') }} $</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} $</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->produitUnites->sum('quantite') ?? 0 }} Pièces</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($produit->status == 'available')
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Disponible</span>
-                                    @elseif($produit->status == 'low_stock')
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Faible stock</span>
+                                    @php
+                                        $unite = $produit->produitUnites->first();
+                                    @endphp
+
+                                    @if($unite && $unite->statut == 'en_stock')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                            Disponible
+                                        </span>
+                                    @elseif($unite && $unite->statut == 'vendu')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Vendu
+                                        </span>
+                                    @elseif($unite && $unite->statut == 'remise')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            Remise
+                                        </span>
+                                    @elseif($unite && $unite->statut == 'defecteux')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Défectueux
+                                        </span>
                                     @else
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rupture</span>
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Rupture
+                                        </span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
-                                        {{-- <button onclick="openViewShoesModal({{ $produit->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
-                                            <i class="fas fa-eye"></i>
-                                        </button> --}}
-                                        <button onclick="openEditShoesModal({{ $produit->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
+                                        <div class="relative">
+                                            <button onclick="toggleDropdownMore('dropdown-shoes-{{ $produit->id }}')" class="px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-all duration-200">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                            <div id="dropdown-shoes-{{ $produit->id }}" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                                <ul class="py-1">
+                                                    <li>
+                                                        <form action="{{ route('changer-statut-remise', ['id' => $produit->id]) }}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" onclick="openVenteModal({{ $produit->id }}); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <button onclick="openEditShoesModal({{ $produit->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button onclick="openDeleteShoesModal({{ $produit->id }})" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
@@ -147,9 +220,20 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr class="hover:bg-gray-50 transition">
+                                <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                    Aucune chaussure trouvée
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
+                
                     </table>
+                </div>
+                <!-- Pagination -->
+                <div class="mt-6 pb-4 mr-4 flex justify-end bg-primary">
+                    {{ $chaussures->withQueryString()->links() }}
                 </div>
             </div>
         </div>
@@ -839,6 +923,18 @@
             openModal('deleteShoesModal');
         }
 
+        // Fonction pour ouvrir/fermer les dropdowns
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Fonction pour ouvrir/fermer les dropdown More
+        function toggleDropdownMore(dropdownIdMore) {
+            const dropdown = document.getElementById(dropdownIdMore);
+            dropdown.classList.toggle('hidden');
+        }
+
         // Helper function for number formatting
         function number_format(number, decimals, dec_point, thousands_sep) {
             number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
@@ -869,5 +965,53 @@
                 event.target.classList.remove('flex');
             }
         }
+
+        // Fonction pour ouvrir le modal de vente
+        function openVenteModal(productId) {
+            const form = document.getElementById('venteForm');
+            form.action = form.action.replace('__id__', productId);
+            openModal('venteModal');
+        }
     </script>
+
+    <!-- Modal Vente -->
+    <div id="venteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">Enregistrer une Vente</h3>
+                    <button onclick="closeModal('venteModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form action="{{ route('changer-statut-vendu', ['id' => '__id__']) }}" method="POST" class="p-6 space-y-4" id="venteForm">
+                @csrf
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du client</label>
+                    <input type="text" name="nom_client" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Jean Dupont" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Téléphone</label>
+                    <input type="text" name="telephone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 0123456789">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                    <input type="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: jean@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Adresse</label>
+                    <textarea name="adresse" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 123 Rue de la Paix" rows="2"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
+                    <input type="number" name="quantite" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 1" min="1" required>
+                </div>
+            </form>
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <button onclick="closeModal('venteModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                <button type="submit" form="venteForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Enregistrer la vente</button>
+            </div>
+        </div>
+    </div>
 @endsection

@@ -30,7 +30,7 @@ class Produits extends Model
 
     public function produitUnites()
     {
-        return $this->hasMany(ProduitUnites::class);
+        return $this->hasMany(ProduitUnites::class, 'produit_id');
     }
 
     public function approvisionnementDetails()

@@ -8,6 +8,9 @@ use App\Models\Categories;
 use App\Models\Marques;
 use App\Models\Produits;
 use App\Models\ProduitUnites;
+use App\Models\Client;
+use App\Models\Vente;
+use App\Models\VenteDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -190,13 +193,13 @@ class DashboardController extends Controller
     public function produits()
     {
         
-        $produits_electroniques = Produits::with(['categorie', 'marque'])
+        $produits_electroniques = Produits::with(['categorie', 'marque','produitUnites'])
             ->where('categorie_id', '=', 1)
-            ->paginate(10);
+            ->paginate(5);
         
-        $chaussures = Produits::with(['categorie', 'marque'])
+        $chaussures = Produits::with(['categorie', 'marque', 'produitUnites'])
             ->where('categorie_id', '=', 2)
-            ->paginate(10);
+            ->paginate(3);
         
         $categories = Categories::all();
         $marques_electroniques = Marques::where('categorie_id', '=', 1)->get();
@@ -248,67 +251,67 @@ class DashboardController extends Controller
     //     }
     // }
    public function AjouterProduit(Request $request)
-{
-    $validated = $request->validate([
-        'nom'            => 'required|string|max:255',
-        'categorie_id'   => 'required|exists:categories,id',
-        'marque_id'      => 'required|exists:marques,id',
-        'modele'         => 'nullable|string|max:100',
-        'description'    => 'nullable|string',
-        'prix_achat'     => 'nullable|numeric|min:0',
-        'prix_vente'     => 'required|numeric|min:0',
-        'taille'         => 'nullable|string|max:50',
-        'numero_serie'   => 'required|string|max:255|unique:produit_unites,numero_serie',
-        'quantite'       => 'required|numeric|min:0',
-    ]);
+    {
+        $validated = $request->validate([
+            'nom'            => 'required|string|max:255',
+            'categorie_id'   => 'required|exists:categories,id',
+            'marque_id'      => 'required|exists:marques,id',
+            'modele'         => 'nullable|string|max:100',
+            'description'    => 'nullable|string',
+            'prix_achat'     => 'nullable|numeric|min:0',
+            'prix_vente'     => 'required|numeric|min:0',
+            'taille'         => 'nullable|string|max:50',
+            'numero_serie'   => 'required|string|max:255|unique:produit_unites,numero_serie',
+            'quantite'       => 'required|numeric|min:0',
+        ]);
 
-    try {
-        $produit = DB::transaction(function () use ($validated) {
+        try {
+            $produit = DB::transaction(function () use ($validated) {
 
-            $produit = Produits::create([
-                'nom'          => $validated['nom'],
-                'categorie_id' => $validated['categorie_id'],
-                'marque_id'    => $validated['marque_id'],
-                'modele'       => $validated['modele'] ?? null,
-                'description'  => $validated['description'] ?? null,
-                'prix_achat'   => $validated['prix_achat'] ?? null,
-                'prix_vente'   => $validated['prix_vente'],
-                'taille'       => $validated['taille'] ?? null,
-            ]);
+                $produit = Produits::create([
+                    'nom'          => $validated['nom'],
+                    'categorie_id' => $validated['categorie_id'],
+                    'marque_id'    => $validated['marque_id'],
+                    'modele'       => $validated['modele'] ?? null,
+                    'description'  => $validated['description'] ?? null,
+                    'prix_achat'   => $validated['prix_achat'] ?? null,
+                    'prix_vente'   => $validated['prix_vente'],
+                    'taille'       => $validated['taille'] ?? null,
+                ]);
 
-            ProduitUnites::create([
-                'produit_id'   => $produit->id,
-                'numero_serie' => $validated['numero_serie'],
-                'statut'       => 'en_stock',
-                'quantite'     => $validated['quantite'] ?? null,
-            ]);
+                ProduitUnites::create([
+                    'produit_id'   => $produit->id,
+                    'numero_serie' => $validated['numero_serie'],
+                    'statut'       => 'en_stock',
+                    'quantite'     => $validated['quantite'] ?? null,
+                ]);
 
-            return $produit;
-        });
+                return $produit;
+            });
 
-        return redirect()
-            ->route('liste-produits')
-            ->with(
-                'success',
-                "Le produit {$produit->nom} a été ajouté avec succès."
-            );
+            return redirect()
+                ->route('liste-produits')
+                ->with(
+                    'success',
+                    "Le produit {$produit->nom} a été ajouté avec succès."
+                );
 
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        // \Log::error('Erreur lors de l\'ajout du produit', [
-        //     'message' => $e->getMessage(),
-        //     'trace'   => $e->getTraceAsString(),
-        // ]);
+            // \Log::error('Erreur lors de l\'ajout du produit', [
+            //     'message' => $e->getMessage(),
+            //     'trace'   => $e->getTraceAsString(),
+            // ]);
 
-        return redirect()
-            ->back()
-            ->withInput()
-            ->with(
-                'error',
-                "Une erreur est survenue: " . $e->getMessage()
-            );
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with(
+                    'error',
+                    "Une erreur est survenue: " . $e->getMessage()
+                );
+        }
     }
-}
 
     //// 3. Modification d'un produit
     public function ModifierProduit(Request $request, $id)
@@ -369,6 +372,95 @@ class DashboardController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['error' => 'Erreur lors de la récupération du produit'], 500)
             ->with('error', 'Erreur: ' . $th->getMessage());
+        }
+    }
+
+    //// Changer le statut du produit en remise
+    public function changerStatutRemise($id)
+    {
+        try {
+            $produitUnite = ProduitUnites::where('produit_id', $id)->first();
+            if (!$produitUnite) {
+                return redirect()->route('liste-produits')->with('error', 'Unité de produit non trouvée');
+            }
+
+            $produitUnite->statut = 'remise';
+            $produitUnite->save();
+
+            return redirect()->route('liste-produits')->with('success', 'Statut changé en remise avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-produits')->with('error', 'Erreur lors du changement de statut');
+        }
+    }
+
+    //// Changer le statut du produit en vendu
+    public function changerStatutVendu(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'nom_client' => 'required|string|max:255',
+                'telephone' => 'nullable|string|max:50',
+                'email' => 'nullable|email|max:150',
+                'adresse' => 'nullable|string',
+                'quantite' => 'required|integer|min:1',
+            ]);
+
+            $produitUnite = ProduitUnites::where('produit_id', $id)->first();
+            if (!$produitUnite) {
+                return redirect()->route('liste-produits')->with('error', 'Unité de produit non trouvée');
+            }
+
+            // Vérifier si la quantité demandée est disponible
+            if ((int)$produitUnite->quantite < $validated['quantite']) {
+                return redirect()->route('liste-produits')->with('error', 'Quantité insuffisante en stock');
+            }
+
+            // Trouver ou créer le client
+            $client = Client::firstOrCreate(
+                ['nom_client' => $validated['nom_client']],
+                [
+                    'telephone' => $validated['telephone'] ?? null,
+                    'email' => $validated['email'] ?? null,
+                    'adresse' => $validated['adresse'] ?? null,
+                ]
+            );
+
+            // Récupérer le produit pour obtenir le prix
+            $produit = Produits::find($id);
+            if (!$produit) {
+                return redirect()->route('liste-produits')->with('error', 'Produit non trouvé');
+            }
+
+            // Créer la vente
+            $vente = Vente::create([
+                'client_id' => $client->id,
+                'user_id' => Auth::id(),
+                'date_vente' => now(),
+                'total' => $produit->prix_vente * $validated['quantite'],
+                'statut' => 'paye',
+            ]);
+
+            // Créer le détail de la vente
+            VenteDetail::create([
+                'vente_id' => $vente->id,
+                'produit_unite_id' => $produitUnite->id,
+                'prix_unitaire' => $produit->prix_vente,
+                'total' => $produit->prix_vente * $validated['quantite'],
+            ]);
+
+            // Diminuer la quantité
+            $produitUnite->quantite = (int)$produitUnite->quantite - $validated['quantite'];
+
+            // Changer le statut en vendu si la quantité est à 0
+            if ($produitUnite->quantite == 0) {
+                $produitUnite->statut = 'vendu';
+            }
+
+            $produitUnite->save();
+
+            return redirect()->route('liste-produits')->with('success', 'Vente enregistrée avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-produits')->with('error', 'Erreur lors de l\'enregistrement de la vente: ' . $th->getMessage());
         }
     }
 

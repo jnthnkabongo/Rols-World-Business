@@ -1,44 +1,6 @@
 @extends('pages.entete')
 @section('content')
-    <style>
-        .pagination {
-            display: flex;
-            gap: 0.25rem;
-        }
 
-        .pagination a,
-        .pagination span {
-            padding: 0.5rem 1rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            color: #4b5563;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .pagination a:hover {
-            background-color: #dbeafe;
-            color: #2563eb;
-            border-color: #3b82f6;
-        }
-
-        .pagination .active {
-            background-color: #2563eb;
-            color: white;
-            border-color: #2563eb;
-        }
-
-        .pagination .disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .pagination .disabled:hover {
-            background-color: transparent;
-            color: #4b5563;
-            border-color: #e5e7eb;
-        }
-    </style>
     <div class="p-8 overflow-y-auto flex-1">
         <!-- En-tête avec bouton d'ajout -->
         <div class="flex justify-between items-center mb-6">
