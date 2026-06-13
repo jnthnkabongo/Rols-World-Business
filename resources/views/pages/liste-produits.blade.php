@@ -222,7 +222,7 @@
                             </tr>
                             @empty
                             <tr class="hover:bg-gray-50 transition">
-                                <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                <td colspan="10" class="px-6 py-4 text-center text-gray-500">
                                     Aucune chaussure trouvée
                                 </td>
                             </tr>
@@ -600,7 +600,7 @@
             </div>
             <form action="{{ route('ajout-marque') }}" method="POST" class="p-6 space-y-4" id="addPhoneBrandForm">
                 @csrf
-                <input type="number" name="categorie_id" value="1">
+                <input type="number" name="categorie_id" id="categorie_id" value="1" hidden>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la marque</label>
                     <input type="text" name="nom" id="addPhoneBrandName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Apple, Samsung, Xiaomi" required oninput="validateAddPhoneBrandForm()">

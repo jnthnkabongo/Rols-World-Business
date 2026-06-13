@@ -172,6 +172,7 @@ class DashboardController extends Controller
         $validated = $request->validate([
             'nom' => 'required|string|max:255|unique:marques,nom',
             'description' => 'nullable|string',
+            'categorie_id' => 'required|exists:categories,id'
         ]);
 
         try {
@@ -180,6 +181,7 @@ class DashboardController extends Controller
             $marque->nom = $validated['nom'];
             $marque->description = $validated['description'] ?? null;
             $marque->save();
+            //dd($marque);
             
             return redirect()->route('liste-produits')->with('success', 'Marque ajoutée avec succès');
 

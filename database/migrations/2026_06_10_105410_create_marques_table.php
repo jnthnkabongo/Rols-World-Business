@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nom', 100);
             $table->string('description', 255);
-            $table->string('logo')->nullable();
+            $table->foreignId('categorie_id')->constrained('categories');
             $table->timestamps();
         });
     }

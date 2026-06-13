@@ -52,7 +52,7 @@
                         @empty
                         <tr class="hover:bg-gray-50 transition">
                             <td colspan="9" class="px-6 py-4 text-center text-gray-500">
-                                Aucun rôle trouvé
+                                Aucune remise trouvé
                             </td>
                         </tr>
                         @endforelse

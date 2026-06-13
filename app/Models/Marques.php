@@ -21,4 +21,9 @@ class Marques extends Model
     {
         return $this->hasMany(Produits::class);
     }
+
+    public function categories()
+    {
+        return $this->belongsTo(Categories::class);
+    }
 }
