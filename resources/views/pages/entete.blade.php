@@ -66,7 +66,7 @@
                         <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                             <i class="fas fa-user text-white text-sm"></i>
                         </div>
-                        <span class="font-medium text-gray-700"></span>
+                        <span class="font-medium text-gray-700">{{ auth()->user()->name ?? 'Utilisateur' }}</span>
                         <i class="fas fa-chevron-down text-gray-400 text-sm"></i>
                     </button>
                     
