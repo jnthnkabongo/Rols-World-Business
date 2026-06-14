@@ -10,16 +10,17 @@ class Remises extends Model
         'user_id',
         'produit_id',
         'nom_remise',
-        'telephone_remise'
+        'telephone_remise',
+        'quantite'
     ];
 
     public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function produitRemise()
     {
-        return $this->belongsTo(Produits::class);
+        return $this->belongsTo(Produits::class, 'produit_id');
     }
 }

@@ -18,6 +18,7 @@
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Produit</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantité</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nom preneur</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Téléphone</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date remise</th>
@@ -31,6 +32,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"># {{ ($liste_remises->perPage() * ($liste_remises->currentPage() - 1 ))+ $loop->iteration }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($remise->produitRemise->nom ?? '-') }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($remise->nom_remise) }} $</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($remise->quantite) }} $</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->telephone_remise}}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->users->name ?? '-' }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->created_at }}</td>
