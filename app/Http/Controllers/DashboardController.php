@@ -353,6 +353,7 @@ class DashboardController extends Controller
         $validated = $request->validate([
             'nom_remise' => 'required|string|max:255',
             'telephone_remise' => 'nullable|string|max:50',
+            'quantite' => 'required|integer|max:255',
         ]);
 
         try {
@@ -362,6 +363,10 @@ class DashboardController extends Controller
             }
 
             $produitUnite->statut = 'remise';
+
+            // Soustraire la quantité dans produit_unites (stock du produit)
+            $currentQuantite = is_numeric($produitUnite->quantite) ? $produitUnite->quantite : 0;
+            $produitUnite->quantite = max(0, $currentQuantite - $validated['quantite']);
             $produitUnite->save();
 
             // Enregistrer la remise dans la table remises
@@ -372,6 +377,7 @@ class DashboardController extends Controller
                     'produit_id' => $id,
                     'nom_remise' => $validated['nom_remise'],
                     'telephone_remise' => $validated['telephone_remise'] ?? null,
+                    'quantite' => $validated['quantite'] ?? null,
                 ]);
             }
 
