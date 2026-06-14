@@ -18,12 +18,10 @@
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Produit</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Client</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix unitaire</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Vendu par</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date de vente</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantité</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase truncate">Total</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nom preneur</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Téléphone</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date remise</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Donner par</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -31,13 +29,11 @@
                         @forelse($liste_remises as $remise)
                             <tr class="hover:bg-gray-50 transition" data-role-id="{{ $remise->id }}" data-role-data='{{ json_encode(['nom' => $remise->nom, 'description' => $remise->description]) }}'>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"># {{ ($liste_remises->perPage() * ($liste_remises->currentPage() - 1 ))+ $loop->iteration }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $vente->ventedetails->first()?->produitUnite->produit->nom ?? 'N/A' }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($remise->client->nom_client) }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->ventedetails->first()?->prix_unitaire ?? '0' }} $</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->user->name }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->date_vente }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->ventedetails->first()->total ?? '0'}} $</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->ventedetails->first()->quantite ?? '0'}} </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($remise->produitRemise->nom ?? '-') }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($remise->nom_remise) }} $</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->telephone_remise}}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->users->name ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $remise->created_at }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
                                         <button onclick="openEditModal({{ $remise->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">

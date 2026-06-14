@@ -102,7 +102,7 @@
                                             <div id="dropdown-electronics-{{ $produit->id }}" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                                                 <ul class="py-1">
                                                     <li>
-                                                        <a href="#" onclick="toggleDropdownMore('dropdown-electronics-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
+                                                        <a href="#" onclick="openRemiseModal({{ $produit->id }}, '{{ $produit->nom }}'); toggleDropdownMore('dropdown-electronics-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
                                                     </li>
                                                     <li>
                                                         <a href="#" onclick="openVenteModal({{ $produit->id }}); toggleDropdownMore('dropdown-electronics-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
@@ -200,10 +200,7 @@
                                             <div id="dropdown-shoes-{{ $produit->id }}" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                                                 <ul class="py-1">
                                                     <li>
-                                                        <form action="{{ route('changer-statut-remise', ['id' => $produit->id]) }}" method="POST">
-                                                            @csrf
-                                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</button>
-                                                        </form>
+                                                        <a href="#" onclick="openRemiseModal({{ $produit->id }}, '{{ $produit->nom }}'); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
                                                     </li>
                                                     <li>
                                                         <a href="#" onclick="openVenteModal({{ $produit->id }}); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
@@ -972,6 +969,14 @@
             form.action = form.action.replace('__id__', productId);
             openModal('venteModal');
         }
+
+        // Fonction pour ouvrir le modal de remise
+        function openRemiseModal(productId, produitNom) {
+            const form = document.getElementById('remiseForm');
+            form.action = form.action.replace('__id__', productId);
+            document.getElementById('remiseProduitNom').value = produitNom;
+            openModal('remiseModal');
+        }
     </script>
 
     <!-- Modal Vente -->
@@ -1011,6 +1016,39 @@
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                 <button onclick="closeModal('venteModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
                 <button type="submit" form="venteForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Enregistrer la vente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Remise -->
+    <div id="remiseModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">Mettre en Remise</h3>
+                    <button onclick="closeModal('remiseModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form action="{{ route('changer-statut-remise', ['id' => '__id__']) }}" method="POST" class="p-6 space-y-4" id="remiseForm">
+                @csrf
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Produit</label>
+                    <input type="text" id="remiseProduitNom" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la remise</label>
+                    <input type="text" name="nom_remise" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Jonathan Dealer Local 28 Ambassade" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Téléphone</label>
+                    <input type="text" name="telephone_remise" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 0976545134">
+                </div>
+            </form>
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <button onclick="closeModal('remiseModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                <button type="submit" form="remiseForm" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition">Mettre en remise</button>
             </div>
         </div>
     </div>

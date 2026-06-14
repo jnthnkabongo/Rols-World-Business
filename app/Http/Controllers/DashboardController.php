@@ -348,8 +348,13 @@ class DashboardController extends Controller
     }
 
     //// Changer le statut du produit en remise
-    public function changerStatutRemise($id)
+    public function changerStatutRemise(Request $request, $id)
     {
+        $validated = $request->validate([
+            'nom_remise' => 'required|string|max:255',
+            'telephone_remise' => 'nullable|string|max:50',
+        ]);
+
         try {
             $produitUnite = ProduitUnites::where('produit_id', $id)->first();
             if (!$produitUnite) {
@@ -359,13 +364,24 @@ class DashboardController extends Controller
             $produitUnite->statut = 'remise';
             $produitUnite->save();
 
+            // Enregistrer la remise dans la table remises
+            $produit = Produits::find($id);
+            if ($produit) {
+                Remises::create([
+                    'user_id' => Auth::id(),
+                    'produit_id' => $id,
+                    'nom_remise' => $validated['nom_remise'],
+                    'telephone_remise' => $validated['telephone_remise'] ?? null,
+                ]);
+            }
+
             return redirect()->route('liste-produits')->with('success', 'Statut changé en remise avec succès');
         } catch (\Throwable $th) {
             return redirect()->route('liste-produits')->with('error', 'Erreur lors du changement de statut');
         }
     }
 
-    //// Changer le statut du produit en vendu
+    //// Changer le statut du produit en vendu & fonction d'enregistrement de vente
     public function changerStatutVendu(Request $request, $id)
     {
         $validated = $request->validate([
@@ -491,7 +507,7 @@ class DashboardController extends Controller
 
     public function remises()
     {
-        $liste_remises = Remises::with('')->paginate(10);
+        $liste_remises = Remises::with('users', 'produitRemise')->paginate(10);
         return view('pages.liste-remises', compact('liste_remises'));
     }
 

@@ -9,7 +9,8 @@ class Remises extends Model
     protected $fillable = [
         'user_id',
         'produit_id',
-        'nom_remise'
+        'nom_remise',
+        'telephone_remise'
     ];
 
     public function users()
@@ -17,7 +18,7 @@ class Remises extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function produits()
+    public function produitRemise()
     {
         return $this->belongsTo(Produits::class);
     }
