@@ -448,27 +448,40 @@ class DashboardController extends Controller
     }
 
     //// 1. Lecture des donnees de la liste des ventes
-    public function ventes()
+    public function ventes(Request $request)
     {
-        $liste_ventes = Ventes::with('client', 'user', 'ventedetails', 'paiements')->paginate(10);
+        $query = Ventes::with('client', 'user', 'ventedetails', 'paiements');
+
+        // Filtrer par date de début et date de fin
+        if ($request->filled('date_debut') && $request->filled('date_fin')) {
+            $query->whereBetween('date_vente', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->filled('date_debut')) {
+            $query->whereDate('date_vente', '>=', $request->date_debut);
+        } elseif ($request->filled('date_fin')) {
+            $query->whereDate('date_vente', '<=', $request->date_fin);
+        }
+
+        $liste_ventes = $query->paginate(10)->withQueryString();
 
         // Statistiques des ventes
         $ventes_aujourdhui = Ventes::whereDate('date_vente', today())->count();
-        $ventes_aujourdhui_quantites = Ventes::with('ventedetails')->whereDate('date_vente', today())->where('quantite','>', 0)->sum('quantite');
-        $ventes_aujourdhui_quantitesss = Ventes::whereDate('date_vente', today())
-        ->withSum('ventedetails as somme_quantite', 'quantite')
-        ->get()
-        ->sum('somme_quantite');
 
         $ventes_aujourdhui_quantite = DB::table('ventes')
-            ->join('vente_details', 'vente_details.vente_id', '=', 'ventes.id')
-            ->whereDate('ventes.date_vente', today())
-            ->where('vente_details.quantite', '>', 0)
-            ->sum('vente_details.quantite');
+        ->join('vente_details', 'vente_details.vente_id', '=', 'ventes.id')
+        ->whereDate('ventes.date_vente', today())
+        ->where('vente_details.quantite', '>', 0)
+        ->sum('vente_details.quantite');
+
         $total_ventes = Ventes::count();
+
+         $ventes_total_quantite = DB::table('ventes')
+        ->join('vente_details', 'vente_details.vente_id', '=', 'ventes.id')
+        ->where('vente_details.quantite', '>', 0)
+        ->sum('vente_details.quantite');
+
         $somme_ventes = Ventes::sum('total');
 
-        return view('pages.liste-ventes', compact('liste_ventes', 'ventes_aujourdhui', 'total_ventes', 'somme_ventes','ventes_aujourdhui_quantite'));
+        return view('pages.liste-ventes', compact('liste_ventes', 'ventes_aujourdhui', 'total_ventes', 'somme_ventes','ventes_aujourdhui_quantite','ventes_total_quantite'));
     }
 
     public function clients(){

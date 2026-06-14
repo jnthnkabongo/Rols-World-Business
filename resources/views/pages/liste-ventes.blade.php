@@ -4,11 +4,12 @@
         <!-- En-tête avec bouton d'ajout -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800">Liste des Ventes</h2>
-            <button onclick="openModal('addRoleModal')" class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg">
+            {{-- <button onclick="openModal('addRoleModal')" class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg">
                 <i class="fas fa-plus"></i>
                 <span>Ajouter une vente</span>
-            </button>
+            </button> --}}
         </div>
+
 
         <!-- Cards statistiques -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -17,7 +18,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Ventes aujourd'hui</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $ventes_aujourdhui }} | {{ $ventes_aujourdhui_quantite}}</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $ventes_aujourdhui }} Ventes | {{ $ventes_aujourdhui_quantite}} Pièces</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-calendar-day text-blue-600 text-xl"></i>
@@ -30,7 +31,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Total des ventes</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $total_ventes }} | </p>
+                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $total_ventes }} Ventes | {{ $ventes_total_quantite }} Pièces</p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-shopping-cart text-green-600 text-xl"></i>
@@ -52,6 +53,32 @@
             </div>
         </div>
 
+        
+        <!-- Formulaire de filtre par date -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <form action="{{ route('liste-ventes') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
+                <div class="flex-1">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Date de début</label>
+                    <input type="date" name="date_debut" value="{{ request('date_debut') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Date de fin</label>
+                    <input type="date" name="date_fin" value="{{ request('date_fin') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {{-- <input type="month" name="" id="" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"> --}}
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-filter mr-2"></i>Filtrer
+                    </button>
+                    <a href="{{ route('liste-ventes') }}" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                        <i class="fas fa-times mr-2"></i>Réinitialiser
+                    </a>
+                    <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-print mr-2"></i>Exporter
+                    </button>
+                </div>
+            </form>
+        </div>
         <!-- Tableau des rôles -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div class="overflow-x-auto">

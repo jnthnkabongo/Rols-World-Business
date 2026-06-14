@@ -80,7 +80,7 @@
                             <span class="ml-3">Paramètres</span>
                         </a>
                         <hr class="my-2">
-                        <a href="/logout" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 transition">
+                        <a href="{{ route('login')}}" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 transition">
                             <i class="fas fa-sign-out-alt w-5"></i>
                             <span class="ml-3">Se déconnecter</span>
                         </a>
