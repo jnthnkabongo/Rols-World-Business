@@ -40,7 +40,7 @@
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()?->user->name ?? '-' }} </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="openEditModal({{ $client->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
+                                        <button onclick="openEditModal({{ $client->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button onclick="openDeleteModal({{ $client->id }})" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">

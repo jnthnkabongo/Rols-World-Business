@@ -34,27 +34,43 @@
         .dropdown-menu.show {
             display: block;
         }
+        .sidebar-hidden {
+            transform: translateX(-100%);
+        }
+        .sidebar-visible {
+            transform: translateX(0);
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 30;
+                transition: transform 0.3s ease-in-out;
+            }
+        }
 
     </style>
 </head>
 <body class="gradient-bg h-screen flex flex-col">
     <!-- Header en haut sur toute la largeur -->
-    <header class="bg-white shadow-md p-6 flex-shrink-0 z-20">
+    <header class="bg-white shadow-md p-2 flex-shrink-0 z-20">
         <div class="flex justify-between items-center w-full">
             <div class="flex items-center space-x-4">
-                <div class="inline-flex items-center justify-center w-20 h-20">
+                <button onclick="toggleSidebar()" class="md:hidden p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+                    <i class="fas fa-bars text-gray-600"></i>
+                </button>
+                <div class="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20">
                     <img src="{{ asset('images/logo-1.png') }}" alt="Logo" class="w-full h-full object-contain">
                 </div>
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-800">{{ $pageTitle ?? 'Tableau de bord' }}</h1>
-                    <p class="text-gray-500 mt-1">{{ $pageSubtitle ?? 'Vue d\'ensemble de votre activité' }}</p>
+                <div class="hidden md:block">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800">{{ $pageTitle ?? 'Tableau de bord' }}</h2>
+                    <p class="text-gray-500 mt-1 text-sm">{{ $pageSubtitle ?? 'Vue d\'ensemble de votre activité' }}</p>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
-                <div class="relative">
+                {{-- <div class="relative">
                     <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                </div>
+                </div> --}}
                 <button class="relative p-2 bg-white rounded-xl shadow hover:shadow-md transition">
                     <i class="fas fa-bell text-gray-600"></i>
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">3</span>
@@ -93,8 +109,8 @@
     <!-- Conteneur principal avec sidebar et contenu -->
     <div class="flex flex-1 overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-64 sidebar-gradient text-white flex flex-col h-full flex-shrink-0">
-            
+        <aside id="sidebar" class="sidebar w-64 sidebar-gradient text-white flex flex-col h-full flex-shrink-0 sidebar-hidden md:sidebar-visible md:transform-none md:translate-x-0">
+
             <!-- Navigation -->
             <nav class="flex-1 p-4 space-y-2">
                 <a href="{{ route('dashboard') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
@@ -153,7 +169,13 @@
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('show');
         }
-        
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('sidebar-hidden');
+            sidebar.classList.toggle('sidebar-visible');
+        }
+
         // Fermer le dropdown quand on clique ailleurs
         window.onclick = function(event) {
             if (!event.target.closest('.relative')) {

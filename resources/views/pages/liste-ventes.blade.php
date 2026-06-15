@@ -18,7 +18,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Ventes aujourd'hui</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $ventes_aujourdhui }} Ventes | {{ $ventes_aujourdhui_quantite}} Pièces</p>
+                        <p class="text-sm font-bold text-gray-800 mt-2">{{ $ventes_aujourdhui }} Ventes | {{ $ventes_aujourdhui_quantite}} Pièces</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-calendar-day text-blue-600 text-xl"></i>
@@ -31,7 +31,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Total des ventes</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ $total_ventes }} Ventes | {{ $ventes_total_quantite }} Pièces</p>
+                        <p class="text-sm font-bold text-gray-800 mt-2">{{ $total_ventes }} Ventes | {{ $ventes_total_quantite }} Pièces</p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-shopping-cart text-green-600 text-xl"></i>
@@ -44,7 +44,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Somme des ventes</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-2">{{ number_format($somme_ventes, 2, ',', ' ') }} $</p>
+                        <p class="text-sm font-bold text-gray-800 mt-2">{{ number_format($somme_ventes, 2, ',', ' ') }} $</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-dollar-sign text-purple-600 text-xl"></i>
@@ -55,7 +55,7 @@
 
         
         <!-- Formulaire de filtre par date -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div class="bg-white rounded-2xl shadow-lg p-3 mb-3">
             <form action="{{ route('liste-ventes') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
                 <div class="flex-1">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Date de début</label>
@@ -113,7 +113,7 @@
                                         {{-- <button onclick="openViewModal({{ $role->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-eye"></i>
                                         </button> --}}
-                                        <button onclick="openEditModal({{ $vente->id }})" class="px-3 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200">
+                                        <button onclick="openEditModal({{ $vente->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button onclick="openDeleteModal({{ $vente->id }})" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
