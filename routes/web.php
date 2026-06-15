@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
 
     //mecanique remises CRUD
     Route::get('liste-remise', [DashboardController::class, 'remises'])->name('liste-remises');
+    Route::post('changer-statut-disponible/{id}', [DashboardController::class, 'changerStatutDisponible'])->name('changer-statut-disponible');
 
     //mecanique rapports CRUD
     Route::get('liste-rapport', [DashboardController::class, 'rapports'])->name('liste-rapports');

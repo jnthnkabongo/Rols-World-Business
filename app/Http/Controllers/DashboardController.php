@@ -387,6 +387,34 @@ class DashboardController extends Controller
         }
     }
 
+    //// Changer le statut de la remise et la suppression dans la liste des remises
+    public function changerStatutDisponible(Request $request, $id)
+    {
+        try {
+            // Récupérer la remise
+            $remise = Remises::findOrFail($id);
+
+            // Récupérer le produit_unite correspondant
+            $produitUnite = ProduitUnites::where('produit_id', $remise->produit_id)->first();
+
+            if (!$produitUnite) {
+                return redirect()->route('liste-remises')->with('error', 'Unité de produit non trouvée');
+            }
+
+            // Additionner la quantité de la remise avec la quantité du produit_unite
+            $produitUnite->quantite += $remise->quantite;
+            $produitUnite->statut = 'en_stock';
+            $produitUnite->save();
+
+            // Supprimer la remise
+            $remise->delete();
+
+            return redirect()->route('liste-remises')->with('success', 'Remise supprimée et quantité restituée avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-remises')->with('error', 'Erreur lors de la suppression de la remise');
+        }
+    }
+
     //// Changer le statut du produit en vendu & fonction d'enregistrement de vente
     public function changerStatutVendu(Request $request, $id)
     {

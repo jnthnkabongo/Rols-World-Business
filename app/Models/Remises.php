@@ -23,4 +23,10 @@ class Remises extends Model
     {
         return $this->belongsTo(Produits::class, 'produit_id');
     }
+
+    public function getNumeroSerieAttribute()
+    {
+        $produitUnite = $this->produitRemise->produitUnites()->where('statut', 'remise')->first();
+        return $produitUnite ? $produitUnite->numero_serie : '-';
+    }
 }
