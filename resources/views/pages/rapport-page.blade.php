@@ -124,8 +124,9 @@
                         @forelse($details_ventes as $detail)
                         @php
                             $prix_achat = $detail->produitUnite->produit->prix_achat ?? 0;
-                            $cout_total = $prix_achat * $detail->quantite;
-                            $benefice = $detail->total - $cout_total;
+                            $cout_total = $detail->total;
+                            $cout_achat = $prix_achat * $detail->quantite;
+                            $benefice = $cout_total - $cout_achat;
                             $prix_vente_unitaire = $detail->quantite > 0 ? $detail->total / $detail->quantite : 0;
                             $marge = $prix_vente_unitaire > 0 ? (($prix_vente_unitaire - $prix_achat) / $prix_vente_unitaire) * 100 : 0;
                         @endphp

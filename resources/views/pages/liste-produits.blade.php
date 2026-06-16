@@ -29,6 +29,9 @@
                     <button onclick="switchTab('shoes')" id="tab-shoes" class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700">
                         <i class="fas fa-shoe-prints mr-2"></i>Chaussures
                     </button>
+                    <button onclick="switchTab('tools')" id="tab-tools" class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-mobile-alt mr-2"></i></i><i class="fas fa-plug mr-2"></i>Accesoires
+                    </button>
                 </nav>
             </div>
 
@@ -132,7 +135,7 @@
             <div id="content-shoes" class="tab-content p-6 hidden">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-gray-800">Chaussures</h3>
-                    <button onclick="openModal('addShoesModal')" class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg">
+                    <button onclick="openModal('addToolsModal')" class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg">
                         <i class="fas fa-plus"></i>
                         <span>Ajouter chaussure</span>
                     </button>
@@ -163,7 +166,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">N {{ $produit->taille ?? '-' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_achat, 2, ',', ' ') }} $</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} $</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->produitUnites->sum('quantite') ?? 0 }} Pièces</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->produitUnites->sum('quantite_produit') ?? 0 }} Pièces</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
                                         $unite = $produit->produitUnites->first();
@@ -231,6 +234,110 @@
                 <!-- Pagination -->
                 <div class="mt-6 pb-4 mr-4 flex justify-end bg-primary">
                     {{ $chaussures->withQueryString()->links() }}
+                </div>
+            </div>
+
+            <!-- Contenu Onglet Tools -->
+            <div id="content-tools" class="tab-content p-6 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Accesoires</h3>
+                    <button onclick="openModal('addToolsModal')" class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg">
+                        <i class="fas fa-plus"></i>
+                        <span>Ajouter accesoire</span>
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nom</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Marque</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Modéle</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix d'achat</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix de vente</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Stock de vente</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Statut</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @forelse($accessoires as $accesoire)
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ ($accessoires->perPage() * ($accessoires->currentPage() - 1 ))+ $loop->iteration }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ ucfirst($accesoire->nom) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($accesoire->marque->nom ?? '-') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($accesoire->modele ?? '-') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($accesoire->prix_achat, 2, ',', ' ') }} FC</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($accesoire->prix_vente, 2, ',', ' ') }} FC</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $accesoire->produitUnites->sum('quantite_produit') ?? 0 }} Pièces</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $unite = $produit->produitUnites->first();
+                                    @endphp
+
+                                    @if($unite && $unite->statut == 'en_stock')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                            Disponible
+                                        </span>
+                                    @elseif($unite && $unite->statut == 'vendu')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Vendu
+                                        </span>
+                                    @elseif($unite && $unite->statut == 'remise')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            Remise
+                                        </span>
+                                    @elseif($unite && $unite->statut == 'defecteux')
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Défectueux
+                                        </span>
+                                    @else
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Rupture
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="relative">
+                                            <button onclick="toggleDropdownMore('dropdown-shoes-{{ $produit->id }}')" class="px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-all duration-200">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                            <div id="dropdown-shoes-{{ $accesoire->id }}" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                                <ul class="py-1">
+                                                    <li>
+                                                        <a href="#" onclick="openRemiseModal({{ $accesoire->id }}, '{{ $produit->nom }}'); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" onclick="openVenteModal({{ $accesoire->id }}); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <button onclick="openEditShoesModal({{ $accesoire->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="openDeleteShoesModal({{ $accesoire->id }})" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr class="hover:bg-gray-50 transition">
+                                <td colspan="10" class="px-6 py-4 text-center text-gray-500">
+                                    Aucune accesoire trouvé
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div class="mt-6 pb-4 mr-4 flex justify-end bg-primary">
+                    {{ $accessoires->withQueryString()->links() }}
                 </div>
             </div>
         </div>
@@ -589,7 +696,7 @@
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all">
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-bold text-gray-800">Ajouter une Marque de Téléphone</h3>
+                    <h3 class="text-xl font-bold text-gray-800">Ajouter une Marque</h3>
                     <button onclick="closeModal('addPhoneBrandModal')" class="text-gray-400 hover:text-gray-600">
                         <i class="fas fa-times text-xl"></i>
                     </button>
@@ -598,6 +705,15 @@
             <form action="{{ route('ajout-marque') }}" method="POST" class="p-6 space-y-4" id="addPhoneBrandForm">
                 @csrf
                 <input type="number" name="categorie_id" id="categorie_id" value="1" hidden>
+                 <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="">Catégorie</label>
+                    <select name="categorie_id" id="categorie_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" name="" id="">
+                        <option value="">Choisir une catégorie...</option>
+                        @foreach( $liste_categories as $categorie)
+                            <option value="{{ $categorie->id }}">{{ ucfirst($categorie->nom) }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la marque</label>
                     <input type="text" name="nom" id="addPhoneBrandName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Apple, Samsung, Xiaomi" required oninput="validateAddPhoneBrandForm()">
@@ -615,32 +731,60 @@
         </div>
     </div>
 
-    <!-- Modal Ajouter Marque Chaussure -->
-    <div id="addShoeBrandModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all">
+    <!-- Modal Ajout d'un Accesoires -->
+    <div id="addToolsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-bold text-gray-800">Ajouter une Marque de Chaussure</h3>
-                    <button onclick="closeModal('addShoeBrandModal')" class="text-gray-400 hover:text-gray-600">
+                    <h3 class="text-xl font-bold text-gray-800">Ajouter un accesoire</h3>
+                    <button onclick="closeModal('addToolsModal')" class="text-gray-400 hover:text-gray-600">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
             </div>
-            <form action="{{ route('ajout-marque') }}" method="POST" class="p-6 space-y-4" id="addShoeBrandForm">
+            <form action="{{ route('ajout-produit') }}" method="POST" class="p-6 space-y-4" id="addShoesForm">
                 @csrf
-                <input type="number" name="categorie_id" id="categorie_id" value="2" hidden>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de la marque</label>
-                    <input type="text" name="nom" id="addShoeBrandName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Nike, Adidas, Puma" required oninput="validateAddShoeBrandForm()">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Description (optionnel)</label>
-                    <textarea name="description" id="addShoeBrandDescription" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Description de la marque..." oninput="validateAddShoeBrandForm()"></textarea>
+                <input type="hidden" name="categorie_id" value="{{ $categories->where('nom', 'accesoires')->first()->id ?? 3 }}">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div >
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Nom de l'accesoire</label>
+                        <input type="text" name="nom" id="addToolsName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Chargeur type-c 60W" required oninput="validateAddToolsForm()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Marque de l'accesoire</label>
+                        <select name="marque_id" id="addToolsBrand" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateAddToolsForm()">
+                            <option value="">Sélectionner...</option>
+                            @foreach($marques_accessoires as $accesoire)
+                                <option value="{{ $accesoire->id }}">{{ $accesoire->nom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Modèle de l'accesoire</label>
+                        <input type="text" name="modele" id="addToolsSaleModele" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Apple" required oninput="validateAddToolsForm()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Prix d'achat (FC)</label>
+                        <input type="number" name="prix_achat" id="addToolsSalePurchasePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 5000 FC" required oninput="validateAddToolsForm()">
+                    </div>
+                     <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente (FC)</label>
+                        <input type="number" name="prix_vente" id="addToolsSalePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 7500 FC" required oninput="validateAddToolsForm()">
+                    </div>
+                   
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
+                        <input type="number" name="quantite" id="addToolsSaleQuantity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 10" required oninput="validateAddToolsForm()">
+                    </div>
+                     <div>
+                        <input type="text" name="numero_serie" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 123456" hidden value="{{ $reference_accesoire}}">
+                    </div>
+                    
                 </div>
 
                 <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
-                    <button onclick="closeModal('addShoeBrandModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                    <button type="submit" form="addShoeBrandForm" id="addShoeBrandBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
+                    <button onclick="closeModal('addToolsModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                    <button type="submit" form="addToolsForm" id="addToolsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
                 </div>
             </form>
         </div>
@@ -683,6 +827,9 @@
             } else if (modalId === 'addPhoneBrandModal') {
                 document.getElementById('addPhoneBrandForm').reset();
                 validateAddPhoneBrandForm();
+            } else if (modalId === 'addToolsModal') {
+                document.getElementById('addShoesForm').reset();
+                validateAddToolsForm();
             } else if (modalId === 'addShoeBrandModal') {
                 document.getElementById('addShoeBrandForm').reset();
                 validateAddShoeBrandForm();
@@ -730,6 +877,25 @@
             } else {
                 addBtn.disabled = true;
                 addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Validation formulaire Tools
+        function validateAddToolsForm() {
+            const name = document.getElementById('addToolsName').value.trim();
+            const brand = document.getElementById('addToolsBrand').value;
+            const modele = document.getElementById('addToolsSaleModele').value.trim();
+            const purchasePrice = document.getElementById('addToolsSalePurchasePrice').value;
+            const salePrice = document.getElementById('addToolsSalePrice').value;
+            const quantity = document.getElementById('addToolsSaleQuantity').value;
+            const addBtn = document.getElementById('addToolsBtn');
+
+            if (name && brand && modele && purchasePrice && salePrice && quantity) {
+                addBtn.disabled = false;
+                addBtn.classList.remove('opacity-50', 'cursor-not-allowed')
+            } else {
+                addBtn.disabled = true;
+                addBtn.classList.add('opacity-50', 'cursor-not-allowed')
             }
         }
 
@@ -918,6 +1084,11 @@
             const form = document.getElementById('deleteShoesForm');
             form.action = form.action.replace('__id__', id);
             openModal('deleteShoesModal');
+        }
+
+        // Fonction pour les Accessoires
+        function openToolsModal() {
+            openModal('addToolsModal');
         }
 
         // Fonction pour ouvrir/fermer les dropdowns

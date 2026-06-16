@@ -33,7 +33,7 @@ class DashboardController extends Controller
     ///// 1. Lecture des donnees de la liste de roles
     public function roles()
     {
-        $liste_roles = Roles::paginate(2);
+        $liste_roles = Roles::paginate(10);
         return view('pages.liste-roles', compact('liste_roles'));
     }
     ///// 2. La creation d'un role
@@ -90,18 +90,18 @@ class DashboardController extends Controller
         }
     }
 
-
     //*************** La mecanique concernant la gestion des roles CRUD */ 
     
     //// 1. Lecture des donnees de la liste des utilisateurs
     public function utilisateurs()
     {
-        $liste_utilisateurs = User::with('role')->paginate(2);
+        $liste_utilisateurs = User::with('role')->paginate(10);
         $liste_roles = Roles::orderBy('nom', 'asc')->get();
         return view('pages.liste-utilisateurs', compact('liste_utilisateurs', 'liste_roles'));
     }
     //// 2. Creation de l'utilisateur
-    public function AjouterUtilisateur(Request $request){
+    public function AjouterUtilisateur(Request $request)
+    {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -124,7 +124,8 @@ class DashboardController extends Controller
         }
     }
     //// 3. Modification de l'utilisateur
-    public function ModifierUtilisateur(Request $request, $id){
+    public function ModifierUtilisateur(Request $request, $id)
+    {
         
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -148,7 +149,8 @@ class DashboardController extends Controller
         }
     }
     //// 4. Suppression de l'utilisateur
-    public function SupprimerUtilisateur($id){
+    public function SupprimerUtilisateur($id)
+    {
         try {
             $user = User::find($id);
             $user->delete();
@@ -199,28 +201,30 @@ class DashboardController extends Controller
         $numeros = ($dernierId ?? 0) + 1;
         $reference = 'CHAUSSURE-' .str_pad($numeros, 3, '0', STR_PAD_LEFT);
 
+        $numero_accesoire = ($dernierId ?? 0) + 1;
+        $reference_accesoire = 'ACCESOIRE-' .str_pad($numero_accesoire, 3, '0', STR_PAD_LEFT);
+
         $produits_electroniques = Produits::with(['categorie', 'marque','produitUnites'])
             ->where('categorie_id', '=', 1)
-            ->paginate(5);
+            ->paginate(10);
         
         $chaussures = Produits::with(['categorie', 'marque', 'produitUnites'])
             ->where('categorie_id', '=', 2)
-            ->paginate(3);
+            ->paginate(10);
+
+        $accessoires = Produits::with(['categorie', 'marque', 'produitUnites'])
+            ->where('categorie_id', '=', 3)
+            ->paginate(10);
         
         $categories = Categories::all();
         $marques_electroniques = Marques::where('categorie_id', '=', 1)->get();
         $marques_chaussures = Marques::where('categorie_id', '=', 2)->get();
-        
-        return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'categories', 'marques_electroniques', 'marques_chaussures', 'reference'));
+        $marques_accessoires = Marques::where('categorie_id', '=', 3)->get();
+        $liste_categories = Categories::orderBy('nom', 'asc')->get();
+
+        return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'accessoires', 'categories', 'marques_electroniques', 'marques_chaussures', 'marques_accessoires', 'reference', 'reference_accesoire', 'liste_categories'));
     }
 
-    // public function numeroSerieChaussure(){
-    //     $numero = random_int(1,100000000000000000);
-    //     $dernierId = ProduitUnites::max('id');
-    //     $numeros = ($dernierId ?? 0) + 1;
-    //     $reference = 'CHAUSSURE-' .str_pad($numeros, 3, '0', STR_PAD_LEFT);
-
-    // }
 
     public function AjouterProduit(Request $request)
     {
