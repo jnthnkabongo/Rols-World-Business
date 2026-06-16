@@ -135,7 +135,7 @@
             <div id="content-shoes" class="tab-content p-6 hidden">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-gray-800">Chaussures</h3>
-                    <button onclick="openModal('addToolsModal')" class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg">
+                    <button onclick="openModal('addShoesModal')" class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg">
                         <i class="fas fa-plus"></i>
                         <span>Ajouter chaussure</span>
                     </button>
@@ -742,7 +742,7 @@
                     </button>
                 </div>
             </div>
-            <form action="{{ route('ajout-produit') }}" method="POST" class="p-6 space-y-4" id="addShoesForm">
+            <form action="{{ route('ajout-produit') }}" method="POST" class="p-6 space-y-4" id="addToolsForm">
                 @csrf
                 <input type="hidden" name="categorie_id" value="{{ $categories->where('nom', 'accesoires')->first()->id ?? 3 }}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -784,7 +784,7 @@
 
                 <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                     <button onclick="closeModal('addToolsModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                    <button type="submit" form="addToolsForm" id="addToolsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
+                    <button type="submit" form="addToolsForm" id="addToolsBrandBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
                 </div>
             </form>
         </div>
@@ -828,7 +828,7 @@
                 document.getElementById('addPhoneBrandForm').reset();
                 validateAddPhoneBrandForm();
             } else if (modalId === 'addToolsModal') {
-                document.getElementById('addShoesForm').reset();
+                document.getElementById('addToolsForm').reset();
                 validateAddToolsForm();
             } else if (modalId === 'addShoeBrandModal') {
                 document.getElementById('addShoeBrandForm').reset();
@@ -888,7 +888,7 @@
             const purchasePrice = document.getElementById('addToolsSalePurchasePrice').value;
             const salePrice = document.getElementById('addToolsSalePrice').value;
             const quantity = document.getElementById('addToolsSaleQuantity').value;
-            const addBtn = document.getElementById('addToolsBtn');
+            const addBtn = document.getElementById('addToolsBrandBtn');
 
             if (name && brand && modele && purchasePrice && salePrice && quantity) {
                 addBtn.disabled = false;

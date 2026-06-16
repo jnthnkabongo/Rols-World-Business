@@ -220,6 +220,7 @@ class DashboardController extends Controller
         $marques_electroniques = Marques::where('categorie_id', '=', 1)->get();
         $marques_chaussures = Marques::where('categorie_id', '=', 2)->get();
         $marques_accessoires = Marques::where('categorie_id', '=', 3)->get();
+        
         $liste_categories = Categories::orderBy('nom', 'asc')->get();
 
         return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'accessoires', 'categories', 'marques_electroniques', 'marques_chaussures', 'marques_accessoires', 'reference', 'reference_accesoire', 'liste_categories'));
