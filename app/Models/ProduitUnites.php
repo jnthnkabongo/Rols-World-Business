@@ -11,7 +11,7 @@ class ProduitUnites extends Model
     protected $fillable = [
         'produit_id',
         'numero_serie', 
-        'quantite',
+        'quantite_produit',
         'statut',
     ];
 

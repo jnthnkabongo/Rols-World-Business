@@ -255,7 +255,7 @@ class DashboardController extends Controller
                     'produit_id'   => $produit->id,
                     'numero_serie' => $validated['numero_serie'],
                     'statut'       => 'en_stock',
-                    'quantite'     => $validated['quantite'] ?? null,
+                    'quantite_produit'     => $validated['quantite'] ?? null,
                 ]);
 
                 return $produit;
@@ -365,8 +365,8 @@ class DashboardController extends Controller
             $produitUnite->statut = 'remise';
 
             // Soustraire la quantité dans produit_unites (stock du produit)
-            $currentQuantite = is_numeric($produitUnite->quantite) ? $produitUnite->quantite : 0;
-            $produitUnite->quantite = max(0, $currentQuantite - $validated['quantite']);
+            $currentQuantite = is_numeric($produitUnite->quantite_produit) ? $produitUnite->quantite_produit : 0;
+            $produitUnite->quantite_produit = max(0, $currentQuantite - $validated['quantite']);
             $produitUnite->save();
 
             // Enregistrer la remise dans la table remises
@@ -402,7 +402,7 @@ class DashboardController extends Controller
             }
 
             // Additionner la quantité de la remise avec la quantité du produit_unite
-            $produitUnite->quantite += $remise->quantite;
+            $produitUnite->quantite_produit += $remise->quantite;
             $produitUnite->statut = 'en_stock';
             $produitUnite->save();
 
@@ -438,7 +438,7 @@ class DashboardController extends Controller
                     throw new \Exception('Unité de produit non trouvée');
                 }
 
-                if ($produitUnite->quantite < $validated['quantite']) {
+                if ($produitUnite->quantite_produit < $validated['quantite']) {
                     throw new \Exception('Quantité insuffisante en stock');
                 }
 
@@ -467,11 +467,11 @@ class DashboardController extends Controller
                     'total' => $produit->prix_vente * $validated['quantite'],
                 ]);
 
-                $produitUnite->decrement('quantite', $validated['quantite']);
+                $produitUnite->decrement('quantite_produit', $validated['quantite']);
 
                 $produitUnite->refresh();
 
-                if ($produitUnite->quantite <= 0) {
+                if ($produitUnite->quantite_produit <= 0) {
                     $produitUnite->update([
                         'statut' => 'vendu'
                     ]);
@@ -546,7 +546,70 @@ class DashboardController extends Controller
     }
 
     public function rapports(){
-        return view('pages.rapport-page');
+        // Statistiques générales
+        $total_ventes = Ventes::count();
+        $total_remises = Remises::count();
+        $total_produits_count = Produits::count();
+        $total_clients = Clients::count();
+        $liste_produits = Produits::all();
+
+        // Statistiques financières
+        $somme_ventes = Ventes::sum('total');
+        $ventes_aujourdhui = Ventes::whereDate('created_at', today())->count();
+        $remises_aujourdhui = Remises::whereDate('created_at', today())->count();
+
+        // Nouvelles statistiques pour les cards
+        $benefice_total = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->value('benefice') ?? 0;
+        $benefice_moyen = $total_ventes > 0 ? $benefice_total / $total_ventes : 0;
+
+        // Meilleur produit (celui qui a généré le plus de bénéfice)
+        $meilleur_produit = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->groupBy('produits.id', 'produits.nom')
+            ->orderByDesc('benefice_total')
+            ->first();
+
+        // Produits par statut
+        $produits_en_stock = ProduitUnites::where('statut', 'en_stock')->count();
+        $produits_en_remise = ProduitUnites::where('statut', 'remise')->count();
+        $produits_vendus = ProduitUnites::where('statut', 'vendu')->count();
+
+        // Détails des ventes pour le tableau
+        $details_ventes = VenteDetails::with('produitUnite.produit', 'vente')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->select('vente_details.*', 'ventes.created_at as date_vente')
+            ->orderByDesc('ventes.created_at')
+            ->paginate(10);
+
+        // Dernières ventes
+        $dernieres_ventes = Ventes::with('client')->latest()->take(5)->get();
+
+        // Dernières remises
+        $dernieres_remises = Remises::with('produitRemise', 'users')->latest()->take(5)->get();
+
+        return view('pages.rapport-page', compact(
+            'total_ventes',
+            'total_remises',
+            'total_produits_count',
+            'total_clients',
+            'somme_ventes',
+            'ventes_aujourdhui',
+            'remises_aujourdhui',
+            'produits_en_stock',
+            'produits_en_remise',
+            'produits_vendus',
+            'benefice_total',
+            'benefice_moyen',
+            'meilleur_produit',
+            'details_ventes',
+            'liste_produits',
+            'dernieres_ventes',
+            'dernieres_remises'
+        ));
     }
 
     public function historiques()
