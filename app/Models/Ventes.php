@@ -11,6 +11,7 @@ class Ventes extends Model
         'user_id', 
         'nom_client',
         'date_vente', 
+        'devise_id',
         'total', 
         'statut'
     ];
@@ -33,5 +34,10 @@ class Ventes extends Model
     public function paiements()
     {
         return $this->hasMany(Paiements::class, 'vente_id');
+    }
+
+    public function venteDevise()
+    {
+        return $this->belongsTo(Devise::class, 'devise_id'); // <-- note: fk
     }
 }

@@ -12,7 +12,7 @@
 
 
         <!-- Cards statistiques -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
             <!-- Card ventes aujourd'hui -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex items-center justify-between">
@@ -39,11 +39,11 @@
                 </div>
             </div>
 
-            <!-- Card somme ventes -->
+            <!-- Card somme ventes $ -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Somme des ventes</p>
+                        <p class="text-sm font-medium text-gray-500">Somme des ventes $</p>
                         <p class="text-sm font-bold text-gray-800 mt-2">{{ number_format($somme_ventes, 2, ',', ' ') }} $</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
@@ -51,6 +51,19 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Card somme ventes FC -->
+             <div class="bg-white rounded-2xl shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Somme des ventes FC</p>
+                        <p class="text-sm font-bold text-gray-800 mt-2">{{ number_format($somme_ventes_fc, 2, ',', ' ') }} FC</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-franc-sign text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>            
         </div>
 
         
@@ -64,7 +77,15 @@
                 <div class="flex-1">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Date de fin</label>
                     <input type="date" name="date_fin" value="{{ request('date_fin') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    {{-- <input type="month" name="" id="" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"> --}}
+                </div>
+                <div class="flex-1">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Catégorie</label>
+                    <select name="categorie_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Toutes les catégories</option>
+                        <option value="1" {{ request('categorie_id') == '1' ? 'selected' : '' }}>Électroniques</option>
+                        <option value="2" {{ request('categorie_id') == '2' ? 'selected' : '' }}>Chaussures</option>
+                        <option value="3" {{ request('categorie_id') == '3' ? 'selected' : '' }}>Accessoires</option>
+                    </select>
                 </div>
                 <div class="flex gap-2">
                     <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
@@ -87,6 +108,7 @@
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Produit</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Catégorie</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Client</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantité</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix unitaire</th>
@@ -98,13 +120,27 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @forelse($liste_ventes as $vente)
+                            @php
+                                $categorie = $vente->ventedetails->first()?->produitUnite->produit->categorie->nom ?? '-';
+                                $categorieClass = match(strtolower($categorie)) {
+                                    'electroniques' => 'bg-blue-100 text-blue-800',
+                                    'chaussures' => 'bg-green-100 text-green-800',
+                                    'accessoires' => 'bg-purple-100 text-purple-800',
+                                    default => 'bg-gray-100 text-gray-800'
+                                };
+                            @endphp
                             <tr class="hover:bg-gray-50 transition" data-role-id="{{ $vente->id }}" data-role-data='{{ json_encode(['nom' => $vente->nom, 'description' => $vente->description]) }}'>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"># {{ ($liste_ventes->perPage() * ($liste_ventes->currentPage() - 1 ))+ $loop->iteration }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($vente->ventedetails->first()?->produitUnite->produit->nom ?? '-') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $categorieClass }}">
+                                        {{ ucfirst($categorie) }}
+                                    </span>
+                                </td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($vente->client->nom_client) }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->quantite ?? '0' }} Pcs</td>   
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->prix_unitaire ?? '0' }} $</td>   
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->total ?? '0' }} $</td>   
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->quantite ?? '0' }} Pcs</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->prix_unitaire ?? '0' }} {{ $vente->venteDevise->logo ?? '-'}}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->total ?? '0' }} {{ $vente->venteDevise->logo ?? '-'}}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->user->name }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->date_vente }}</td>
                               
@@ -124,8 +160,8 @@
                             </tr>
                         @empty
                         <tr class="hover:bg-gray-50 transition">
-                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-                                Aucun rôle trouvé
+                            <td colspan="10" class="px-6 py-4 text-center text-gray-500">
+                                Aucune vente trouvée
                             </td>
                         </tr>
                         @endforelse

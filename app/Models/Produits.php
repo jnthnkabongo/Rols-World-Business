@@ -13,7 +13,8 @@ class Produits extends Model
         'modele', 
         'description', 
         'prix_achat', 
-        'prix_vente', 
+        'prix_vente',
+        'devise_id', 
         'status',
         'taille'
     ];
@@ -36,5 +37,10 @@ class Produits extends Model
     public function approvisionnementDetails()
     {
         return $this->hasMany(ApprovisionnementDetail::class);
+    }
+
+    public function produitDevise()
+    {
+        return $this->belongsTo(Devise::class, 'devise_id');
     }
 }

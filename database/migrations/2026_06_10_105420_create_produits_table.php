@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nom', 150);
             $table->foreignId('categorie_id')->constrained('categories');
             $table->foreignId('marque_id')->constrained('marques');
+            $table->foreignId('devise_id')->constrained('devises');
             $table->string('modele', 100)->nullable();
             $table->text('description')->nullable();
             $table->decimal('prix_achat', 10, 2)->nullable();

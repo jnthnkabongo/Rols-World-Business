@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('client_id')->constrained('clients');
             $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('devise_id')->constrained('devises');
             $table->dateTime('date_vente');
             $table->decimal('total', 10, 2)->nullable();
             $table->enum('statut', ['paye', 'credit'])->default('paye');

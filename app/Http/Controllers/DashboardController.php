@@ -204,16 +204,17 @@ class DashboardController extends Controller
         $numero_accesoire = ($dernierId ?? 0) + 1;
         $reference_accesoire = 'ACCESOIRE-' .str_pad($numero_accesoire, 3, '0', STR_PAD_LEFT);
 
-        $produits_electroniques = Produits::with(['categorie', 'marque','produitUnites'])
+        $produits_electroniques = Produits::with(['categorie', 'marque','produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 1)
             ->paginate(10);
         
-        $chaussures = Produits::with(['categorie', 'marque', 'produitUnites'])
+        $chaussures = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 2)
             ->paginate(10);
 
-        $accessoires = Produits::with(['categorie', 'marque', 'produitUnites'])
+        $accessoires = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 3)
+            //->where('devise_id', '2')
             ->paginate(10);
         
         $categories = Categories::all();
@@ -226,7 +227,7 @@ class DashboardController extends Controller
         return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'accessoires', 'categories', 'marques_electroniques', 'marques_chaussures', 'marques_accessoires', 'reference', 'reference_accesoire', 'liste_categories'));
     }
 
-
+    // Ajout d'un produit
     public function AjouterProduit(Request $request)
     {
         $validated = $request->validate([
@@ -505,7 +506,7 @@ class DashboardController extends Controller
     //// 1. Lecture des donnees de la liste des ventes
     public function ventes(Request $request)
     {
-        $query = Ventes::with('client', 'user', 'ventedetails', 'paiements');
+        $query = Ventes::with('client', 'user', 'ventedetails.produitUnite.produit', 'paiements');
 
         // Filtrer par date de début et date de fin
         if ($request->filled('date_debut') && $request->filled('date_fin')) {
@@ -516,7 +517,14 @@ class DashboardController extends Controller
             $query->whereDate('date_vente', '<=', $request->date_fin);
         }
 
-        $liste_ventes = $query->paginate(10)->withQueryString();
+        // Filtrer par catégorie (accessoires, électroniques, chaussures)
+        if ($request->filled('categorie_id')) {
+            $query->whereHas('ventedetails.produitUnite.produit', function($q) use ($request) {
+                $q->where('categorie_id', $request->categorie_id);
+            });
+        }
+
+        $liste_ventes = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
 
         // Statistiques des ventes
         $ventes_aujourdhui = Ventes::whereDate('date_vente', today())->count();
@@ -534,23 +542,26 @@ class DashboardController extends Controller
         ->where('vente_details.quantite', '>', 0)
         ->sum('vente_details.quantite');
 
-        $somme_ventes = Ventes::sum('total');
+        $somme_ventes = Ventes::where('devise_id', '1')->sum('total');
 
-        return view('pages.liste-ventes', compact('liste_ventes', 'ventes_aujourdhui', 'total_ventes', 'somme_ventes','ventes_aujourdhui_quantite','ventes_total_quantite'));
+        $somme_ventes_fc = Ventes::where('devise_id', '2')->sum('total');
+
+        return view('pages.liste-ventes', compact('liste_ventes', 'ventes_aujourdhui', 'total_ventes', 'somme_ventes','ventes_aujourdhui_quantite','ventes_total_quantite', 'somme_ventes_fc'));
     }
 
     public function clients(){
-        $liste_clients = Clients::with('ventes', 'garanties')->paginate(10);
+        $liste_clients = Clients::orderBy('id', 'desc')->with('ventes', 'garanties')->paginate(10);
         return view('pages.liste-clients', compact('liste_clients'));
     }
 
     public function remises()
     {
-        $liste_remises = Remises::with('users', 'produitRemise')->paginate(10);
+        $liste_remises = Remises::orderBy('id', 'desc')->with('users', 'produitRemise')->paginate(10);
         return view('pages.liste-remises', compact('liste_remises'));
     }
 
-    public function rapports(){
+    public function rapports()
+    {
         // Statistiques générales
         $total_ventes = Ventes::count();
         $total_remises = Remises::count();

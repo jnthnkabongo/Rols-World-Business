@@ -67,8 +67,8 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($produit->marque->nom ?? '-') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($produit->modele ?? '-') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->produitUnites->first()->numero_serie ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_achat, 2, ',', ' ') }} $</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} $</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_achat, 2, ',', ' ') }} {{ $produit->produitDevise->logo ?? '-'}}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} {{ $produit->produitDevise->logo ?? '-'}}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
                                         $unite = $produit->produitUnites->first();
@@ -164,8 +164,8 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($produit->marque->nom ?? '-') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($produit->modele ?? '-') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">N {{ $produit->taille ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_achat, 2, ',', ' ') }} $</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} $</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_achat, 2, ',', ' ') }} {{ $produit->produitDevise->logo ?? '-'}}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($produit->prix_vente, 2, ',', ' ') }} {{ $produit->produitDevise->logo ?? '-'}}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $produit->produitUnites->sum('quantite_produit') ?? 0 }} Pièces</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
@@ -268,8 +268,8 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ ucfirst($accesoire->nom) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($accesoire->marque->nom ?? '-') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($accesoire->modele ?? '-') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($accesoire->prix_achat, 2, ',', ' ') }} FC</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($accesoire->prix_vente, 2, ',', ' ') }} FC</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($accesoire->prix_achat, 2, ',', ' ') }} {{ $accesoire->produitDevise->logo ?? '-'}}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($accesoire->prix_vente, 2, ',', ' ') }} {{ $accesoire->produitDevise->logo ?? '-'}}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $accesoire->produitUnites->sum('quantite_produit') ?? 0 }} Pièces</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
@@ -301,16 +301,16 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
                                         <div class="relative">
-                                            <button onclick="toggleDropdownMore('dropdown-shoes-{{ $produit->id }}')" class="px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-all duration-200">
+                                            <button onclick="toggleDropdownMore('dropdown-tools-{{ $accesoire->id }}')" class="px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-all duration-200">
                                                 <i class="fas fa-ellipsis-h"></i>
                                             </button>
-                                            <div id="dropdown-shoes-{{ $accesoire->id }}" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                            <div id="dropdown-tools-{{ $accesoire->id }}" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                                                 <ul class="py-1">
                                                     <li>
-                                                        <a href="#" onclick="openRemiseModal({{ $accesoire->id }}, '{{ $produit->nom }}'); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
+                                                        <a href="#" onclick="openRemiseModal({{ $accesoire->id }}, '{{ $accesoire->nom }}'); toggleDropdownMore('dropdown-shoes-{{ $accesoire->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" onclick="openVenteModal({{ $accesoire->id }}); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
+                                                        <a href="#" onclick="openVenteModal({{ $accesoire->id }}); toggleDropdownMore('dropdown-shoes-{{ $accesoire->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -784,7 +784,7 @@
 
                 <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                     <button onclick="closeModal('addToolsModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                    <button type="submit" form="addToolsForm" id="addToolsBrandBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
+                    <button type="submit" form="addToolsForm" id="addToolsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
                 </div>
             </form>
         </div>
@@ -888,7 +888,7 @@
             const purchasePrice = document.getElementById('addToolsSalePurchasePrice').value;
             const salePrice = document.getElementById('addToolsSalePrice').value;
             const quantity = document.getElementById('addToolsSaleQuantity').value;
-            const addBtn = document.getElementById('addToolsBrandBtn');
+            const addBtn = document.getElementById('addToolsBtn');
 
             if (name && brand && modele && purchasePrice && salePrice && quantity) {
                 addBtn.disabled = false;
