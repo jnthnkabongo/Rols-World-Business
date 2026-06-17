@@ -24,7 +24,130 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('pages.dashboard');
+        // Statistiques pour les produits électroniques (catégorie_id = 1)
+        $produits_electroniques = Produits::where('categorie_id', 1)->with('produitUnites')->get();
+        
+        $electroniques_stock_value = 0;
+        $electroniques_stock_quantity = 0;
+        foreach ($produits_electroniques as $produit) {
+            foreach ($produit->produitUnites as $unite) {
+                if ($unite->statut == 'en_stock') {
+                    $electroniques_stock_value += $produit->prix_vente * $unite->quantite_produit;
+                    $electroniques_stock_quantity += $unite->quantite_produit;
+                }
+            }
+        }
+
+        // Ventes électroniques
+        $ventes_electroniques = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
+            $q->where('categorie_id', 1);
+        })->get();
+        
+        $electroniques_sales_value = $ventes_electroniques->sum('total');
+        $electroniques_sales_quantity = DB::table('vente_details')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->where('produits.categorie_id', 1)
+            ->sum('vente_details.quantite');
+
+        // Ventes journalières électroniques
+        $electroniques_daily_sales = Ventes::whereDate('date_vente', today())
+            ->whereHas('ventedetails.produitUnite.produit', function($q) {
+                $q->where('categorie_id', 1);
+            })->sum('total');
+        
+        $electroniques_daily_quantity = DB::table('vente_details')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->where('produits.categorie_id', 1)
+            ->whereDate('ventes.date_vente', today())
+            ->sum('vente_details.quantite');
+
+        // Remises électroniques
+        $electroniques_remises = Remises::whereHas('produitRemise', function($q) {
+            $q->where('categorie_id', 1);
+        })->count();
+        
+        $electroniques_remises_quantity = DB::table('remises')
+            ->join('produits', 'remises.produit_id', '=', 'produits.id')
+            ->where('produits.categorie_id', 1)
+            ->sum('remises.quantite');
+
+        // Statistiques pour les chaussures (catégorie_id = 2)
+        $produits_chaussures = Produits::where('categorie_id', 2)->with('produitUnites')->get();
+        
+        $chaussures_stock_value = 0;
+        $chaussures_stock_quantity = 0;
+        foreach ($produits_chaussures as $produit) {
+            foreach ($produit->produitUnites as $unite) {
+                if ($unite->statut == 'en_stock') {
+                    $chaussures_stock_value += $produit->prix_vente * $unite->quantite_produit;
+                    $chaussures_stock_quantity += $unite->quantite_produit;
+                }
+            }
+        }
+
+        // Ventes chaussures
+        $ventes_chaussures = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
+            $q->where('categorie_id', 2);
+        })->get();
+        
+        $chaussures_sales_value = $ventes_chaussures->sum('total');
+        $chaussures_sales_quantity = DB::table('vente_details')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->where('produits.categorie_id', 2)
+            ->sum('vente_details.quantite');
+
+        // Ventes journalières chaussures
+        $chaussures_daily_sales = Ventes::whereDate('date_vente', today())
+            ->whereHas('ventedetails.produitUnite.produit', function($q) {
+                $q->where('categorie_id', 2);
+            })->sum('total');
+        
+        $chaussures_daily_quantity = DB::table('vente_details')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->where('produits.categorie_id', 2)
+            ->whereDate('ventes.date_vente', today())
+            ->sum('vente_details.quantite');
+
+        // Remises chaussures
+        $chaussures_remises = Remises::whereHas('produitRemise', function($q) {
+            $q->where('categorie_id', 2);
+        })->count();
+        
+        $chaussures_remises_quantity = DB::table('remises')
+            ->join('produits', 'remises.produit_id', '=', 'produits.id')
+            ->where('produits.categorie_id', 2)
+            ->sum('remises.quantite');
+
+        // Dernières ventes pour le tableau
+        $dernieres_ventes = Ventes::with('client')->latest()->take(15)->get();
+
+        return view('pages.dashboard', compact(
+            'electroniques_stock_value',
+            'electroniques_stock_quantity',
+            'electroniques_sales_value',
+            'electroniques_sales_quantity',
+            'electroniques_daily_sales',
+            'electroniques_daily_quantity',
+            'electroniques_remises',
+            'electroniques_remises_quantity',
+            'chaussures_stock_value',
+            'chaussures_stock_quantity',
+            'chaussures_sales_value',
+            'chaussures_sales_quantity',
+            'chaussures_daily_sales',
+            'chaussures_daily_quantity',
+            'chaussures_remises',
+            'chaussures_remises_quantity',
+            'dernieres_ventes'
+        ));
     }
 
 
