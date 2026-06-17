@@ -126,6 +126,57 @@ class DashboardController extends Controller
             ->where('produits.categorie_id', 2)
             ->sum('remises.quantite');
 
+        // Statistiques pour les accessoires (catégorie_id = 3)
+        $produits_accessoires = Produits::where('categorie_id', 3)->with('produitUnites')->get();
+        
+        $accessoires_stock_value = 0;
+        $accessoires_stock_quantity = 0;
+        foreach ($produits_accessoires as $produit) {
+            foreach ($produit->produitUnites as $unite) {
+                if ($unite->statut == 'en_stock') {
+                    $accessoires_stock_value += $produit->prix_vente * $unite->quantite_produit;
+                    $accessoires_stock_quantity += $unite->quantite_produit;
+                }
+            }
+        }
+
+        // Ventes accessoires
+        $ventes_accessoires = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
+            $q->where('categorie_id', 3);
+        })->get();
+        
+        $accessoires_sales_value = $ventes_accessoires->sum('total');
+        $accessoires_sales_quantity = DB::table('vente_details')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->where('produits.categorie_id', 3)
+            ->sum('vente_details.quantite');
+
+        // Ventes journalières accessoires
+        $accessoires_daily_sales = Ventes::whereDate('date_vente', today())
+            ->whereHas('ventedetails.produitUnite.produit', function($q) {
+                $q->where('categorie_id', 3);
+            })->sum('total');
+        
+        $accessoires_daily_quantity = DB::table('vente_details')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->where('produits.categorie_id', 3)
+            ->whereDate('ventes.date_vente', today())
+            ->sum('vente_details.quantite');
+
+        // Remises accessoires
+        $accessoires_remises = Remises::whereHas('produitRemise', function($q) {
+            $q->where('categorie_id', 3);
+        })->count();
+        
+        $accessoires_remises_quantity = DB::table('remises')
+            ->join('produits', 'remises.produit_id', '=', 'produits.id')
+            ->where('produits.categorie_id', 3)
+            ->sum('remises.quantite');
+
         // Dernières ventes pour le tableau
         $dernieres_ventes = Ventes::with('client')->latest()->take(15)->get();
 
@@ -146,6 +197,14 @@ class DashboardController extends Controller
             'chaussures_daily_quantity',
             'chaussures_remises',
             'chaussures_remises_quantity',
+            'accessoires_stock_value',
+            'accessoires_stock_quantity',
+            'accessoires_sales_value',
+            'accessoires_sales_quantity',
+            'accessoires_daily_sales',
+            'accessoires_daily_quantity',
+            'accessoires_remises',
+            'accessoires_remises_quantity',
             'dernieres_ventes'
         ));
     }
