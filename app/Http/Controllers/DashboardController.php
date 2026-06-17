@@ -240,6 +240,7 @@ class DashboardController extends Controller
             'taille'         => 'nullable|string|max:50',
             'numero_serie'   => 'required|string|max:255|unique:produit_unites,numero_serie',
             'quantite'       => 'required|numeric|min:0',
+            'devise_id'      => 'required|numeric|min:1',  
         ]);
 
         try {
@@ -254,6 +255,7 @@ class DashboardController extends Controller
                     'prix_achat'   => $validated['prix_achat'] ?? null,
                     'prix_vente'   => $validated['prix_vente'],
                     'taille'       => $validated['taille'] ?? null,
+                    'devise_id'    => $validated['devise_id'] ?? null,
                 ]);
 
                 ProduitUnites::create([
@@ -462,6 +464,7 @@ class DashboardController extends Controller
                     'date_vente' => now(),
                     'total' => $produit->prix_vente * $validated['quantite'],
                     'statut' => 'paye',
+                    'devise_id' => $produit->devise_id,
                 ]);
 
                 VenteDetails::create([
