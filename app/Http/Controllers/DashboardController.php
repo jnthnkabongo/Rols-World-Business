@@ -214,7 +214,6 @@ class DashboardController extends Controller
 
         $accessoires = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 3)
-            //->where('devise_id', '2')
             ->paginate(10);
         
         $categories = Categories::all();
@@ -560,7 +559,7 @@ class DashboardController extends Controller
         return view('pages.liste-remises', compact('liste_remises'));
     }
 
-    public function rapports()
+    public function rapports(Request $request)
     {
         // Statistiques générales
         $total_ventes = Ventes::count();
@@ -569,22 +568,89 @@ class DashboardController extends Controller
         $total_clients = Clients::count();
         $liste_produits = Produits::all();
 
-        // Statistiques financières
-        $somme_ventes = Ventes::sum('total');
+        // Filtre par devise
+        $devise_id = $request->devise_id;
+
+        // Base query pour les statistiques avec filtre de devise
+        $ventesQuery = Ventes::query();
+        if ($devise_id) {
+            $ventesQuery->where('devise_id', $devise_id);
+        }
+
+        // Base query pour les détails de ventes avec filtres
+        $detailsQuery = VenteDetails::with('produitUnite.produit', 'vente.venteDevise')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->select('vente_details.*', 'ventes.created_at as date_vente');
+
+        // Appliquer le filtre de devise
+        if ($devise_id) {
+            $detailsQuery->where('ventes.devise_id', $devise_id);
+        }
+
+        // Appliquer le filtre de produit
+        if ($request->produit_id) {
+            $detailsQuery->whereHas('produitUnite.produit', function($q) use ($request) {
+                $q->where('id', $request->produit_id);
+            });
+        }
+
+        // Appliquer les filtres de date
+        if ($request->date_debut && $request->date_fin) {
+            $detailsQuery->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $detailsQuery->whereDate('ventes.created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $detailsQuery->whereDate('ventes.created_at', '<=', $request->date_fin);
+        }
+
+        $details_ventes = $detailsQuery->orderByDesc('ventes.created_at')->paginate(10);
+
+        // Statistiques financières - devise_id 1 ($)
+        $somme_ventes_dollar = Ventes::where('devise_id', 1)->sum('total');
         $ventes_aujourdhui = Ventes::whereDate('created_at', today())->count();
         $remises_aujourdhui = Remises::whereDate('created_at', today())->count();
 
-        // Nouvelles statistiques pour les cards
-        $benefice_total = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
+        // Bénéfice total pour devise_id 1 ($)
+        $benefice_total_dollar = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
             ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
             ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 1)
             ->value('benefice') ?? 0;
-        $benefice_moyen = $total_ventes > 0 ? $benefice_total / $total_ventes : 0;
+        
+        $ventes_dollar_count = Ventes::where('devise_id', 1)->count();
+        $benefice_moyen_dollar = $ventes_dollar_count > 0 ? $benefice_total_dollar / $ventes_dollar_count : 0;
 
-        // Meilleur produit (celui qui a généré le plus de bénéfice)
-        $meilleur_produit = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
+        // Meilleur produit pour devise_id 1 ($)
+        $meilleur_produit_dollar = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
             ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
             ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 1)
+            ->groupBy('produits.id', 'produits.nom')
+            ->orderByDesc('benefice_total')
+            ->first();
+
+        // Statistiques financières - devise_id 2 (FC)
+        $somme_ventes_fc = Ventes::where('devise_id', 2)->sum('total');
+
+        // Bénéfice total pour devise_id 2 (FC)
+        $benefice_total_fc = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 2)
+            ->value('benefice') ?? 0;
+        
+        $ventes_fc_count = Ventes::where('devise_id', 2)->count();
+        $benefice_moyen_fc = $ventes_fc_count > 0 ? $benefice_total_fc / $ventes_fc_count : 0;
+
+        // Meilleur produit pour devise_id 2 (FC)
+        $meilleur_produit_fc = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 2)
             ->groupBy('produits.id', 'produits.nom')
             ->orderByDesc('benefice_total')
             ->first();
@@ -593,13 +659,6 @@ class DashboardController extends Controller
         $produits_en_stock = ProduitUnites::where('statut', 'en_stock')->count();
         $produits_en_remise = ProduitUnites::where('statut', 'remise')->count();
         $produits_vendus = ProduitUnites::where('statut', 'vendu')->count();
-
-        // Détails des ventes pour le tableau
-        $details_ventes = VenteDetails::with('produitUnite.produit', 'vente')
-            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
-            ->select('vente_details.*', 'ventes.created_at as date_vente')
-            ->orderByDesc('ventes.created_at')
-            ->paginate(10);
 
         // Dernières ventes
         $dernieres_ventes = Ventes::with('client')->latest()->take(5)->get();
@@ -612,15 +671,19 @@ class DashboardController extends Controller
             'total_remises',
             'total_produits_count',
             'total_clients',
-            'somme_ventes',
+            'somme_ventes_dollar',
+            'somme_ventes_fc',
             'ventes_aujourdhui',
             'remises_aujourdhui',
             'produits_en_stock',
             'produits_en_remise',
             'produits_vendus',
-            'benefice_total',
-            'benefice_moyen',
-            'meilleur_produit',
+            'benefice_total_dollar',
+            'benefice_moyen_dollar',
+            'meilleur_produit_dollar',
+            'benefice_total_fc',
+            'benefice_moyen_fc',
+            'meilleur_produit_fc',
             'details_ventes',
             'liste_produits',
             'dernieres_ventes',

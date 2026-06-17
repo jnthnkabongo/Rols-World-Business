@@ -273,7 +273,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $accesoire->produitUnites->sum('quantite_produit') ?? 0 }} Pièces</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
-                                        $unite = $produit->produitUnites->first();
+                                        $unite = $accesoire->produitUnites->first();
                                     @endphp
 
                                     @if($unite && $unite->statut == 'en_stock')
