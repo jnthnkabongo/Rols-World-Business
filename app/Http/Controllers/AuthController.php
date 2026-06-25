@@ -85,4 +85,36 @@ class AuthController extends Controller
     {
         //
     }
+
+    public function login_api(Credentials $request){
+        $credentials = $request->only('email', 'password');
+
+        if (!$credentials) {
+            return response()->json([
+                'message' => 'Veuillez remplir les informations'
+            ], 401);
+        }
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            $token = $user->createToken('auth-token')->plainTextToken;
+            
+            return response()->json([
+                'message' => 'Connexion reussie',
+                'token' => $token,
+                'user' => $user
+            ], 200);
+        }
+        return response()->json([
+            'message' => 'Les informations saisies ne sont pas correctes'
+        ], 401);
+        
+    }
+
+    public function logout_api(){
+        Auth::logout();
+        return response()->json([
+            'message' => 'Déconnexion réussie'
+        ], 200);
+    }
 }

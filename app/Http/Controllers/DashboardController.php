@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -879,6 +880,35 @@ class DashboardController extends Controller
     public function historiques()
     {
         return view('pages.historiques');
+    }
+
+    public function historiques_api()
+    {
+        //
+    }
+
+    public function dashboard_api(){
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Utilisateur non authentifier',
+            ], 401);
+        }
+
+        $sommes_ventes = Ventes::with('client')->count();
+        $sommes_ventes_today = ventes::whereDate('created_at', Carbon::today())->count();
+        $sommes_remises = Remises::with('produitRemise', 'users')->count();
+        $sommes_remises_today = Remises::whereDate('created_at', Carbon::today())->count();
+        $sommes_produits = ProduitUnites::count();
+
+        return response()->json([
+            'sommes_ventes' => $sommes_ventes,
+            'sommes_ventes_today' => $sommes_ventes_today,
+            'sommes_remises' => $sommes_remises,
+            'sommes_remises_today' => $sommes_remises_today,
+            'sommes_produits' => $sommes_produits
+        ]);
     }
 
     /**
