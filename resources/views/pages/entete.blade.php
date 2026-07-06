@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Rol's World Business</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/image_plan.png')}}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -126,10 +127,10 @@
                     <i class="fas fa-users w-5"></i>
                     <span>Utilisateurs</span>
                 </a>
-                <a href="{{ route('liste-fournisseurs') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
+                {{-- <a href="{{ route('liste-fournisseurs') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
                     <i class="fas fa-truck w-5"></i>
                     <span>Fournisseurs</span>
-                </a>
+                </a> --}}
                 <a href="{{ route('liste-produits')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
                     <i class="fas fa-box w-5"></i>
                     <span>Produits</span>

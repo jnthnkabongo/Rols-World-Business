@@ -36,7 +36,7 @@
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $client->telephone }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $client->adresse }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()?->ventedetails->first()?->produitUnite->produit->nom ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()?->total ?? '-' }} $</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()?->total ?? '-' }} {{ $client->ventes->first()?->venteDevise->logo ?? '-'}}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $client->ventes->first()?->user->name ?? '-' }} </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">

@@ -78,7 +78,7 @@
                     </button>
                 </div>
             </div>
-            <form method="POST" action="{{ route('ajout-utilisateur')}}" class="p-6 space-y-4" id="addUserForm">
+            <form action="{{ route('ajout-utilisateur')}}" method="POST" class="p-6 space-y-4" id="addUserForm">
                 @csrf
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom complet</label>
@@ -93,10 +93,6 @@
                     <input type="password" id="userPassword" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Mot de passe" oninput="validateAddForm()">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Confirmer le mot de passe</label>
-                    <input type="password" id="userPasswordConfirm" name="passwordConfirm" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Confirmer le mot de passe" oninput="validateAddForm()">
-                </div>
-                <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Rôle</label>
                     <select id="userRole" name="role_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="validateAddForm()">
                         <option value="">Sélectionner...</option>
@@ -108,7 +104,7 @@
 
                 <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                     <button onclick="closeModal('addUserModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                    <button id="addUserBtn" type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
+                    <button type="submit" id="addUserBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
                 </div>
             </form>
         </div>
@@ -200,11 +196,10 @@
             const userName = document.getElementById('userName').value.trim();
             const userEmail = document.getElementById('userEmail').value.trim();
             const userPassword = document.getElementById('userPassword').value;
-            const userPasswordConfirm = document.getElementById('userPasswordConfirm').value;
             const userRole = document.getElementById('userRole').value;
             const addBtn = document.getElementById('addUserBtn');
             
-            if (userName && userEmail && userPassword && userPasswordConfirm && userRole && userPassword === userPasswordConfirm) {
+            if (userName && userEmail && userPassword && userRole) {
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
@@ -212,26 +207,6 @@
                 addBtn.classList.add('opacity-50', 'cursor-not-allowed');
             }
         }
-
-        // function openViewModal(userId) {
-        //     // Simuler le chargement des données de l'utilisateur
-        //     const users = {
-        //         1: { name: 'Jean Dupont', email: 'jean.dupont@email.com', role: 'Administrateur', date: '01/06/2026', status: 'Actif' },
-        //         2: { name: 'Marie Martin', email: 'marie.martin@email.com', role: 'Manager', date: '02/06/2026', status: 'Actif' },
-        //         3: { name: 'Pierre Bernard', email: 'pierre.bernard@email.com', role: 'Utilisateur', date: '03/06/2026', status: 'Actif' },
-        //         4: { name: 'Sophie Petit', email: 'sophie.petit@email.com', role: 'Utilisateur', date: '04/06/2026', status: 'Inactif' }
-        //     };
-            
-        //     const user = users[userId];
-        //     document.getElementById('viewUserId').textContent = '#' + userId;
-        //     document.getElementById('viewUserName').textContent = user.name;
-        //     document.getElementById('viewUserEmail').textContent = user.email;
-        //     document.getElementById('viewUserRole').textContent = user.role;
-        //     document.getElementById('viewUserDate').textContent = user.date;
-        //     document.getElementById('viewUserStatus').textContent = user.status;
-            
-        //     openModal('viewUserModal');
-        // }
 
         function openEditModal(utilisateurId) {
             // Simuler le chargement des données pour l'édition

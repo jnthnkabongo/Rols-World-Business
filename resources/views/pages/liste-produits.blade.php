@@ -12,10 +12,10 @@
                     <i class="fas fa-mobile-screen-button"></i>
                 </button>
 
-                <button onclick="openModal('addShoeBrandModal')"
+                {{-- <button onclick="openModal('addShoeBrandModal')"
                     class="inline-flex items-center justify-center w-12 h-12 text-white rounded-full shadow-lg bg-blue-700 hover:bg-blue-800 transition">
                     <i class="fas fa-shoe-prints"></i>
-                </button>
+                </button> --}}
             </div>
         </div>
 

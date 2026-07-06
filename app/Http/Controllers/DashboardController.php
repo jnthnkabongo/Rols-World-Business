@@ -285,24 +285,34 @@ class DashboardController extends Controller
     //// 2. Creation de l'utilisateur
     public function AjouterUtilisateur(Request $request)
     {
+        Log::info('Début AjouterUtilisateur');
+        Log::info('Données reçues: ' . json_encode($request->all()));
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
-            'role_id' => 'required|exists:roles,id',
+            'role_id' => 'required|exists:roles,id'
         ]);
         
+        Log::info('Validation réussie: ' . json_encode($validated));
+        
         try {
+            Log::info('Création utilisateur');
             $user = new User();
             $user->name = $validated['name'];
             $user->email = $validated['email'];
             $user->password = bcrypt($validated['password']);
             $user->role_id = $validated['role_id'];
+            $user->last_login = now();
             $user->save();
-            //dd($user);
+            
+            Log::info('Utilisateur sauvegardé avec succès, ID: ' . $user->id);
             return redirect()->route('liste-utilisateurs')->with('success', 'Utilisateur ajouté avec succès');
 
         } catch (\Throwable $th) {
+            Log::error('Erreur lors de l\'ajout: ' . $th->getMessage());
+            Log::error('Stack trace: ' . $th->getTraceAsString());
             return redirect()->route('liste-utilisateurs')->with('error', 'Erreur lors de l\'ajout de l\'utilisateur');
         }
     }
@@ -312,8 +322,8 @@ class DashboardController extends Controller
         
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
+            'email' => 'required|email|unique:users,email,'.$id,
+            'password' => 'nullable|string|min:8',
             'role_id' => 'required|exists:roles,id',
         ]);
         
@@ -321,10 +331,11 @@ class DashboardController extends Controller
             $user = User::find($id);
             $user->name = $validated['name'];
             $user->email = $validated['email'];
-            $user->password = bcrypt($validated['password']) ?? null;
-            $user->role_id = $validated['role_id'] ?? null;
+            if (!empty($validated['password'])) {
+                $user->password = bcrypt($validated['password']);
+            }
+            $user->role_id = $validated['role_id'];
             $user->save();
-            dd($user);
             return redirect()->route('liste-utilisateurs')->with('success', 'Utilisateur modifié avec succès');
 
         } catch (\Throwable $th) {
@@ -722,7 +733,7 @@ class DashboardController extends Controller
 
         $total_ventes = Ventes::count();
 
-         $ventes_total_quantite = DB::table('ventes')
+        $ventes_total_quantite = DB::table('ventes')
         ->join('vente_details', 'vente_details.vente_id', '=', 'ventes.id')
         ->where('vente_details.quantite', '>', 0)
         ->sum('vente_details.quantite');
@@ -901,14 +912,240 @@ class DashboardController extends Controller
         $sommes_remises = Remises::with('produitRemise', 'users')->count();
         $sommes_remises_today = Remises::whereDate('created_at', Carbon::today())->count();
         $sommes_produits = ProduitUnites::count();
+        $sommes_produits_categorie1 = Produits::where('categorie_id', 1)->count();
+        $sommes_produits_categorie2 = Produits::where('categorie_id', 2)->count();
+        $sommes_produits_categorie3 = Produits::where('categorie_id', 3)->count();
+        $liste_vente = Ventes::with('client')->orderBy('id','desc')->get();
 
         return response()->json([
             'sommes_ventes' => $sommes_ventes,
             'sommes_ventes_today' => $sommes_ventes_today,
             'sommes_remises' => $sommes_remises,
             'sommes_remises_today' => $sommes_remises_today,
-            'sommes_produits' => $sommes_produits
+            'sommes_produits' => $sommes_produits,
+            'sommes_produit_categorie1' => $sommes_produits_categorie1,
+            'sommes_produit_categorie2' => $sommes_produits_categorie2,
+            'sommes_produit_categorie3' => $sommes_produits_categorie3,
+            'liste_ventes' => $liste_vente,
+        ], 200);
+    }
+
+    public function liste_produits_api(){
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Utilisateur non authentifier',
+            ]);
+        }
+
+        $listes_produits_electroniques = Produits::where('categorie_id', 1)->with('produitUnites')->orderBy('id','desc')->get();
+        $listes_produits_accesoires = Produits::where('categorie_id', 2)->with('produitUnites')->orderBy('id','desc')->get();
+        $listes_produits_chaussures = Produits::where('categorie_id', 3)->with('produitUnites')->orderBy('id','desc')->get();
+        
+        return response()->json([
+            'listes_produits_electroniques' => $listes_produits_electroniques,
+            'listes_produits_accesoires' => $listes_produits_accesoires,
+            'listes_produits_chaussures' => $listes_produits_chaussures,
+        ], 200);
+    }
+
+    public function changerStatutVendu_api(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Uilisateur non authentifier',
+            ]);
+        }
+
+        $validated = $request->validate([
+            'nom_client' => 'required|string|max:255',
+            'telephone' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:150',
+            'adresse' => 'nullable|string',
+            'quantite' => 'required|integer|min:1',
         ]);
+
+        try {
+
+            DB::transaction(function () use ($validated, $id) {
+
+                $produit = Produits::findOrFail($id);
+
+                $produitUnite = ProduitUnites::where('produit_id', $id)->first();
+
+                if (!$produitUnite) {
+                    throw new \Exception('Unité de produit non trouvée');
+                }
+
+                if ($produitUnite->quantite_produit < $validated['quantite']) {
+                    throw new \Exception('Quantité insuffisante en stock');
+                }
+
+                $client = Clients::firstOrCreate(
+                    ['nom_client' => $validated['nom_client']],
+                    [
+                        'telephone' => $validated['telephone'] ?? null,
+                        'email' => $validated['email'] ?? null,
+                        'adresse' => $validated['adresse'] ?? null,
+                    ]
+                );
+
+                $vente = Ventes::create([
+                    'client_id' => $client->id,
+                    'user_id' => Auth::id(),
+                    'date_vente' => now(),
+                    'total' => $produit->prix_vente * $validated['quantite'],
+                    'statut' => 'paye',
+                    'devise_id' => $produit->devise_id,
+                ]);
+
+                VenteDetails::create([
+                    'vente_id' => $vente->id,
+                    'produit_unite_id' => $produitUnite->id,
+                    'quantite' => $validated['quantite'],
+                    'prix_unitaire' => $produit->prix_vente,
+                    'total' => $produit->prix_vente * $validated['quantite'],
+                ]);
+
+                $produitUnite->decrement('quantite_produit', $validated['quantite']);
+
+                $produitUnite->refresh();
+
+                if ($produitUnite->quantite_produit <= 0) {
+                    $produitUnite->update([
+                        'statut' => 'vendu'
+                    ]);
+                }
+            });
+
+            return response()->json([
+                'message' => 'Vente reussie'
+            ], 200);
+
+        } catch (\Throwable $th) {
+
+            // \Log::error('Erreur vente', [
+            //     'message' => $th->getMessage(),
+            //     'line' => $th->getLine(),
+            //     'file' => $th->getFile(),
+            // ]);
+
+            return response()->json([
+                'message' => 'Erreur lors de l\'enregistrement d\'une vente' 
+            ]);
+        }
+    }
+
+    public function liste_ventes_api (){
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Uilisateur non authentifier',
+            ]);
+        }
+        $query = Ventes::with('client', 'user', 'ventedetails.produitUnite.produit', 'paiements');
+
+        $liste_ventes = $query->orderBy('id', 'desc')->get();
+        // $liste_ventes = VenteDetails::with('vente', 'produitUnite')->orderBy('id','desc')->get();
+
+        return response()->json([
+            'liste_ventes' => $liste_ventes
+        ], 200);
+    }
+
+    public function ajouter_vente_api(){
+         
+    }
+
+    public function liste_remises_api () {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Utilisateur non authentifier',
+            ]);
+        }
+
+        $liste_remises = Remises::with('users', 'produitRemise')->orderBy('id', 'desc')->get();
+        return response()->json([
+            'liste_remises' => $liste_remises
+        ], 200);
+    }
+
+    public function ajouter_remise_api(Request $request, $id){
+        $validated = $request->validate([
+            'nom_remise' => 'required|string|max:255',
+            'telephone_remise' => 'nullable|string|max:50',
+            'quantite' => 'required|integer|max:255',
+        ]);
+
+        try {
+            $produitUnite = ProduitUnites::where('produit_id', $id)->first();
+            if (!$produitUnite) {
+                return redirect()->route('liste-produits')->with('error', 'Unité de produit non trouvée');
+            }
+
+            $produitUnite->statut = 'remise';
+
+            // Soustraire la quantité dans produit_unites (stock du produit)
+            $currentQuantite = is_numeric($produitUnite->quantite_produit) ? $produitUnite->quantite_produit : 0;
+            $produitUnite->quantite_produit = max(0, $currentQuantite - $validated['quantite']);
+            $produitUnite->save();
+
+            // Enregistrer la remise dans la table remises
+            $produit = Produits::find($id);
+            if ($produit) {
+                Remises::create([
+                    'user_id' => Auth::id(),
+                    'produit_id' => $id,
+                    'nom_remise' => $validated['nom_remise'],
+                    'telephone_remise' => $validated['telephone_remise'] ?? null,
+                    'quantite' => $validated['quantite'] ?? null,
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'Ajout a la remise reussie'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Erreur lors de l\'enregistrement d\'une remise'
+            ]);
+        } 
+    }
+
+    public function retourner_remise_produit(Request $request, $id){
+          try {
+            // Récupérer la remise
+            $remise = Remises::findOrFail($id);
+
+            // Récupérer le produit_unite correspondant
+            $produitUnite = ProduitUnites::where('produit_id', $remise->produit_id)->first();
+
+            if (!$produitUnite) {
+                return redirect()->route('liste-remises')->with('error', 'Unité de produit non trouvée');
+            }
+
+            // Additionner la quantité de la remise avec la quantité du produit_unite
+            $produitUnite->quantite_produit += $remise->quantite;
+            $produitUnite->statut = 'en_stock';
+            $produitUnite->save();
+
+            // Supprimer la remise
+            $remise->delete();
+
+            return response()->json([
+                'message' => 'Retour du produit dans la liste des produits'
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Erreur lors de la remise du produit'
+            ]);
+        }
     }
 
     /**
