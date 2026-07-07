@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DashboardController extends Controller
 {
@@ -743,6 +744,37 @@ class DashboardController extends Controller
         $somme_ventes_fc = Ventes::where('devise_id', '2')->sum('total');
 
         return view('pages.liste-ventes', compact('liste_ventes', 'ventes_aujourdhui', 'total_ventes', 'somme_ventes','ventes_aujourdhui_quantite','ventes_total_quantite', 'somme_ventes_fc'));
+    }
+
+    public function exportVentesPDF(Request $request)
+    {
+        $query = Ventes::with('client', 'user', 'ventedetails.produitUnite.produit', 'paiements');
+
+        // Filtrer par date de début et date de fin
+        if ($request->filled('date_debut') && $request->filled('date_fin')) {
+            $query->whereBetween('date_vente', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->filled('date_debut')) {
+            $query->whereDate('date_vente', '>=', $request->date_debut);
+        } elseif ($request->filled('date_fin')) {
+            $query->whereDate('date_vente', '<=', $request->date_fin);
+        }
+
+        // Filtrer par catégorie (accessoires, électroniques, chaussures)
+        if ($request->filled('categorie_id')) {
+            $query->whereHas('ventedetails.produitUnite.produit', function($q) use ($request) {
+                $q->where('categorie_id', $request->categorie_id);
+            });
+        }
+
+        $liste_ventes = $query->orderBy('id', 'desc')->get();
+
+        // Calculer les totaux pour le PDF
+        $somme_ventes = $liste_ventes->where('devise_id', '1')->sum('total');
+        $somme_ventes_fc = $liste_ventes->where('devise_id', '2')->sum('total');
+        $total_ventes = $liste_ventes->count();
+
+        $pdf = Pdf::loadView('pdf.ventes-pdf', compact('liste_ventes', 'somme_ventes', 'somme_ventes_fc', 'total_ventes'));
+        return $pdf->download('ventes-' . date('Y-m-d') . '.pdf');
     }
 
     public function clients(){

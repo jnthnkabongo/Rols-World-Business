@@ -94,9 +94,9 @@
                     <a href="{{ route('liste-ventes') }}" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
                         <i class="fas fa-times mr-2"></i>Réinitialiser
                     </a>
-                    <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                        <i class="fas fa-print mr-2"></i>Exporter
-                    </button>
+                    <a href="{{ route('export-ventes-pdf', request()->query()) }}" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-file-pdf mr-2"></i>Exporter PDF
+                    </a>
                 </div>
             </form>
         </div>
