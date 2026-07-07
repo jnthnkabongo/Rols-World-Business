@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
 
     //mecanique ventes CRUD
     Route::get('liste-vente', [DashboardController::class, 'ventes'])->name('liste-ventes');
+    Route::get('export-ventes-pdf', [DashboardController::class, 'exportVentesPDF'])->name('export-ventes-pdf');
 
     //mecanique clients CRUD
     Route::get('liste-clients', [DashboardController::class, 'clients'])->name('liste-clients');

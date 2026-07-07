@@ -471,10 +471,10 @@ class DashboardController extends Controller
 
         } catch (\Exception $e) {
 
-            \Log::error('Erreur lors de l\'ajout du produit', [
-                'message' => $e->getMessage(),
-                'trace'   => $e->getTraceAsString(),
-            ]);
+            // \\Log::error('Erreur lors de l\'ajout du produit', [
+            //     'message' => $e->getMessage(),
+            //     'trace'   => $e->getTraceAsString(),
+            // ]);
 
             return redirect()
                 ->back()
@@ -686,11 +686,11 @@ class DashboardController extends Controller
 
         } catch (\Throwable $th) {
 
-            \Log::error('Erreur vente', [
-                'message' => $th->getMessage(),
-                'line' => $th->getLine(),
-                'file' => $th->getFile(),
-            ]);
+            // \Log::error('Erreur vente', [
+            //     'message' => $th->getMessage(),
+            //     'line' => $th->getLine(),
+            //     'file' => $th->getFile(),
+            // ]);
 
             return redirect()
                 ->back()

@@ -32,7 +32,7 @@
         <!-- Logo/Icon -->
         <div class="text-center mb-4">
             <div class="inline-flex items-center justify-center w-60 h-60 mb-1">
-                <img src="{{ asset('images/logo-1.png') }}" alt="Logo" class="w-full h-full object-contain">
+                <img src="{{ asset('images/imahe.png') }}" alt="Logo" class="w-full h-full object-contain">
             </div>
             <h1 class="text-3xl font-bold text-gray-800 mb-1">Bienvenue</h1>
             <p class="text-gray-500 text-sm">Connectez-vous pour continuer</p>
