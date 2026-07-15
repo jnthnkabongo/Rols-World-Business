@@ -401,6 +401,7 @@ class DashboardController extends Controller
 
         $produits_electroniques = Produits::with(['categorie', 'marque','produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 1)
+            ->orderBy('id', 'desc')
             ->paginate(10);
         
         $chaussures = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
@@ -525,7 +526,10 @@ class DashboardController extends Controller
     public function SupprimerProduit($id)
     {
         try {
+            ProduitUnites::where('produit_id', $id)->delete();
+            
             $produit = Produits::find($id);
+
             $produit->delete();
             return redirect()->route('liste-produits')->with('success', 'Produit supprimé avec succès');
         } catch (\Throwable $th) {
