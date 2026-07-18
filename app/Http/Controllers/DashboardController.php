@@ -28,7 +28,7 @@ class DashboardController extends Controller
     {
         // Statistiques pour les produits électroniques (catégorie_id = 1)
         $produits_electroniques = Produits::where('categorie_id', 1)->with('produitUnites')->get();
-        
+
         $electroniques_stock_value = 0;
         $electroniques_stock_quantity = 0;
         foreach ($produits_electroniques as $produit) {
@@ -44,7 +44,7 @@ class DashboardController extends Controller
         $ventes_electroniques = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
             $q->where('categorie_id', 1);
         })->get();
-        
+
         $electroniques_sales_value = $ventes_electroniques->sum('total');
         $electroniques_sales_quantity = DB::table('vente_details')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
@@ -58,7 +58,7 @@ class DashboardController extends Controller
             ->whereHas('ventedetails.produitUnite.produit', function($q) {
                 $q->where('categorie_id', 1);
             })->sum('total');
-        
+
         $electroniques_daily_quantity = DB::table('vente_details')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
             ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
@@ -71,7 +71,7 @@ class DashboardController extends Controller
         $electroniques_remises = Remises::whereHas('produitRemise', function($q) {
             $q->where('categorie_id', 1);
         })->count();
-        
+
         $electroniques_remises_quantity = DB::table('remises')
             ->join('produits', 'remises.produit_id', '=', 'produits.id')
             ->where('produits.categorie_id', 1)
@@ -79,7 +79,7 @@ class DashboardController extends Controller
 
         // Statistiques pour les chaussures (catégorie_id = 2)
         $produits_chaussures = Produits::where('categorie_id', 2)->with('produitUnites')->get();
-        
+
         $chaussures_stock_value = 0;
         $chaussures_stock_quantity = 0;
         foreach ($produits_chaussures as $produit) {
@@ -95,7 +95,7 @@ class DashboardController extends Controller
         $ventes_chaussures = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
             $q->where('categorie_id', 2);
         })->get();
-        
+
         $chaussures_sales_value = $ventes_chaussures->sum('total');
         $chaussures_sales_quantity = DB::table('vente_details')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
@@ -109,7 +109,7 @@ class DashboardController extends Controller
             ->whereHas('ventedetails.produitUnite.produit', function($q) {
                 $q->where('categorie_id', 2);
             })->sum('total');
-        
+
         $chaussures_daily_quantity = DB::table('vente_details')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
             ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
@@ -122,7 +122,7 @@ class DashboardController extends Controller
         $chaussures_remises = Remises::whereHas('produitRemise', function($q) {
             $q->where('categorie_id', 2);
         })->count();
-        
+
         $chaussures_remises_quantity = DB::table('remises')
             ->join('produits', 'remises.produit_id', '=', 'produits.id')
             ->where('produits.categorie_id', 2)
@@ -130,7 +130,7 @@ class DashboardController extends Controller
 
         // Statistiques pour les accessoires (catégorie_id = 3)
         $produits_accessoires = Produits::where('categorie_id', 3)->with('produitUnites')->get();
-        
+
         $accessoires_stock_value = 0;
         $accessoires_stock_quantity = 0;
         foreach ($produits_accessoires as $produit) {
@@ -146,7 +146,7 @@ class DashboardController extends Controller
         $ventes_accessoires = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
             $q->where('categorie_id', 3);
         })->get();
-        
+
         $accessoires_sales_value = $ventes_accessoires->sum('total');
         $accessoires_sales_quantity = DB::table('vente_details')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
@@ -160,7 +160,7 @@ class DashboardController extends Controller
             ->whereHas('ventedetails.produitUnite.produit', function($q) {
                 $q->where('categorie_id', 3);
             })->sum('total');
-        
+
         $accessoires_daily_quantity = DB::table('vente_details')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
             ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
@@ -173,7 +173,7 @@ class DashboardController extends Controller
         $accessoires_remises = Remises::whereHas('produitRemise', function($q) {
             $q->where('categorie_id', 3);
         })->count();
-        
+
         $accessoires_remises_quantity = DB::table('remises')
             ->join('produits', 'remises.produit_id', '=', 'produits.id')
             ->where('produits.categorie_id', 3)
@@ -212,8 +212,8 @@ class DashboardController extends Controller
     }
 
 
-    //*************** La mecanique concernant la gestion des roles CRUD */ 
-    
+    //*************** La mecanique concernant la gestion des roles CRUD */
+
     ///// 1. Lecture des donnees de la liste de roles
     public function roles()
     {
@@ -274,8 +274,8 @@ class DashboardController extends Controller
         }
     }
 
-    //*************** La mecanique concernant la gestion des roles CRUD */ 
-    
+    //*************** La mecanique concernant la gestion des roles CRUD */
+
     //// 1. Lecture des donnees de la liste des utilisateurs
     public function utilisateurs()
     {
@@ -288,16 +288,16 @@ class DashboardController extends Controller
     {
         Log::info('Début AjouterUtilisateur');
         Log::info('Données reçues: ' . json_encode($request->all()));
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
             'role_id' => 'required|exists:roles,id'
         ]);
-        
+
         Log::info('Validation réussie: ' . json_encode($validated));
-        
+
         try {
             Log::info('Création utilisateur');
             $user = new User();
@@ -307,7 +307,7 @@ class DashboardController extends Controller
             $user->role_id = $validated['role_id'];
             $user->last_login = now();
             $user->save();
-            
+
             Log::info('Utilisateur sauvegardé avec succès, ID: ' . $user->id);
             return redirect()->route('liste-utilisateurs')->with('success', 'Utilisateur ajouté avec succès');
 
@@ -320,14 +320,14 @@ class DashboardController extends Controller
     //// 3. Modification de l'utilisateur
     public function ModifierUtilisateur(Request $request, $id)
     {
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'nullable|string|min:8',
             'role_id' => 'required|exists:roles,id',
         ]);
-        
+
         try {
             $user = User::find($id);
             $user->name = $validated['name'];
@@ -355,7 +355,7 @@ class DashboardController extends Controller
         }
     }
 
-    //*************** La mecanique concernant la gestion des founitures CRUD */ 
+    //*************** La mecanique concernant la gestion des founitures CRUD */
 
     //// 1. Lecture des donnees de la liste des fournisseurs
     public function fournisseurs()
@@ -379,15 +379,15 @@ class DashboardController extends Controller
             $marque->description = $validated['description'] ?? null;
             $marque->save();
             //dd($marque);
-            
+
             return redirect()->route('liste-produits')->with('success', 'Marque ajoutée avec succès');
 
         } catch (\Throwable $th) {
             return redirect()->route('liste-produits')->with('error', 'Erreur lors de l\'ajout de la marque');
         }
     }
-    
-    //*************** La mecanique concernant la gestion des produits CRUD */ 
+
+    //*************** La mecanique concernant la gestion des produits CRUD */
 
     //// 1. Lecture des donnees de la liste des produits
     public function produits()
@@ -403,7 +403,7 @@ class DashboardController extends Controller
             ->where('categorie_id', '=', 1)
             ->orderBy('id', 'desc')
             ->paginate(10);
-        
+
         $chaussures = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 2)
             ->paginate(10);
@@ -411,12 +411,12 @@ class DashboardController extends Controller
         $accessoires = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 3)
             ->paginate(10);
-        
+
         $categories = Categories::all();
         $marques_electroniques = Marques::where('categorie_id', '=', 1)->get();
         $marques_chaussures = Marques::where('categorie_id', '=', 2)->get();
         $marques_accessoires = Marques::where('categorie_id', '=', 3)->get();
-        
+
         $liste_categories = Categories::orderBy('nom', 'asc')->get();
 
         return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'accessoires', 'categories', 'marques_electroniques', 'marques_chaussures', 'marques_accessoires', 'reference', 'reference_accesoire', 'liste_categories'));
@@ -436,7 +436,7 @@ class DashboardController extends Controller
             'taille'         => 'nullable|string|max:50',
             'numero_serie'   => 'required|string|max:255|unique:produit_unites,numero_serie',
             'quantite'       => 'required|numeric|min:0',
-            'devise_id'      => 'required|numeric|min:1',  
+            'devise_id'      => 'required|numeric|min:1',
         ]);
 
         try {
@@ -488,7 +488,7 @@ class DashboardController extends Controller
         }
     }
 
-    //// 3. Modification d'un produit
+    /// 3. Modification d'un produit
     public function ModifierProduit(Request $request, $id)
     {
         $validated = $request->validate([
@@ -500,20 +500,75 @@ class DashboardController extends Controller
             'prix_achat' => 'nullable|numeric',
             'prix_vente' => 'required|numeric',
             'taille' => 'nullable|string',
+            'numero_serie' => 'nullable|string',
+            'stock' => 'nullable|numeric|min:0',
+            'status' => 'nullable|string',
+            'produit_id' => 'nullable|integer|exists:produit_unites,id'
         ]);
 
         try {
-            $produit = Produits::find($id);
+
+            // Récupère le produit principal
+            $produit = Produits::findOrFail($id);
+
+            // Récupère ou crée l'unité associée
+            $produitUnite = null;
+            if (!empty($validated['produit_id'])) {
+                $produitUnite = ProduitUnites::find($validated['produit_id']);
+            }
+            if (!$produitUnite) {
+                $produitUnite = ProduitUnites::where('produit_id', $id)->first();
+            }
+
+            // Vérification d'unicité du numéro de série si fourni (exclut l'unité actuelle si fournie)
+            if (!empty($validated['numero_serie'])) {
+                $existsQuery = ProduitUnites::where('numero_serie', $validated['numero_serie']);
+                if (!empty($validated['produit_id'])) {
+                    $existsQuery->where('id', '!=', $validated['produit_id']);
+                } else {
+                    $existsQuery->where('produit_id', '!=', $id);
+                }
+                if ($existsQuery->exists()) {
+                    return redirect()->back()->withInput()->with('error', 'Le numéro de série est déjà utilisé par un autre produit.');
+                }
+            }
+
+            // Met à jour le modèle Produits
             $produit->nom = $validated['nom'];
             $produit->categorie_id = $validated['categorie_id'];
             $produit->marque_id = $validated['marque_id'];
             $produit->modele = $validated['modele'] ?? null;
             $produit->description = $validated['description'] ?? null;
             $produit->prix_achat = $validated['prix_achat'] ?? null;
-            $produit->prix_vente = $validated['prix_vente'];
+            $produit->prix_vente = $validated['prix_vente'] ?? null;
             $produit->taille = $validated['taille'] ?? null;
+            if (isset($validated['status'])) {
+                $produit->status = $validated['status'];
+            }
             $produit->save();
-            
+
+            // Si aucune unité existante, on en crée une
+            if (!$produitUnite) {
+                $produitUnite = ProduitUnites::create([
+                    'produit_id' => $produit->id,
+                    'numero_serie' => $validated['numero_serie'] ?? null,
+                    'quantite_produit' => $validated['stock'] ?? null,
+                    'statut' => $validated['statut'] ?? 'en_stock'
+                ]);
+            } else {
+                // Met à jour l'unité existante
+                if (isset($validated['numero_serie'])) {
+                    $produitUnite->numero_serie = $validated['numero_serie'];
+                }
+                if (isset($validated['stock'])) {
+                    $produitUnite->quantite_produit = $validated['stock'];
+                }
+                if (isset($validated['statut'])) {
+                    $produitUnite->statut = $validated['statut'];
+                }
+                $produitUnite->save();
+            }
+
             return redirect()->route('liste-produits')->with('success', 'Produit modifié avec succès');
 
         } catch (\Throwable $th) {
@@ -521,13 +576,204 @@ class DashboardController extends Controller
             ->with('error', 'Erreur: ' . $th->getMessage());
         }
     }
+    // use Illuminate\Http\Request;
+    // use Illuminate\Support\Facades\Log;
 
-    //// 4. Suppression d'un produit
+    // public function ModifierProduit(Request $request, $id)
+    // {
+    //     Log::info('================ Début ModifierProduit ================');
+
+    //     Log::info('ID du produit (route)', [
+    //         'id' => $id
+    //     ]);
+
+    //     Log::info('Toutes les données reçues', $request->all());
+
+    //     $validated = $request->validate([
+    //         'nom' => 'required|string|max:255',
+    //         'categorie_id' => 'required|exists:categories,id',
+    //         'marque_id' => 'required|exists:marques,id',
+    //         'modele' => 'nullable|string|max:100',
+    //         'description' => 'nullable|string',
+    //         'prix_achat' => 'nullable|numeric',
+    //         'prix_vente' => 'required|numeric',
+    //         'taille' => 'nullable|string',
+    //         'numero_serie' => 'nullable|string',
+    //         'stock' => 'nullable|numeric|min:0',
+    //         'status' => 'nullable|string',
+    //         'produit_id' => 'nullable|integer|exists:produit_unites,id'
+    //     ]);
+
+    //     Log::info('Données validées', $validated);
+
+    //     Log::info('Valeur de produit_id après validation', [
+    //         'produit_id' => $validated['produit_id'] ?? null
+    //     ]);
+
+    //     try {
+
+    //         // Récupération du produit principal
+    //         $produit = Produits::findOrFail($id);
+
+    //         Log::info('Produit trouvé', [
+    //             'id' => $produit->id,
+    //             'nom' => $produit->nom
+    //         ]);
+
+    //         $produitUnite = null;
+
+    //         // Recherche par produit_id envoyé
+    //         if (!empty($validated['produit_id'])) {
+
+    //             Log::info('Recherche de ProduitUnites avec l\'id', [
+    //                 'id' => $validated['produit_id']
+    //             ]);
+
+    //             $produitUnite = ProduitUnites::find($validated['produit_id']);
+
+    //             if ($produitUnite) {
+    //                 Log::info('ProduitUnite trouvé', [
+    //                     'id' => $produitUnite->id,
+    //                     'produit_id' => $produitUnite->produit_id,
+    //                     'numero_serie' => $produitUnite->numero_serie
+    //                 ]);
+    //             } else {
+    //                 Log::warning('Aucun ProduitUnite trouvé avec cet id.');
+    //             }
+    //         }
+
+    //         // Recherche par produit_id si rien trouvé
+    //         if (!$produitUnite) {
+
+    //             Log::info('Recherche de l\'unité avec produit_id = '.$id);
+
+    //             $produitUnite = ProduitUnites::where('produit_id', $id)->first();
+
+    //             if ($produitUnite) {
+    //                 Log::info('ProduitUnite trouvé via produit_id', [
+    //                     'id' => $produitUnite->id,
+    //                     'produit_id' => $produitUnite->produit_id,
+    //                     'numero_serie' => $produitUnite->numero_serie
+    //                 ]);
+    //             } else {
+    //                 Log::warning('Aucune unité liée au produit.');
+    //             }
+    //         }
+
+    //         // Vérification de l'unicité du numéro de série
+    //         if (!empty($validated['numero_serie'])) {
+
+    //             Log::info('Vérification du numéro de série', [
+    //                 'numero_serie' => $validated['numero_serie']
+    //             ]);
+
+    //             $existsQuery = ProduitUnites::where('numero_serie', $validated['numero_serie']);
+
+    //             if (!empty($validated['produit_id'])) {
+    //                 $existsQuery->where('id', '!=', $validated['produit_id']);
+    //             } else {
+    //                 $existsQuery->where('produit_id', '!=', $id);
+    //             }
+
+    //             if ($existsQuery->exists()) {
+
+    //                 Log::warning('Numéro de série déjà utilisé.');
+
+    //                 return redirect()->back()
+    //                     ->withInput()
+    //                     ->with('error', 'Le numéro de série est déjà utilisé par un autre produit.');
+    //             }
+    //         }
+
+    //         // Mise à jour du produit
+    //         $produit->nom = $validated['nom'];
+    //         $produit->categorie_id = $validated['categorie_id'];
+    //         $produit->marque_id = $validated['marque_id'];
+    //         $produit->modele = $validated['modele'] ?? null;
+    //         $produit->description = $validated['description'] ?? null;
+    //         $produit->prix_achat = $validated['prix_achat'] ?? null;
+    //         $produit->prix_vente = $validated['prix_vente'];
+    //         $produit->taille = $validated['taille'] ?? null;
+
+    //         if (isset($validated['status'])) {
+    //             $produit->status = $validated['status'];
+    //         }
+
+    //         $produit->save();
+
+    //         Log::info('Produit mis à jour avec succès.');
+
+    //         // Création ou mise à jour de l'unité
+    //         if (!$produitUnite) {
+
+    //             Log::info('Création d\'une nouvelle unité.');
+
+    //             $produitUnite = ProduitUnites::create([
+    //                 'produit_id' => $produit->id,
+    //                 'numero_serie' => $validated['numero_serie'] ?? null,
+    //                 'quantite_produit' => $validated['stock'] ?? null,
+    //                 'statut' => $validated['status'] ?? 'en_stock'
+    //             ]);
+
+    //             Log::info('Nouvelle unité créée', [
+    //                 'id' => $produitUnite->id,
+    //                 'produit_id' => $produitUnite->produit_id
+    //             ]);
+
+    //         } else {
+
+    //             Log::info('Mise à jour de l\'unité existante', [
+    //                 'id' => $produitUnite->id
+    //             ]);
+
+    //             if (isset($validated['numero_serie'])) {
+    //                 $produitUnite->numero_serie = $validated['numero_serie'];
+    //             }
+
+    //             if (isset($validated['stock'])) {
+    //                 $produitUnite->quantite_produit = $validated['stock'];
+    //             }
+
+    //             if (isset($validated['status'])) {
+    //                 $produitUnite->statut = $validated['status'];
+    //             }
+
+    //             $produitUnite->save();
+
+    //             Log::info('Unité mise à jour', [
+    //                 'id' => $produitUnite->id,
+    //                 'produit_id' => $produitUnite->produit_id,
+    //                 'numero_serie' => $produitUnite->numero_serie,
+    //                 'quantite_produit' => $produitUnite->quantite_produit,
+    //                 'statut' => $produitUnite->statut
+    //             ]);
+    //         }
+
+    //         Log::info('================ Fin ModifierProduit ================');
+
+    //         return redirect()->route('liste-produits')
+    //             ->with('success', 'Produit modifié avec succès');
+
+    //     } catch (\Throwable $th) {
+
+    //         Log::error('Erreur ModifierProduit', [
+    //             'message' => $th->getMessage(),
+    //             'line' => $th->getLine(),
+    //             'file' => $th->getFile(),
+    //             'trace' => $th->getTraceAsString()
+    //         ]);
+
+    //         return redirect()->route('liste-produits')
+    //             ->with('error', 'Erreur : '.$th->getMessage());
+    //     }
+    // }
+
+    /// 4. Suppression d'un produit
     public function SupprimerProduit($id)
     {
         try {
             ProduitUnites::where('produit_id', $id)->delete();
-            
+
             $produit = Produits::find($id);
 
             $produit->delete();
@@ -539,21 +785,66 @@ class DashboardController extends Controller
     }
 
     //// 5. Récupérer les données d'un produit pour les modals
+    // public function getProductData($id)
+    // {
+    //     try {
+    //         $produit = Produits::with(['categorie', 'marque'])->find($id);
+
+    //         if (!$produit) {
+    //             return response()->json(['error' => 'Produit non trouvé'], 404);
+    //         }
+    //         $produitId = ProduitUnites::where('produit_id', $id)->get();
+
+    //         return response()->json([
+    //             'produit' => $produit,
+    //             'produitUnites' => $produitId
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         return response()->json(['error' => 'Erreur lors de la récupération du produit'], 500)
+    //         ->with('error', 'Erreur: ' . $th->getMessage());
+    //     }
+    // }
     public function getProductData($id)
     {
         try {
+            // Produit (informations générales)
             $produit = Produits::with(['categorie', 'marque'])->find($id);
             if (!$produit) {
                 return response()->json(['error' => 'Produit non trouvé'], 404);
             }
-            return response()->json($produit);
+
+            // Ligne(s) dans produits_unites
+            $produitUnite = ProduitUnites::where('produit_id', $id)->first();
+
+            if (!$produitUnite) {
+                return response()->json(['error' => 'Détails produit_unites non trouvés'], 404);
+            }
+
+            // On renvoie un JSON compatible avec ton JS (data.nom, data.marque_id, data.numero_serie, etc.)
+            return response()->json([
+                'id' => $produit->id,
+                'nom' => $produit->nom,
+                'marque_id' => $produit->marque_id,
+                'modele' => $produit->modele,
+                'prix_achat' => $produit->prix_achat,
+                'prix_vente' => $produit->prix_vente,
+                'taille' => $produit->taille,
+                'status' => $produit->status,
+
+                // Champs venant de produits_unites
+                'produit_unite_id' => $produitUnite->id,
+                'numero_serie' => $produitUnite->numero_serie,
+                'quantite_produit' => $produitUnite->quantite_produit
+            ]);
         } catch (\Throwable $th) {
-            return response()->json(['error' => 'Erreur lors de la récupération du produit'], 500)
-            ->with('error', 'Erreur: ' . $th->getMessage());
+            return response()->json([
+                'error' => 'Erreur lors de la récupération du produit',
+                'details' => $th->getMessage()
+            ], 500);
         }
     }
 
-    //// Changer le statut du produit en remise
+    /// Changer le statut du produit en remise
     public function changerStatutRemise(Request $request, $id)
     {
         $validated = $request->validate([
@@ -593,7 +884,7 @@ class DashboardController extends Controller
         }
     }
 
-    //// Changer le statut de la remise et la suppression dans la liste des remises
+    /// Changer le statut de la remise et la suppression dans la liste des remises
     public function changerStatutDisponible(Request $request, $id)
     {
         try {
@@ -621,7 +912,7 @@ class DashboardController extends Controller
         }
     }
 
-    //// Changer le statut du produit en vendu & fonction d'enregistrement de vente
+    /// Changer le statut du produit en vendu & fonction d'enregistrement de vente
     public function changerStatutVendu(Request $request, $id)
     {
         $validated = $request->validate([
@@ -704,7 +995,7 @@ class DashboardController extends Controller
         }
     }
 
-    //// 1. Lecture des donnees de la liste des ventes
+    // 1. Lecture des donnees de la liste des ventes
     public function ventes(Request $request)
     {
         $query = Ventes::with('client', 'user', 'ventedetails.produitUnite.produit', 'paiements');
@@ -850,7 +1141,7 @@ class DashboardController extends Controller
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
             ->where('ventes.devise_id', 1)
             ->value('benefice') ?? 0;
-        
+
         $ventes_dollar_count = Ventes::where('devise_id', 1)->count();
         $benefice_moyen_dollar = $ventes_dollar_count > 0 ? $benefice_total_dollar / $ventes_dollar_count : 0;
 
@@ -874,7 +1165,7 @@ class DashboardController extends Controller
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
             ->where('ventes.devise_id', 2)
             ->value('benefice') ?? 0;
-        
+
         $ventes_fc_count = Ventes::where('devise_id', 2)->count();
         $benefice_moyen_fc = $ventes_fc_count > 0 ? $benefice_total_fc / $ventes_fc_count : 0;
 
@@ -978,7 +1269,7 @@ class DashboardController extends Controller
         $listes_produits_electroniques = Produits::where('categorie_id', 1)->with('produitUnites')->orderBy('id','desc')->get();
         $listes_produits_accesoires = Produits::where('categorie_id', 2)->with('produitUnites')->orderBy('id','desc')->get();
         $listes_produits_chaussures = Produits::where('categorie_id', 3)->with('produitUnites')->orderBy('id','desc')->get();
-        
+
         return response()->json([
             'listes_produits_electroniques' => $listes_produits_electroniques,
             'listes_produits_accesoires' => $listes_produits_accesoires,
@@ -1070,7 +1361,7 @@ class DashboardController extends Controller
             // ]);
 
             return response()->json([
-                'message' => 'Erreur lors de l\'enregistrement d\'une vente' 
+                'message' => 'Erreur lors de l\'enregistrement d\'une vente'
             ]);
         }
     }
@@ -1094,7 +1385,7 @@ class DashboardController extends Controller
     }
 
     public function ajouter_vente_api(){
-         
+
     }
 
     public function liste_remises_api () {
@@ -1151,7 +1442,7 @@ class DashboardController extends Controller
             return response()->json([
                 'message' => 'Erreur lors de l\'enregistrement d\'une remise'
             ]);
-        } 
+        }
     }
 
     public function retourner_remise_produit(Request $request, $id){

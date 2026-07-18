@@ -5,7 +5,7 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <h2 class="text-2xl font-bold text-gray-800">Liste des Produits</h2>
 
-            
+
             <div class="flex gap-3">
                 <button onclick="openModal('addPhoneBrandModal')"
                     class="inline-flex items-center justify-center w-12 h-12 text-white rounded-full shadow-lg bg-blue-700 hover:bg-blue-800 transition">
@@ -228,7 +228,7 @@
                             </tr>
                             @endforelse
                         </tbody>
-                
+
                     </table>
                 </div>
                 <!-- Pagination -->
@@ -332,7 +332,7 @@
                             </tr>
                             @endforelse
                         </tbody>
-                
+
                     </table>
                 </div>
                 <!-- Pagination -->
@@ -400,11 +400,11 @@
                     <!-- Modèle -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2" for="">Modèle</label>
-                        <input 
-                            type="text" 
-                            name="modele" 
+                        <input
+                            type="text"
+                            name="modele"
                             id="addElectronicsModele"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Ex: A465DF67"
                             required
                             oninput="validateAddElectronicsForm()"
@@ -414,11 +414,11 @@
                     <!-- Numéro série -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2" for="">Numéro série</label>
-                        <input 
-                            type="text" 
-                            name="numero_serie" 
+                        <input
+                            type="text"
+                            name="numero_serie"
                             id="addElectronicsNumberSerie"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Ex: A465DF67"
                             required
                             oninput="validateAddElectronicsForm()"
@@ -477,7 +477,7 @@
                 <button type="submit" form="addElectronicsForm" id="addElectronicsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
             </div>
         </div>
-    </div> 
+    </div>
 
     <!-- Modal Modifier Appareil Électronique -->
     <div id="editElectronicsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -493,6 +493,7 @@
             <form action="{{ route('modifier-produit', ['id' => '__id__']) }}" method="POST" class="p-6 space-y-4" id="editElectronicsForm">
                 @csrf
                 @method('POST')
+                <input type="hidden" name="produit_unite_id" id="editElectronicsUnitId">
                 <input type="hidden" name="categorie_id" value="{{ $categories->where('nom', 'Électronique')->first()->id ?? 1 }}">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du produit</label>
@@ -507,21 +508,39 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente (€)</label>
-                    <input type="number" name="prix_vente" step="0.01" id="editElectronicsPrice" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditElectronicsForm()">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="block text-sm font-semibold text-gray-700 mb-2">Modèle</label>
+                        <input type="text" name="modele" id="editElectronicsModele" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditElectronicsForm()">
+                    </div>
+                    <div>
+                        <label for="block text-sm font-semibold text-gray-700 mb-2">Numéro série</label>
+                        <input type="text" name="numero_serie" id="editElectronicsSerialNumber" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditElectronicsForm()">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
-                    <input type="number" name="stock" id="editElectronicsStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditElectronicsForm()">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Prix d'achat ($)</label>
+                        <input type="number" name="prix_achat" step="0.01" id="editElectronicsVente" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditElectronicsForm()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente ($)</label>
+                        <input type="number" name="prix_vente" step="0.01" id="editElectronicsPrice" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditElectronicsForm()">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
-                    <select name="status" id="editElectronicsStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditElectronicsForm()">
-                        <option value="available">Disponible</option>
-                        <option value="low_stock">Faible stock</option>
-                        <option value="out_of_stock">Rupture</option>
-                    </select>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
+                        <input type="number" name="stock" id="editElectronicsStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditElectronicsForm()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
+                        <select name="statut" id="editElectronicsStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditElectronicsForm()">
+                            <option value="en_stock">Disponible</option>
+                            <option value="en_stock">Faible stock</option>
+                            <option value="en_stock">Rupture</option>
+                        </select>
+                    </div>
                 </div>
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
@@ -773,7 +792,7 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente (FC)</label>
                         <input type="number" name="prix_vente" id="addToolsSalePrice" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 7500 FC" required oninput="validateAddToolsForm()">
                     </div>
-                   
+
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
                         <input type="number" name="quantite" id="addToolsSaleQuantity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 10" required oninput="validateAddToolsForm()">
@@ -820,7 +839,7 @@
             const modal = document.getElementById(modalId);
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            
+
             // Réinitialiser le formulaire d'ajout quand on ouvre le modal
             if (modalId === 'addElectronicsModal') {
                 document.getElementById('addElectronicsForm').reset();
@@ -855,7 +874,7 @@
             const purchasePrice = document.getElementById('addElectronicsPurchasePrice').value;
             const salePrice = document.getElementById('addElectronicsSalePrice').value;
             const addBtn = document.getElementById('addElectronicsBtn');
-            
+
             if (name && brand && modele && numberSerie && salePrice && purchasePrice) {
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -874,7 +893,7 @@
             const purchasePrice = document.getElementById('addShoesSalePurchasePrice').value;
             const salePrice = document.getElementById('addShoesSalePrice').value;
             const addBtn = document.getElementById('addShoesBtn');
-            
+
             if (name && brand && modele && taille && purchasePrice && salePrice ) {
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -908,7 +927,7 @@
             const name = document.getElementById('addPhoneBrandName').value.trim();
             const description = document.getElementById('addPhoneBrandDescription').value.trim();
             const addBtn = document.getElementById('addPhoneBrandBtn');
-            
+
             if (name && description) {
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -923,7 +942,7 @@
             const name = document.getElementById('addShoeBrandName').value.trim();
             const description = document.getElementById('addShoeBrandDescription').value.trim();
             const addBtn = document.getElementById('addShoeBrandBtn');
-            
+
             if (name && description) {
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -935,14 +954,21 @@
 
         // Validation formulaire Modifier Appareil Électronique
         function validateEditElectronicsForm() {
-            const name = document.getElementById('editElectronicsName').value.trim();
-            const brand = document.getElementById('editElectronicsBrand').value;
-            const price = document.getElementById('editElectronicsPrice').value;
-            const stock = document.getElementById('editElectronicsStock').value;
-            const status = document.getElementById('editElectronicsStatus').value;
+            const name = document.getElementById('editElectronicsName')?.value.trim() || '';
+            const brand = document.getElementById('editElectronicsBrand')?.value || '';
+            const modele = document.getElementById('editElectronicsModele')?.value.trim() || '';
+            const numberSerie = document.getElementById('editElectronicsSerialNumber')?.value.trim() || '';
+            const prix = document.getElementById('editElectronicsVente')?.value;
+            const price = document.getElementById('editElectronicsPrice')?.value;
+            const stock = document.getElementById('editElectronicsStock')?.value;
+            const status = document.getElementById('editElectronicsStatus')?.value || '';
             const editBtn = document.getElementById('editElectronicsBtn');
-            
-            if (name && brand && price && stock && status) {
+
+            // Vérifie que les champs texte ne sont pas vides et que les champs numériques ont une valeur
+            const hasTextFields = name && brand && modele && numberSerie && status;
+            const hasNumericFields = (prix !== undefined && prix !== '') && (price !== undefined && price !== '') && (stock !== undefined && stock !== '');
+
+            if (hasTextFields && hasNumericFields) {
                 editBtn.disabled = false;
                 editBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
@@ -960,7 +986,7 @@
             const stock = document.getElementById('editShoesStock').value;
             const status = document.getElementById('editShoesStatus').value;
             const editBtn = document.getElementById('editShoesBtn');
-            
+
             if (name && brand && size && price && stock && status) {
                 editBtn.disabled = false;
                 editBtn.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -981,7 +1007,7 @@
                     document.getElementById('viewElectronicsBrand').textContent = data.marque ? data.marque.nom : '-';
                     document.getElementById('viewElectronicsPrice').textContent = number_format(data.prix_vente, 2, ',', ' ') + ' €';
                     document.getElementById('viewElectronicsStock').textContent = data.stock;
-                    
+
                     let statusText = 'Disponible';
                     let statusClass = 'bg-green-100 text-green-800';
                     if (data.status === 'low_stock') {
@@ -991,11 +1017,11 @@
                         statusText = 'Rupture';
                         statusClass = 'bg-red-100 text-red-800';
                     }
-                    
+
                     const statusElement = document.getElementById('viewElectronicsStatus');
                     statusElement.textContent = statusText;
                     statusElement.className = `px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}`;
-                    
+
                     openModal('viewElectronicsModal');
                 })
                 .catch(error => console.error('Error fetching product:', error));
@@ -1008,14 +1034,21 @@
                 .then(data => {
                     document.getElementById('editElectronicsName').value = data.nom;
                     document.getElementById('editElectronicsBrand').value = data.marque_id;
+                    document.getElementById('editElectronicsModele').value = data.modele;
+                    document.getElementById('editElectronicsSerialNumber').value = data.numero_serie;
+                    // Set the produit_unite id so we update the correct row
+                    if (document.getElementById('editElectronicsUnitId')) {
+                        document.getElementById('editElectronicsUnitId').value = data.produit_unite_id || '';
+                    }
+                    document.getElementById('editElectronicsVente').value = data.prix_achat;
                     document.getElementById('editElectronicsPrice').value = data.prix_vente;
                     document.getElementById('editElectronicsStock').value = data.stock;
                     document.getElementById('editElectronicsStatus').value = data.status;
-                    
+
                     // Update form action with correct ID
                     const form = document.getElementById('editElectronicsForm');
                     form.action = form.action.replace('__id__', id);
-                    
+
                     openModal('editElectronicsModal');
                     validateEditElectronicsForm();
                 })
@@ -1041,7 +1074,7 @@
                     document.getElementById('viewShoesSize').textContent = data.taille || '-';
                     document.getElementById('viewShoesPrice').textContent = number_format(data.prix_vente, 2, ',', ' ') + ' €';
                     document.getElementById('viewShoesStock').textContent = data.stock;
-                    
+
                     let statusText = 'Disponible';
                     let statusClass = 'bg-green-100 text-green-800';
                     if (data.status === 'low_stock') {
@@ -1051,11 +1084,11 @@
                         statusText = 'Rupture';
                         statusClass = 'bg-red-100 text-red-800';
                     }
-                    
+
                     const statusElement = document.getElementById('viewShoesStatus');
                     statusElement.textContent = statusText;
                     statusElement.className = `px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}`;
-                    
+
                     openModal('viewShoesModal');
                 })
                 .catch(error => console.error('Error fetching product:', error));
@@ -1072,11 +1105,11 @@
                     document.getElementById('editShoesPrice').value = data.prix_vente;
                     document.getElementById('editShoesStock').value = data.stock;
                     document.getElementById('editShoesStatus').value = data.status;
-                    
+
                     // Update form action with correct ID
                     const form = document.getElementById('editShoesForm');
                     form.action = form.action.replace('__id__', id);
-                    
+
                     openModal('editShoesModal');
                     validateEditShoesForm();
                 })
@@ -1167,7 +1200,7 @@
             </div>
             <form action="{{ route('changer-statut-vendu', ['id' => '__id__']) }}" method="POST" class="p-6 space-y-4" id="venteForm">
                 @csrf
-                
+
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du client</label>
                     <input type="text" name="nom_client" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Jean Dupont" required>
