@@ -41,16 +41,38 @@ class DashboardController extends Controller
         }
 
         // Ventes électroniques
-        $ventes_electroniques = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
-            $q->where('categorie_id', 1);
-        })->get();
+        // $ventes_electroniques = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
+        //     $q->where('categorie_id', 1);
+        // })->get();
+
+        // $electroniques_sales_value = $ventes_electroniques->sum('total');
+        // $electroniques_sales_quantity = DB::table('vente_details')
+        //     ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+        //     ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+        //     ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+        //     ->where('produits.categorie_id', 1)
+        //     ->sum('vente_details.quantite');
+
+        // Ventes électroniques
+        $debutMois = Carbon::now()->startOfMonth();
+        $finMois = Carbon::now()->endOfMonth();
+
+        // Ventes électroniques du mois en cours
+        $ventes_electroniques = Ventes::whereBetween('created_at', [$debutMois, $finMois])
+            ->whereHas('ventedetails.produitUnite.produit', function ($q) {
+                $q->where('categorie_id', 1);
+            })
+            ->get();
 
         $electroniques_sales_value = $ventes_electroniques->sum('total');
+
+        // Quantité vendue du mois en cours
         $electroniques_sales_quantity = DB::table('vente_details')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
             ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
             ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
             ->where('produits.categorie_id', 1)
+            ->whereBetween('ventes.created_at', [$debutMois, $finMois])
             ->sum('vente_details.quantite');
 
         // Ventes journalières électroniques
@@ -66,6 +88,17 @@ class DashboardController extends Controller
             ->where('produits.categorie_id', 1)
             ->whereDate('ventes.date_vente', today())
             ->sum('vente_details.quantite');
+
+        // Bénéfice journalier électronique
+        $electroniques_daily_profit = VenteDetails::selectRaw(
+            'SUM(vente_details.total - (COALESCE(produits.prix_achat, 0) * vente_details.quantite)) as benefice'
+        )
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('produits.categorie_id', 1)
+            ->whereDate('ventes.date_vente', today())
+            ->value('benefice') ?? 0;
 
         // Remises électroniques
         $electroniques_remises = Remises::whereHas('produitRemise', function($q) {
@@ -92,16 +125,32 @@ class DashboardController extends Controller
         }
 
         // Ventes chaussures
-        $ventes_chaussures = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
-            $q->where('categorie_id', 2);
-        })->get();
+        // $ventes_chaussures = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
+        //     $q->where('categorie_id', 2);
+        // })->get();
+
+        // $chaussures_sales_value = $ventes_chaussures->sum('total');
+        // $chaussures_sales_quantity = DB::table('vente_details')
+        //     ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+        //     ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+        //     ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+        //     ->where('produits.categorie_id', 2)
+        //     ->sum('vente_details.quantite');
+        // Ventes chaussures
+        $ventes_chaussures = Ventes::whereBetween('created_at', [$debutMois, $finMois])
+            ->whereHas('ventedetails.produitUnite.produit', function ($q) {
+                $q->where('categorie_id', 2);
+            })
+            ->get();
 
         $chaussures_sales_value = $ventes_chaussures->sum('total');
+
         $chaussures_sales_quantity = DB::table('vente_details')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
             ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
             ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
             ->where('produits.categorie_id', 2)
+            ->whereBetween('ventes.created_at', [$debutMois, $finMois])
             ->sum('vente_details.quantite');
 
         // Ventes journalières chaussures
@@ -117,6 +166,17 @@ class DashboardController extends Controller
             ->where('produits.categorie_id', 2)
             ->whereDate('ventes.date_vente', today())
             ->sum('vente_details.quantite');
+
+        // Bénéfice journalier chaussure
+        $chaussures_daily_profit = VenteDetails::selectRaw(
+            'SUM(vente_details.total - (COALESCE(produits.prix_achat, 0) * vente_details.quantite)) as benefice'
+        )
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('produits.categorie_id', 2)
+            ->whereDate('ventes.date_vente', today())
+            ->value('benefice') ?? 0;
 
         // Remises chaussures
         $chaussures_remises = Remises::whereHas('produitRemise', function($q) {
@@ -143,7 +203,8 @@ class DashboardController extends Controller
         }
 
         // Ventes accessoires
-        $ventes_accessoires = Ventes::whereHas('ventedetails.produitUnite.produit', function($q) {
+        $ventes_accessoires = Ventes::whereBetween('created_at', [$debutMois, $finMois])
+            ->whereHas('ventedetails.produitUnite.produit', function($q) {
             $q->where('categorie_id', 3);
         })->get();
 
@@ -153,6 +214,7 @@ class DashboardController extends Controller
             ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
             ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
             ->where('produits.categorie_id', 3)
+            ->whereBetween('ventes.created_at', [$debutMois, $finMois])
             ->sum('vente_details.quantite');
 
         // Ventes journalières accessoires
@@ -168,6 +230,17 @@ class DashboardController extends Controller
             ->where('produits.categorie_id', 3)
             ->whereDate('ventes.date_vente', today())
             ->sum('vente_details.quantite');
+
+        // Bénéfice journalier chaussure
+        $accessoires_daily_profit = VenteDetails::selectRaw(
+            'SUM(vente_details.total - (COALESCE(produits.prix_achat, 0) * vente_details.quantite)) as benefice'
+        )
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('produits.categorie_id', 3)
+            ->whereDate('ventes.date_vente', today())
+            ->value('benefice') ?? 0;
 
         // Remises accessoires
         $accessoires_remises = Remises::whereHas('produitRemise', function($q) {
@@ -189,6 +262,7 @@ class DashboardController extends Controller
             'electroniques_sales_quantity',
             'electroniques_daily_sales',
             'electroniques_daily_quantity',
+            'electroniques_daily_profit',
             'electroniques_remises',
             'electroniques_remises_quantity',
             'chaussures_stock_value',
@@ -197,6 +271,7 @@ class DashboardController extends Controller
             'chaussures_sales_quantity',
             'chaussures_daily_sales',
             'chaussures_daily_quantity',
+            'chaussures_daily_profit',
             'chaussures_remises',
             'chaussures_remises_quantity',
             'accessoires_stock_value',
@@ -205,6 +280,7 @@ class DashboardController extends Controller
             'accessoires_sales_quantity',
             'accessoires_daily_sales',
             'accessoires_daily_quantity',
+            'accessoires_daily_profit',
             'accessoires_remises',
             'accessoires_remises_quantity',
             'dernieres_ventes'
@@ -390,7 +466,7 @@ class DashboardController extends Controller
     //*************** La mecanique concernant la gestion des produits CRUD */
 
     //// 1. Lecture des donnees de la liste des produits
-    public function produits()
+    public function produits(Request $request)
     {
         $dernierId = ProduitUnites::max('id');
         $numeros = ($dernierId ?? 0) + 1;
@@ -399,18 +475,45 @@ class DashboardController extends Controller
         $numero_accesoire = ($dernierId ?? 0) + 1;
         $reference_accesoire = 'ACCESOIRE-' .str_pad($numero_accesoire, 3, '0', STR_PAD_LEFT);
 
+        $recherche = trim($request->input('recherche', ''));
+        $statut = $request->input('statut');
+
+        $appliquerFiltres = function ($query) use ($recherche, $statut) {
+            if ($recherche !== '') {
+                $query->where(function ($query) use ($recherche) {
+                    $query->where('nom', 'like', "%{$recherche}%")
+                        ->orWhere('modele', 'like', "%{$recherche}%")
+                        ->orWhereHas('marque', function ($query) use ($recherche) {
+                            $query->where('nom', 'like', "%{$recherche}%");
+                        })
+                        ->orWhereHas('produitUnites', function ($query) use ($recherche) {
+                            $query->where('numero_serie', 'like', "%{$recherche}%");
+                        });
+                });
+            }
+
+            if (in_array($statut, ['vendu', 'en_stock'], true)) {
+                $query->whereHas('produitUnites', function ($query) use ($statut) {
+                    $query->where('statut', $statut);
+                });
+            }
+        };
+
         $produits_electroniques = Produits::with(['categorie', 'marque','produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 1)
+            ->tap($appliquerFiltres)
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->paginate(10, ['*'], 'electroniques_page');
 
         $chaussures = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 2)
-            ->paginate(10);
+            ->tap($appliquerFiltres)
+            ->paginate(10, ['*'], 'chaussures_page');
 
         $accessoires = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 3)
-            ->paginate(10);
+            ->tap($appliquerFiltres)
+            ->paginate(10, ['*'], 'accessoires_page');
 
         $categories = Categories::all();
         $marques_electroniques = Marques::where('categorie_id', '=', 1)->get();
@@ -419,7 +522,7 @@ class DashboardController extends Controller
 
         $liste_categories = Categories::orderBy('nom', 'asc')->get();
 
-        return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'accessoires', 'categories', 'marques_electroniques', 'marques_chaussures', 'marques_accessoires', 'reference', 'reference_accesoire', 'liste_categories'));
+        return view('pages.liste-produits', compact('produits_electroniques', 'chaussures', 'accessoires', 'categories', 'marques_electroniques', 'marques_chaussures', 'marques_accessoires', 'reference', 'reference_accesoire', 'liste_categories', 'recherche', 'statut'));
     }
 
     // Ajout d'un produit
@@ -1130,16 +1233,29 @@ class DashboardController extends Controller
         $details_ventes = $detailsQuery->orderByDesc('ventes.created_at')->paginate(10);
 
         // Statistiques financières - devise_id 1 ($)
-        $somme_ventes_dollar = Ventes::where('devise_id', 1)->sum('total');
+        // $somme_ventes_dollar = Ventes::where('devise_id', 1)->sum('total');
+        $debutMois = Carbon::now()->startOfMonth();
+        $finMois = Carbon::now()->endOfMonth();
+
+        $somme_ventes_dollar = Ventes::where('devise_id', 1)
+            ->whereBetween('created_at', [$debutMois, $finMois])
+            ->sum('total');
         $ventes_aujourdhui = Ventes::whereDate('created_at', today())->count();
         $remises_aujourdhui = Remises::whereDate('created_at', today())->count();
 
         // Bénéfice total pour devise_id 1 ($)
+        // $benefice_total_dollar = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
+        //     ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+        //     ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+        //     ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+        //     ->where('ventes.devise_id', 1)
+        //     ->value('benefice') ?? 0;
         $benefice_total_dollar = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
             ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
             ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
             ->where('ventes.devise_id', 1)
+            ->whereBetween('ventes.created_at', [$debutMois, $finMois])
             ->value('benefice') ?? 0;
 
         $ventes_dollar_count = Ventes::where('devise_id', 1)->count();
@@ -1156,7 +1272,9 @@ class DashboardController extends Controller
             ->first();
 
         // Statistiques financières - devise_id 2 (FC)
-        $somme_ventes_fc = Ventes::where('devise_id', 2)->sum('total');
+        $somme_ventes_fc = Ventes::where('devise_id', 2)
+            ->whereBetween('created_at', [$debutMois, $finMois])
+            ->sum('total');
 
         // Bénéfice total pour devise_id 2 (FC)
         $benefice_total_fc = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
@@ -1164,6 +1282,7 @@ class DashboardController extends Controller
             ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
             ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
             ->where('ventes.devise_id', 2)
+            ->whereBetween('ventes.created_at', [$debutMois, $finMois])
             ->value('benefice') ?? 0;
 
         $ventes_fc_count = Ventes::where('devise_id', 2)->count();

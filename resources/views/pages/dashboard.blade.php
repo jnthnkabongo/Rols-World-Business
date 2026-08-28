@@ -19,16 +19,16 @@
         </div>
 
         <!-- Stats Cards Electroniques -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 md:gap-6 mb-6 md:mb-8">
             <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-blue-100 text-xs md:text-sm font-medium">Stock Électroniques</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ number_format($electroniques_stock_value, 2, ',', ' ') }} $</p>
+                        <p class="text-white text-xs md:text-sm font-medium">Stock Électroniques</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ number_format($electroniques_stock_value, 2, ',', ' ') }} $</p>
                         <p class="text-blue-100 text-xs mt-1">{{ $electroniques_stock_quantity }} pièces</p>
                     </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-laptop text-white text-xl md:text-2xl"></i>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-laptop text-white text-xl md:text-xl"></i>
                     </div>
                 </div>
             </div>
@@ -37,21 +37,157 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-green-100 text-xs md:text-sm font-medium">Ventes Électroniques</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ number_format($electroniques_sales_value, 2, ',', ' ') }} $</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ number_format($electroniques_sales_value, 2, ',', ' ') }} $</p>
                         <p class="text-green-100 text-xs mt-1">{{ $electroniques_sales_quantity }} pièces</p>
                     </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-shopping-bag text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-xs md:text-sm font-medium">Ventes Journalières</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ number_format($electroniques_daily_sales, 2, ',', ' ') }} $</p>
+                        <p class="text-purple-100 text-xs mt-1">{{ $electroniques_daily_quantity }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-calendar-day text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-xs md:text-sm font-medium">Bénefice Journalier</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ number_format($electroniques_daily_profit, 2, ',', ' ') }} $</p>
+                        <p class="text-purple-100 text-xs mt-1">{{ $electroniques_daily_quantity }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
                         <i class="fas fa-chart-line text-white text-xl md:text-2xl"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-gradient-to-br from-purple-400 to-purple-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+            <div class="bg-gradient-to-br from-red-400 to-red-700 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-purple-100 text-xs md:text-sm font-medium">Ventes Journalières</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ number_format($electroniques_daily_sales, 2, ',', ' ') }} $</p>
-                        <p class="text-purple-100 text-xs mt-1">{{ $electroniques_daily_quantity }} pièces</p>
+                        <p class="text-orange-100 text-xs md:text-sm font-medium">Remises Électroniques</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ $electroniques_remises }}</p>
+                        <p class="text-orange-100 text-xs mt-1">{{ $electroniques_remises_quantity }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-exchange-alt text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Chaussures -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 md:gap-6 mb-6 md:mb-8">
+            <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-indigo-100 text-xs md:text-sm font-medium">Stock Chaussures</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ number_format($chaussures_stock_value, 2, ',', ' ') }} $</p>
+                        <p class="text-indigo-100 text-xs mt-1">{{ $chaussures_stock_quantity }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-shoe-prints text-white text-xl md:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-green-400 to-green-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-teal-100 text-xs md:text-sm font-medium">Ventes Chaussures</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ number_format($chaussures_sales_value, 2, ',', ' ') }} $</p>
+                        <p class="text-teal-100 text-xs mt-1">{{ $chaussures_sales_quantity }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-shopping-bag text-white text-xl md:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-teal-100 text-xs md:text-sm font-medium">Ventes Journalier</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ number_format($chaussures_sales_value, 2, ',', ' ') }} $</p>
+                        <p class="text-teal-100 text-xs mt-1">{{ $chaussures_sales_quantity }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-calendar-day text-white text-xl md:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-pink-100 text-xs md:text-sm font-medium">Bénefice Journalières</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ number_format($chaussures_daily_profit, 2, ',', ' ') }} $</p>
+                        <p class="text-pink-100 text-xs mt-1">{{ $chaussures_daily_profit }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-chart-line text-white text-xl md:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-red-400 to-red-700 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-rose-100 text-xs md:text-sm font-medium">Remises Chaussures</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ $chaussures_remises }}</p>
+                        <p class="text-rose-100 text-xs mt-1">{{ $chaussures_remises_quantity }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-exchange-alt text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Accessoires -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 md:gap-6 mb-6 md:mb-8">
+            <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white text-xs md:text-sm font-medium">Stock Accessoires</p>
+                        <p class="text-lg md:text-md font-bold text-white mt-1">{{ number_format($accessoires_stock_value, 2, ',', ' ') }} FC</p>
+                        <p class="text-white text-xs mt-1">{{ $accessoires_stock_quantity }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-mobile-alt text-white text-xl md:text-xl"></i><i class="fas fa-plug text-white text-xl md:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-green-400 to-green-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white text-xs md:text-sm font-medium">Ventes Accessoires</p>
+                        <p class="text-lg md:text-md font-bold text-white mt-1">{{ number_format($accessoires_sales_value, 2, ',', ' ') }} FC</p>
+                        <p class="text-white text-xs mt-1">{{ $accessoires_sales_quantity }} pièces</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-shopping-bag text-white text-xl md:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-lime-100 text-xs md:text-sm font-medium">Ventes Journalières</p>
+                        <p class="text-lg md:text-md font-bold text-white mt-1">{{ number_format($accessoires_daily_sales, 2, ',', ' ') }} FC</p>
+                        <p class="text-lime-100 text-xs mt-1">{{ $accessoires_daily_quantity }} pièces</p>
                     </div>
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
                         <i class="fas fa-calendar-day text-white text-xl md:text-2xl"></i>
@@ -62,122 +198,25 @@
             <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-orange-100 text-xs md:text-sm font-medium">Remises Électroniques</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ $electroniques_remises }}</p>
-                        <p class="text-orange-100 text-xs mt-1">{{ $electroniques_remises_quantity }} pièces</p>
+                        <p class="text-teal-100 text-xs md:text-sm font-medium">Bénefie Journalier</p>
+                        <p class="text-lg md:text-md font-bold text-white mt-1">{{ number_format($accessoires_daily_profit, 2, ',', ' ') }} FC</p>
+                        <p class="text-teal-100 text-xs mt-1">{{ $accessoires_daily_profit }} pièces</p>
                     </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-exchange-alt text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stats Cards Chaussures -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-            <div class="bg-gradient-to-br from-indigo-400 to-indigo-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-indigo-100 text-xs md:text-sm font-medium">Stock Chaussures</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ number_format($chaussures_stock_value, 2, ',', ' ') }} $</p>
-                        <p class="text-indigo-100 text-xs mt-1">{{ $chaussures_stock_quantity }} pièces</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-shoe-prints text-white text-xl md:text-2xl"></i>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-chart-line text-white text-xl md:text-xl"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-gradient-to-br from-teal-400 to-teal-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-teal-100 text-xs md:text-sm font-medium">Ventes Chaussures</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ number_format($chaussures_sales_value, 2, ',', ' ') }} $</p>
-                        <p class="text-teal-100 text-xs mt-1">{{ $chaussures_sales_quantity }} pièces</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-shopping-bag text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-pink-400 to-pink-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-pink-100 text-xs md:text-sm font-medium">Ventes Journalières</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ number_format($chaussures_daily_sales, 2, ',', ' ') }} $</p>
-                        <p class="text-pink-100 text-xs mt-1">{{ $chaussures_daily_quantity }} pièces</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-clock text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-rose-400 to-rose-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-rose-100 text-xs md:text-sm font-medium">Remises Chaussures</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ $chaussures_remises }}</p>
-                        <p class="text-rose-100 text-xs mt-1">{{ $chaussures_remises_quantity }} pièces</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-exchange-alt text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stats Cards Accessoires -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-            <div class="bg-gradient-to-br from-amber-400 to-amber-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-amber-100 text-xs md:text-sm font-medium">Stock Accessoires</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ number_format($accessoires_stock_value, 2, ',', ' ') }} FC</p>
-                        <p class="text-amber-100 text-xs mt-1">{{ $accessoires_stock_quantity }} pièces</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-mobile-alt text-white text-xl md:text-2xl"></i><i class="fas fa-plug text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-cyan-400 to-cyan-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-cyan-100 text-xs md:text-sm font-medium">Ventes Accessoires</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ number_format($accessoires_sales_value, 2, ',', ' ') }} FC</p>
-                        <p class="text-cyan-100 text-xs mt-1">{{ $accessoires_sales_quantity }} pièces</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-tag text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-lime-400 to-lime-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-lime-100 text-xs md:text-sm font-medium">Ventes Journalières</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ number_format($accessoires_daily_sales, 2, ',', ' ') }} FC</p>
-                        <p class="text-lime-100 text-xs mt-1">{{ $accessoires_daily_quantity }} pièces</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-calendar-check text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-fuchsia-400 to-fuchsia-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+            <div class="bg-gradient-to-br from-red-400 to-red-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-fuchsia-100 text-xs md:text-sm font-medium">Remises Accessoires</p>
-                        <p class="text-lg md:text-2xl font-bold text-white mt-1">{{ $accessoires_remises }}</p>
+                        <p class="text-lg md:text-xl font-bold text-white mt-1">{{ $accessoires_remises }}</p>
                         <p class="text-fuchsia-100 text-xs mt-1">{{ $accessoires_remises_quantity }} pièces</p>
                     </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-exchange-alt text-white text-xl md:text-2xl"></i>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-exchange-alt text-white text-xl md:text-xl"></i>
                     </div>
                 </div>
             </div>

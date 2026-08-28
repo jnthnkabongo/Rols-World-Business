@@ -19,6 +19,38 @@
             </div>
         </div>
 
+        <form method="GET" action="{{ route('liste-produits') }}" class="bg-white rounded-2xl shadow-lg p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="md:col-span-2 relative">
+                    <label for="recherche" class="sr-only">Rechercher un produit</label>
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="search" name="recherche" id="recherche" value="{{ $recherche }}"
+                        placeholder="Rechercher par nom, marque, modèle ou numéro de série"
+                        class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex gap-3">
+                    <div class="flex-1">
+                        <label for="statut" class="sr-only">Filtrer par état</label>
+                        <select name="statut" id="statut" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Tous les états</option>
+                            <option value="en_stock" @selected($statut === 'en_stock')>En stock</option>
+                            <option value="vendu" @selected($statut === 'vendu')>Vendu</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="inline-flex items-center justify-center gap-2 px-5 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-filter"></i>
+                        <span>Filtrer</span>
+                    </button>
+                </div>
+            </div>
+            @if($recherche !== '' || $statut)
+                <a href="{{ route('liste-produits') }}" class="inline-flex items-center gap-2 mt-3 text-sm text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-times"></i>
+                    Réinitialiser les filtres
+                </a>
+            @endif
+        </form>
+
         <!-- Onglets -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div class="border-b border-gray-200">
@@ -315,7 +347,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <button onclick="openEditShoesModal({{ $accesoire->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
+                                        <button onclick="openEditToolsModal({{ $accesoire->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button onclick="openDeleteShoesModal({{ $accesoire->id }})" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
@@ -649,6 +681,7 @@
             <form action="{{ route('modifier-produit', ['id' => '__id__']) }}" method="POST" class="p-6 space-y-4" id="editShoesForm">
                 @csrf
                 @method('POST')
+                <input type="hidden" name="produit_id" id="editShoesUnitId">
                 <input type="hidden" name="categorie_id" value="{{ $categories->where('nom', 'Chaussures')->first()->id ?? 2 }}">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du produit</label>
@@ -663,21 +696,48 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Taille</label>
-                    <input type="text" name="taille" id="editShoesSize" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="validateEditShoesForm()">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                       <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Modèle</label>
+                            <input type="text" name="modele" id="editShoesModele" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="validateEditShoesForm()">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Taille</label>
+                        <input type="text" name="taille" id="editShoesSize" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="validateEditShoesForm()">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente (€)</label>
-                    <input type="number" name="prix_vente" step="0.01" id="editShoesPrice" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditShoesForm()">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité de stock</label>
+                        <input type="text" name="stock" id="editShoesStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="validateEditShoesForm()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Numéro série</label>
+                        <input type="text" name="numero_serie" id="editShoesSerialNumber" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditShoesForm()">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
-                    <input type="number" name="stock" id="editShoesStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditShoesForm()">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Prix d'achat ($)</label>
+                        <input type="number" name="prix_achat" step="0.01" id="editShoesVente" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditShoesForm()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente ($)</label>
+                        <input type="number" name="prix_vente" step="0.01" id="editShoesPrice" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditShoesForm()">
+                    </div>
                 </div>
+                {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
+                        <input type="number" name="stock" id="editShoesStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditShoesForm()">
+                    </div>
+
+                </div> --}}
+
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
-                    <select name="status" id="editShoesStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditShoesForm()">
+                    <select name="status" id="editShoesStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 invisible" required onchange="validateEditShoesForm()">
                         <option value="available">Disponible</option>
                         <option value="low_stock">Faible stock</option>
                         <option value="out_of_stock">Rupture</option>
@@ -810,6 +870,74 @@
                     <button type="submit" form="addToolsForm" id="addToolsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Ajouter</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal Modifier Accesoire -->
+    <div id="editToolsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">Modifier l'accesoire</h3>
+                    <button onclick="closeModal('editToolsModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form action="{{ route('modifier-produit', ['id' => '__id__']) }}" method="POST" class="p-6 space-y-4" id="editToolsForm">
+                @csrf
+                @method('POST')
+                <input type="hidden" name="produit_id" id="editToolsUnitId">
+                <input type="hidden" name="categorie_id" value="{{ $categories->where('nom', 'Accesoires')->first()->id ?? 3 }}">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du produit</label>
+                    <input type="text" name="nom" id="editToolsName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditToolsForm()">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Marque</label>
+                    <select name="marque_id" id="editToolsBrand" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="validateEditToolsForm()">
+                        <option value="">Sélectionner...</option>
+                        @foreach($marques_accessoires as $marque)
+                            <option value="{{ $marque->id }}">{{ $marque->nom }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Modèle</label>
+                    <input type="text" name="modele" id="editToolsModele" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditToolsForm()">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Prix d'achat (FC)</label>
+                        <input type="number" name="prix_achat" step="0.01" id="editToolsVente" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditToolsForm()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente (FC)</label>
+                        <input type="number" name="prix_vente" step="0.01" id="editToolsPrice" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditToolsForm()">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Numéro série</label>
+                        <input type="text" name="numero_serie" step="0.01" id="editToolsSerialNumers" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditToolsForm()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
+                        <input type="number" name="stock" step="0.01" id="editToolsStock" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required oninput="validateEditToolsForm()">
+                    </div>
+                </div>
+                <div>
+                    <select name="status" id="editToolsStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 invisible" required onchange="validateEditToolsForm()">
+                        <option value="available">Disponible</option>
+                        <option value="low_stock">Faible stock</option>
+                        <option value="out_of_stock">Rupture</option>
+                    </select>
+                </div>
+            </form>
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <button onclick="closeModal('editToolsModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+                <button type="submit" form="editToolsForm" id="editToolsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Modifier</button>
+            </div>
         </div>
     </div>
 
@@ -979,15 +1107,37 @@
 
         // Validation formulaire Modifier Chaussure
         function validateEditShoesForm() {
-            const name = document.getElementById('editShoesName').value.trim();
-            const brand = document.getElementById('editShoesBrand').value;
+            const name = document.getElementById('editShoesName')?.value.trim() || '';
+            const brand = document.getElementById('editShoesBrand')?.value || '';
+            const modele = document.getElementById('editShoesModele')?.value.trim() || '';
             const size = document.getElementById('editShoesSize').value;
-            const price = document.getElementById('editShoesPrice').value;
             const stock = document.getElementById('editShoesStock').value;
+            const numberSeries = document.getElementById('editShoesSerialNumber')?.value.trim() || '';
+            const price = document.getElementById('editShoesPrice').value;
+            const vente = document.getElementById('editShoesVente').value;
             const status = document.getElementById('editShoesStatus').value;
             const editBtn = document.getElementById('editShoesBtn');
 
-            if (name && brand && size && price && stock && status) {
+            if (name && brand && modele && size && stock && numberSeries && price && vente && status) {
+                editBtn.disabled = false;
+                editBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                editBtn.disabled = true;
+                editBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        //Validation formulaire Modifier Accesoire
+        function validateEditToolsForm(){
+            const name = document.getElementById('editToolsName')?.value.trim() || '';
+            const brand = document.getElementById('editToolsBrand')?.value || '';
+            const modele = document.getElementById('editToolsModele')?.value || '';
+            const vente = document.getElementById('editToolsVente').value;
+            const price = document.getElementById('editToolsPrice').value;
+            const status = document.getElementById('editToolsStatus').value;
+            const editBtn = document.getElementById('editToolsBtn');
+
+            if (name && brand && modele && vente && price && status) {
                 editBtn.disabled = false;
                 editBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
@@ -1027,6 +1177,7 @@
                 .catch(error => console.error('Error fetching product:', error));
         }
 
+        // Fonction ouvertureModal Modification Electronics
         function openEditElectronicsModal(id) {
             // Fetch product data from server
             fetch(`{{ route('get-product-data', ['id' => '__id__']) }}`.replace('__id__', id))
@@ -1055,6 +1206,7 @@
                 .catch(error => console.error('Error fetching product:', error));
         }
 
+        // Fonction ouvertureModal suppression Electronics
         function openDeleteElectronicsModal(id) {
             // Update form action with correct ID
             const form = document.getElementById('deleteElectronicsForm');
@@ -1101,9 +1253,16 @@
                 .then(data => {
                     document.getElementById('editShoesName').value = data.nom;
                     document.getElementById('editShoesBrand').value = data.marque_id;
+                    document.getElementById('editShoesModele').value = data.modele;
                     document.getElementById('editShoesSize').value = data.taille || '';
+                    document.getElementById('editShoesStock').value = data.quantite_produit;
+                    document.getElementById('editShoesSerialNumber').value = data.numero_serie;
+                    // Set the produit_unite id so we update the correct row
+                    if (document.getElementById('editShoesUnitId')) {
+                        document.getElementById('editShoesUnitId').value = data.produit_id || '';
+                    }
                     document.getElementById('editShoesPrice').value = data.prix_vente;
-                    document.getElementById('editShoesStock').value = data.stock;
+                    document.getElementById('editShoesVente').value = data.prix_achat;
                     document.getElementById('editShoesStatus').value = data.status;
 
                     // Update form action with correct ID
@@ -1126,6 +1285,42 @@
         // Fonction pour les Accessoires
         function openToolsModal() {
             openModal('addToolsModal');
+        }
+
+        // Fonction pour ouverture
+        function openEditToolsModal(id){
+            // Fetch product data from server
+            fetch(`{{ route('get-product-data', ['id' => '__id__']) }}`.replace('__id__', id))
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('editToolsName').value = data.nom;
+                    document.getElementById('editToolsBrand').value = data.marque_id;
+                    document.getElementById('editToolsModele').value = data.modele;
+                    document.getElementById('editToolsVente').value = data.prix_achat;
+                    document.getElementById('editToolsPrice').value = data.prix_vente;
+                    document.getElementById('editToolsSerialNumers').value = data.numero_serie;
+                    // Set the produit_unite id so we update the correct row
+                    if (document.getElementById('editShoesUnitId')) {
+                        document.getElementById('editShoesUnitId').value = data.produit_id || '';
+                    }
+                    document.getElementById('editToolsStock').value = data.quantite_produit;
+                    document.getElementById('editShoesStatus').value = data.status;
+
+                    // Update form action with correct ID
+                    const form = document.getElementById('editToolsForm');
+                    form.action = form.action.replace('__id__', id);
+
+                    openModal('editToolsModal');
+                    validateEditToolsForm();
+                })
+                .catch(error => console.error('Error fetching product:', error));
+        }
+
+        function openDeleteToolsModal(id) {
+            // Update form action with correct ID
+            const form = document.getElementById('deleteToolsForm');
+            form.action = form.action.replace('__id__', id);
+            openModal('deleteToolsForm');
         }
 
         // Fonction pour ouvrir/fermer les dropdowns
