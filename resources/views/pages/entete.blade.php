@@ -76,7 +76,7 @@
                     <i class="fas fa-bell text-gray-600"></i>
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">3</span>
                 </button>
-                
+
                 <!-- User Dropdown -->
                 <div class="relative">
                     <button onclick="toggleDropdown()" class="flex items-center space-x-3 bg-white rounded-xl shadow px-4 py-2 hover:shadow-md transition">
@@ -86,7 +86,7 @@
                         <span class="font-medium text-gray-700">{{ auth()->user()->name ?? 'Utilisateur' }}</span>
                         <i class="fas fa-chevron-down text-gray-400 text-sm"></i>
                     </button>
-                    
+
                     <div id="userDropdown" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-2 z-30">
                         <a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
                             <i class="fas fa-user w-5 text-gray-400"></i>
@@ -106,7 +106,7 @@
             </div>
         </div>
     </header>
-    
+
     <!-- Conteneur principal avec sidebar et contenu -->
     <div class="flex flex-1 overflow-hidden">
         <!-- Sidebar -->
@@ -148,6 +148,11 @@
                     <span>Remises</span>
                 </a>
 
+                <a href="{{ route('liste-dettes') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
+                    <i class="fas fa-money-bill w-5"></i>
+                    <span>Dettes</span>
+                </a>
+
                 <a href="{{ route('liste-rapports') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
                     <i class="fas fa-file-alt w-5"></i>
                     <span>Rapports</span>
@@ -158,13 +163,13 @@
                 </a>
             </nav>
         </aside>
-        
+
         <!-- Contenu principal -->
         <main class="flex-1 overflow-y-auto">
             @yield('content')
         </main>
     </div>
-    
+
     <script>
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');

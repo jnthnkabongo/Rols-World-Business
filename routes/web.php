@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DettesController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/', [AuthController::class, 'create'])->name('connexion');
 
-Route::middleware('auth')->group(function () { 
+Route::middleware('auth')->group(function () {
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     //mecanique roles CRUD
@@ -51,6 +52,13 @@ Route::middleware('auth')->group(function () {
     //mecanique remises CRUD
     Route::get('liste-remise', [DashboardController::class, 'remises'])->name('liste-remises');
     Route::post('changer-statut-disponible/{id}', [DashboardController::class, 'changerStatutDisponible'])->name('changer-statut-disponible');
+
+    //mecaniques dettes CRUD
+    Route::get('liste-dettes', [DettesController::class, 'index'])->name('liste-dettes');
+    Route::post('ajouter-dettes', [DettesController::class, 'store'])->name('ajouter-dette');
+    Route::post('modifier-dettes/{id}', [DettesController::class, 'update'])->name('modifier-dette');
+    Route::post('payer-dettes/{id}', [DettesController::class, 'payer'])->name('payer-dette');
+    Route::post('supprimer-dettes/{id}', [DettesController::class, 'destroy'])->name('supprimer-dette');
 
     //mecanique rapports CRUD
     Route::get('liste-rapport', [DashboardController::class, 'rapports'])->name('liste-rapports');
