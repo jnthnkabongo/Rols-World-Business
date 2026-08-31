@@ -1370,7 +1370,23 @@
         function openVenteModal(productId) {
             const form = document.getElementById('venteForm');
             form.action = form.action.replace('__id__', productId);
+            form.reset();
+            validateVenteForm();
             openModal('venteModal');
+        }
+
+        function validateVenteForm() {
+            const nomClient = document.getElementById('nom_client').value.trim();
+            const quantite = document.getElementById('vente_quantite').value.trim();
+            const btn = document.getElementById('venteBtn');
+
+            if (nomClient && quantite && Number(quantite) > 0) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
         }
 
         // Fonction pour ouvrir le modal de remise
@@ -1398,7 +1414,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du client</label>
-                    <input type="text" name="nom_client" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Jean Dupont" required>
+                    <input type="text" id="nom_client" name="nom_client" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Jean Dupont" oninput="validateVenteForm()">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Téléphone</label>
@@ -1414,12 +1430,12 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>
-                    <input type="number" name="quantite" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 1" min="1" required>
+                    <input type="number" id="vente_quantite" name="quantite" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 1" min="1" oninput="validateVenteForm()">
                 </div>
             </form>
             <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
                 <button onclick="closeModal('venteModal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
-                <button type="submit" form="venteForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Enregistrer la vente</button>
+                <button id="venteBtn" type="submit" form="venteForm" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition opacity-50 cursor-not-allowed" disabled>Enregistrer la vente</button>
             </div>
         </div>
     </div>

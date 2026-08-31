@@ -30,7 +30,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Dettes aujourd'hui</p>
-                        <p class="text-sm font-bold text-gray-800 mt-2">{{ $liste_dettes->count() }} Dettes</p>
+                        <p class="text-sm font-bold text-gray-800 mt-2">{{ $somme_dettes_aujourd_hui }} Personnes | Dettes</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-users text-blue-600 text-xl"></i>
@@ -42,7 +42,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Total des dettes</p>
-                        <p class="text-sm font-bold text-gray-800 mt-2">{{ $liste_dettes->total() }} Dettes</p>
+                        <p class="text-sm font-bold text-gray-800 mt-2">{{ $somme_toutes_dettes }} Personnes | Dettes</p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-money-bill text-green-600 text-xl"></i>
@@ -54,7 +54,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Somme des dettes en attente $</p>
-                        <p class="text-sm font-bold text-gray-800 mt-2">{{ number_format($liste_dettes->sum('reste_a_payer'), 2, ',', ' ') }} $</p>
+                        <p class="text-sm font-bold text-gray-800 mt-2">{{ number_format($somme_dettes_en_attente, 2, ',',' ') }} $</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-dollar-sign text-purple-600 text-xl"></i>
@@ -66,7 +66,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Somme des dettes payés</p>
-                        <p class="text-sm font-bold text-gray-800 mt-2">{{ number_format($liste_dettes->sum('montant_payer'), 2, ',', ' ') }} $</p>
+                        <p class="text-sm font-bold text-gray-800 mt-2">{{ number_format($somme_dettes_payer, 2, ',', ' ') }} $</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-franc-sign text-purple-600 text-xl"></i>

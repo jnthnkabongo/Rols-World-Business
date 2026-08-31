@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dettes;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Redirect;
 
 class DettesController extends Controller
@@ -14,7 +15,11 @@ class DettesController extends Controller
     public function index()
     {
         $liste_dettes = Dettes::orderBy('id', 'desc')->paginate(10);
-        return view('pages.liste-dettes', compact('liste_dettes'));
+        $somme_dettes_aujourd_hui = Dettes::whereDate('created_at', Carbon::today())->count('id');
+        $somme_toutes_dettes = Dettes::count('id');
+        $somme_dettes_en_attente = Dettes::sum('reste_a_payer');
+        $somme_dettes_payer = Dettes::sum('montant_payer');
+        return view('pages.liste-dettes', compact('liste_dettes','somme_dettes_aujourd_hui','somme_dettes_en_attente', 'somme_dettes_payer','somme_toutes_dettes'));
     }
 
     /**
