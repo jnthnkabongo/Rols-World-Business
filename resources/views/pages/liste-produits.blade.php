@@ -140,7 +140,7 @@
                                                         <a href="#" onclick="openRemiseModal({{ $produit->id }}, '{{ $produit->nom }}'); toggleDropdownMore('dropdown-electronics-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" onclick="openVenteModal({{ $produit->id }}); toggleDropdownMore('dropdown-electronics-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
+                                                        <a href="#" onclick="openVenteModal({{ $produit->id }}, @js($produit->prix_vente), @js($produit->produitDevise->logo ?? '-')); toggleDropdownMore('dropdown-electronics-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -238,7 +238,7 @@
                                                         <a href="#" onclick="openRemiseModal({{ $produit->id }}, '{{ $produit->nom }}'); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" onclick="openVenteModal({{ $produit->id }}); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
+                                                        <a href="#" onclick="openVenteModal({{ $produit->id }}, @js($produit->prix_vente), @js($produit->produitDevise->logo ?? '-')); toggleDropdownMore('dropdown-shoes-{{ $produit->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -342,7 +342,7 @@
                                                         <a href="#" onclick="openRemiseModal({{ $accesoire->id }}, '{{ $accesoire->nom }}'); toggleDropdownMore('dropdown-shoes-{{ $accesoire->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Remise</a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" onclick="openVenteModal({{ $accesoire->id }}); toggleDropdownMore('dropdown-shoes-{{ $accesoire->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
+                                                        <a href="#" onclick="openVenteModal({{ $accesoire->id }}, @js($accesoire->prix_vente), @js($accesoire->produitDevise->logo ?? '-')); toggleDropdownMore('dropdown-shoes-{{ $accesoire->id }}'); return false;" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Vente</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -942,7 +942,25 @@
     </div>
 
     <script>
-        function switchTab(tabName) {
+        function switchTab(tabName, updateUrl = true) {
+            const validTabs = ['electronics', 'shoes', 'tools'];
+
+            if (!validTabs.includes(tabName)) {
+                tabName = 'electronics';
+            }
+
+            if (updateUrl) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('tab', tabName);
+                window.history.replaceState({}, '', url);
+            }
+
+            document.querySelectorAll('.tab-content nav[role="navigation"] a[href]').forEach(link => {
+                const url = new URL(link.href, window.location.origin);
+                url.searchParams.set('tab', tabName);
+                link.href = url;
+            });
+
             // Cacher tout le contenu des onglets
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.add('hidden');
@@ -962,6 +980,15 @@
             activeButton.classList.remove('border-transparent', 'text-gray-500');
             activeButton.classList.add('border-blue-600', 'text-blue-600');
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tab = new URLSearchParams(window.location.search).get('tab');
+            switchTab(tab || 'electronics', false);
+
+            if (tab) {
+                document.getElementById('content-' + tab)?.scrollIntoView({ block: 'start' });
+            }
+        });
 
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -1367,10 +1394,12 @@
         }
 
         // Fonction pour ouvrir le modal de vente
-        function openVenteModal(productId) {
+        function openVenteModal(productId, price, currency) {
             const form = document.getElementById('venteForm');
             form.action = form.action.replace('__id__', productId);
             form.reset();
+            document.getElementById('venteProduitPrix').value = price;
+            document.getElementById('venteProduitDevise').textContent = currency;
             validateVenteForm();
             openModal('venteModal');
         }
@@ -1427,6 +1456,13 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Adresse</label>
                     <textarea name="adresse" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 123 Rue de la Paix" rows="2"></textarea>
+                </div>
+                 <div>
+                    <label for="venteProduitPrix" class="block text-sm font-semibold text-gray-700 mb-2">Prix de vente</label>
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="venteProduitPrix" name="prix_vente" min="0" step="0.01" required class="w-full px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <span id="venteProduitDevise" class="font-semibold text-blue-700">-</span>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Quantité</label>

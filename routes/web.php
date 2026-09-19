@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
 
     //mecanique ventes CRUD
     Route::get('liste-vente', [DashboardController::class, 'ventes'])->name('liste-ventes');
+    Route::post('supprimer-vente/{id}', [DashboardController::class, 'SupprimerVente'])->name('supprimer-vente');
     Route::get('export-ventes-pdf', [DashboardController::class, 'exportVentesPDF'])->name('export-ventes-pdf');
 
     //mecanique clients CRUD

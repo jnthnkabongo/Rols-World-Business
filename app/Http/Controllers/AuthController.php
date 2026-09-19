@@ -43,7 +43,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             return redirect()->intended(route('dashboard'))->with('Session', 'Connexion reussie');
         }
-        return redirect()->route('')->withErrors(['Error' => 'Identifiants invalides'])->onlyInput('email');
+        return redirect()->route('login')->withErrors(['Error' => 'Identifiants invalides'])->onlyInput('email');
     }
 
     /**
@@ -98,7 +98,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken('auth-token')->plainTextToken;
-            
+
             return response()->json([
                 'message' => 'Connexion reussie',
                 'token' => $token,
@@ -108,7 +108,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Les informations saisies ne sont pas correctes'
         ], 401);
-        
+
     }
 
     public function logout_api(){

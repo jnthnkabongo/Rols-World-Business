@@ -1024,6 +1024,7 @@ class DashboardController extends Controller
             'email' => 'nullable|email|max:150',
             'adresse' => 'nullable|string',
             'quantite' => 'required|integer|min:1',
+            'prix_vente' => 'required|numeric|min:0',
         ]);
 
         try {
@@ -1031,6 +1032,13 @@ class DashboardController extends Controller
             DB::transaction(function () use ($validated, $id) {
 
                 $produit = Produits::findOrFail($id);
+                DB::table('produits')
+                    ->where('id', $produit->id)
+                    ->update([
+                        'prix_vente' => $validated['prix_vente'],
+                        'updated_at' => now(),
+                    ]);
+                $produit->refresh();
 
                 $produitUnite = ProduitUnites::where('produit_id', $id)->first();
 
@@ -1055,7 +1063,7 @@ class DashboardController extends Controller
                     'client_id' => $client->id,
                     'user_id' => Auth::id(),
                     'date_vente' => now(),
-                    'total' => $produit->prix_vente * $validated['quantite'],
+                    'total' => $validated['prix_vente'] * $validated['quantite'],
                     'statut' => 'paye',
                     'devise_id' => $produit->devise_id,
                 ]);
@@ -1064,8 +1072,8 @@ class DashboardController extends Controller
                     'vente_id' => $vente->id,
                     'produit_unite_id' => $produitUnite->id,
                     'quantite' => $validated['quantite'],
-                    'prix_unitaire' => $produit->prix_vente,
-                    'total' => $produit->prix_vente * $validated['quantite'],
+                    'prix_unitaire' => $validated['prix_vente'],
+                    'total' => $validated['prix_vente'] * $validated['quantite'],
                 ]);
 
                 $produitUnite->decrement('quantite_produit', $validated['quantite']);
@@ -1095,6 +1103,36 @@ class DashboardController extends Controller
                 ->back()
                 ->withInput()
                 ->with('error', $th->getMessage());
+        }
+    }
+
+    public function SupprimerVente($id)
+    {
+        try {
+            DB::transaction(function () use ($id) {
+                $vente = Ventes::with('ventedetails')->lockForUpdate()->findOrFail($id);
+
+                foreach ($vente->ventedetails as $detail) {
+                    $produitUnite = ProduitUnites::lockForUpdate()->findOrFail($detail->produit_unite_id);
+
+                    $qtyToRestore = (int) ($detail->quantite ?? 0);
+                    $currentQuantity = is_numeric($produitUnite->quantite_produit)
+                        ? (int) $produitUnite->quantite_produit
+                        : 0;
+
+                    $produitUnite->quantite_produit = $currentQuantity + $qtyToRestore;
+                    $produitUnite->statut = 'en_stock';
+                    $produitUnite->save();
+                }
+
+                $vente->paiements()->delete();
+                $vente->ventedetails()->delete();
+                $vente->delete();
+            });
+
+            return redirect()->route('liste-ventes')->with('success', 'Vente supprimée et stock restitué avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('liste-ventes')->with('error', 'Erreur lors de la suppression de la vente');
         }
     }
 

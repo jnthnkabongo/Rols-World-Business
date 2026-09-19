@@ -63,10 +63,10 @@
                         <i class="fas fa-franc-sign text-purple-600 text-xl"></i>
                     </div>
                 </div>
-            </div>            
+            </div>
         </div>
 
-        
+
         <!-- Formulaire de filtre par date -->
         <div class="bg-white rounded-2xl shadow-lg p-3 mb-3">
             <form action="{{ route('liste-ventes') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
@@ -143,7 +143,7 @@
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->ventedetails->first()?->total ?? '0' }} {{ $vente->venteDevise->logo ?? '-'}}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->user->name }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $vente->date_vente }}</td>
-                              
+
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center space-x-2">
                                         {{-- <button onclick="openViewModal({{ $role->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
@@ -152,9 +152,12 @@
                                         <button onclick="openEditModal({{ $vente->id }})" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button onclick="openDeleteModal({{ $vente->id }})" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <form action="{{ route('supprimer-vente', $vente->id) }}" method="POST" onsubmit="return confirm('Supprimer cette vente et restituer le stock ?');">
+                                            @csrf
+                                            <button type="submit" class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200" title="Supprimer la vente et restituer le stock">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -173,7 +176,7 @@
             <div class="mt-6 pb-4 mr-4 flex justify-end bg-primary">
                 {{ $liste_ventes->withQueryString()->links() }}
             </div>
-   
+
         </div>
     </div>
 @endsection
