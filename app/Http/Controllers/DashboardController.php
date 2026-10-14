@@ -1416,6 +1416,13 @@ class DashboardController extends Controller
         $meilleur_produit_chaussures_dollar = null;
         $ventes_chaussures_dollar_count = 0;
 
+        // Stats accessoires en dollars ($)
+        $benefice_total_accessoires_dollar = 0;
+        $somme_ventes_accessoires_dollar = 0;
+        $benefice_moyen_accessoires_dollar = 0;
+        $meilleur_produit_accessoires_dollar = null;
+        $ventes_accessoires_dollar_count = 0;
+
         $ventes_aujourdhui = Ventes::whereDate('created_at', today())->count();
         $remises_aujourdhui = Remises::whereDate('created_at', today())->count();
 
@@ -1570,6 +1577,198 @@ class DashboardController extends Controller
                 ->first();
         }
 
+        // Stats électroniques en dollars ($)
+        $statsQueryElectroniquesDollar = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 1)
+            ->where('produits.categorie_id', 1);
+
+        // Appliquer les filtres de date
+        if ($request->date_debut && $request->date_fin) {
+            $statsQueryElectroniquesDollar->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $statsQueryElectroniquesDollar->whereDate('ventes.created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $statsQueryElectroniquesDollar->whereDate('ventes.created_at', '<=', $request->date_fin);
+        } else {
+            $statsQueryElectroniquesDollar->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+        }
+
+        $benefice_total_electroniques_dollar = $statsQueryElectroniquesDollar->value('benefice') ?? 0;
+
+        // Somme des ventes électroniques en dollars
+        $ventesQueryElectroniquesDollar = Ventes::where('devise_id', 1)
+            ->whereHas('ventedetails.produitUnite.produit', function($q) {
+                $q->where('categorie_id', 1);
+            });
+
+        if ($request->date_debut && $request->date_fin) {
+            $ventesQueryElectroniquesDollar->whereBetween('created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $ventesQueryElectroniquesDollar->whereDate('created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $ventesQueryElectroniquesDollar->whereDate('created_at', '<=', $request->date_fin);
+        } else {
+            $ventesQueryElectroniquesDollar->whereBetween('created_at', [$date_debut, $date_fin]);
+        }
+
+        $somme_ventes_electroniques_dollar = $ventesQueryElectroniquesDollar->sum('total');
+        $ventes_electroniques_dollar_count = $ventesQueryElectroniquesDollar->count();
+        $benefice_moyen_electroniques_dollar = $ventes_electroniques_dollar_count > 0 ? $benefice_total_electroniques_dollar / $ventes_electroniques_dollar_count : 0;
+
+        // Meilleur produit électronique en dollars
+        $meilleurProduitElectroniquesDollar = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 1)
+            ->where('produits.categorie_id', 1);
+
+        if ($request->date_debut && $request->date_fin) {
+            $meilleurProduitElectroniquesDollar->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $meilleurProduitElectroniquesDollar->whereDate('ventes.created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $meilleurProduitElectroniquesDollar->whereDate('ventes.created_at', '<=', $request->date_fin);
+        } else {
+            $meilleurProduitElectroniquesDollar->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+        }
+
+        $meilleur_produit_electroniques_dollar = $meilleurProduitElectroniquesDollar
+            ->groupBy('produits.id', 'produits.nom')
+            ->orderByDesc('benefice_total')
+            ->first();
+
+        // Stats chaussures en dollars ($)
+        $statsQueryChaussuresDollar = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 1)
+            ->where('produits.categorie_id', 2);
+
+        // Appliquer les filtres de date
+        if ($request->date_debut && $request->date_fin) {
+            $statsQueryChaussuresDollar->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $statsQueryChaussuresDollar->whereDate('ventes.created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $statsQueryChaussuresDollar->whereDate('ventes.created_at', '<=', $request->date_fin);
+        } else {
+            $statsQueryChaussuresDollar->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+        }
+
+        $benefice_total_chaussures_dollar = $statsQueryChaussuresDollar->value('benefice') ?? 0;
+
+        // Somme des ventes chaussures en dollars
+        $ventesQueryChaussuresDollar = Ventes::where('devise_id', 1)
+            ->whereHas('ventedetails.produitUnite.produit', function($q) {
+                $q->where('categorie_id', 2);
+            });
+
+        if ($request->date_debut && $request->date_fin) {
+            $ventesQueryChaussuresDollar->whereBetween('created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $ventesQueryChaussuresDollar->whereDate('created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $ventesQueryChaussuresDollar->whereDate('created_at', '<=', $request->date_fin);
+        } else {
+            $ventesQueryChaussuresDollar->whereBetween('created_at', [$date_debut, $date_fin]);
+        }
+
+        $somme_ventes_chaussures_dollar = $ventesQueryChaussuresDollar->sum('total');
+        $ventes_chaussures_dollar_count = $ventesQueryChaussuresDollar->count();
+        $benefice_moyen_chaussures_dollar = $ventes_chaussures_dollar_count > 0 ? $benefice_total_chaussures_dollar / $ventes_chaussures_dollar_count : 0;
+
+        // Meilleur produit chaussures en dollars
+        $meilleurProduitChaussuresDollar = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 1)
+            ->where('produits.categorie_id', 2);
+
+        if ($request->date_debut && $request->date_fin) {
+            $meilleurProduitChaussuresDollar->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $meilleurProduitChaussuresDollar->whereDate('ventes.created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $meilleurProduitChaussuresDollar->whereDate('ventes.created_at', '<=', $request->date_fin);
+        } else {
+            $meilleurProduitChaussuresDollar->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+        }
+
+        $meilleur_produit_chaussures_dollar = $meilleurProduitChaussuresDollar
+            ->groupBy('produits.id', 'produits.nom')
+            ->orderByDesc('benefice_total')
+            ->first();
+
+        // Stats accessoires en dollars ($)
+        $statsQueryAccessoiresDollar = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 2)
+            ->where('produits.categorie_id', 3);
+
+        // Appliquer les filtres de date
+        if ($request->date_debut && $request->date_fin) {
+            $statsQueryAccessoiresDollar->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $statsQueryAccessoiresDollar->whereDate('ventes.created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $statsQueryAccessoiresDollar->whereDate('ventes.created_at', '<=', $request->date_fin);
+        } else {
+            $statsQueryAccessoiresDollar->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+        }
+
+        $benefice_total_accessoires_dollar = $statsQueryAccessoiresDollar->value('benefice') ?? 0;
+
+        // Somme des ventes accessoires en dollars
+        $ventesQueryAccessoiresDollar = Ventes::where('devise_id', 1)
+            ->whereHas('ventedetails.produitUnite.produit', function($q) {
+                $q->where('categorie_id', 3);
+            });
+
+        if ($request->date_debut && $request->date_fin) {
+            $ventesQueryAccessoiresDollar->whereBetween('created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $ventesQueryAccessoiresDollar->whereDate('created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $ventesQueryAccessoiresDollar->whereDate('created_at', '<=', $request->date_fin);
+        } else {
+            $ventesQueryAccessoiresDollar->whereBetween('created_at', [$date_debut, $date_fin]);
+        }
+
+        $somme_ventes_accessoires_dollar = $ventesQueryAccessoiresDollar->sum('total');
+        $ventes_accessoires_dollar_count = $ventesQueryAccessoiresDollar->count();
+        $benefice_moyen_accessoires_dollar = $ventes_accessoires_dollar_count > 0 ? $benefice_total_accessoires_dollar / $ventes_accessoires_dollar_count : 0;
+
+        // Meilleur produit accessoires en dollars
+        $meilleurProduitAccessoiresDollar = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
+            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+            ->where('ventes.devise_id', 2)
+            ->where('produits.categorie_id', 3);
+
+        if ($request->date_debut && $request->date_fin) {
+            $meilleurProduitAccessoiresDollar->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+        } elseif ($request->date_debut) {
+            $meilleurProduitAccessoiresDollar->whereDate('ventes.created_at', '>=', $request->date_debut);
+        } elseif ($request->date_fin) {
+            $meilleurProduitAccessoiresDollar->whereDate('ventes.created_at', '<=', $request->date_fin);
+        } else {
+            $meilleurProduitAccessoiresDollar->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+        }
+
+        $meilleur_produit_accessoires_dollar = $meilleurProduitAccessoiresDollar
+            ->groupBy('produits.id', 'produits.nom')
+            ->orderByDesc('benefice_total')
+            ->first();
+
         // Produits par statut
         $produits_en_stock = ProduitUnites::where('statut', 'en_stock')->count();
         $produits_en_remise = ProduitUnites::where('statut', 'remise')->count();
@@ -1599,6 +1798,18 @@ class DashboardController extends Controller
             'benefice_total_fc',
             'benefice_moyen_fc',
             'meilleur_produit_fc',
+            'benefice_total_electroniques_dollar',
+            'somme_ventes_electroniques_dollar',
+            'benefice_moyen_electroniques_dollar',
+            'meilleur_produit_electroniques_dollar',
+            'benefice_total_chaussures_dollar',
+            'somme_ventes_chaussures_dollar',
+            'benefice_moyen_chaussures_dollar',
+            'meilleur_produit_chaussures_dollar',
+            'benefice_total_accessoires_dollar',
+            'somme_ventes_accessoires_dollar',
+            'benefice_moyen_accessoires_dollar',
+            'meilleur_produit_accessoires_dollar',
             'details_ventes',
             'liste_produits',
             'dernieres_ventes',
