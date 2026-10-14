@@ -42,6 +42,9 @@ Route::middleware('auth')->group(function () {
     Route::post('changer-statut-remise/{id}', [DashboardController::class, 'changerStatutRemise'])->name('changer-statut-remise');
     Route::post('changer-statut-vendu/{id}', [DashboardController::class, 'changerStatutVendu'])->name('changer-statut-vendu');
 
+    Route::get('liste-produits-epures', [DashboardController::class, 'produits_epures'])->name('liste-produits-epures');
+
+    
     //mecanique ventes CRUD
     Route::get('liste-vente', [DashboardController::class, 'ventes'])->name('liste-ventes');
     Route::post('supprimer-vente/{id}', [DashboardController::class, 'SupprimerVente'])->name('supprimer-vente');

@@ -54,8 +54,10 @@ class DashboardController extends Controller
         //     ->sum('vente_details.quantite');
 
         // Ventes électroniques
-        $debutMois = Carbon::now()->startOfMonth();
-        $finMois = Carbon::now()->endOfMonth();
+        // $debutMois = Carbon::now()->startOfMonth();
+        // $finMois = Carbon::now()->endOfMonth();
+        $debutMois = Carbon::now()->day(10)->startOfDay();
+        $finMois = Carbon::now()->addMonth()->day(10)->endOfDay();
 
         // Ventes électroniques du mois en cours
         $ventes_electroniques = Ventes::whereBetween('created_at', [$debutMois, $finMois])
@@ -487,31 +489,57 @@ class DashboardController extends Controller
                             $query->where('nom', 'like', "%{$recherche}%");
                         })
                         ->orWhereHas('produitUnites', function ($query) use ($recherche) {
-                            $query->where('numero_serie', 'like', "%{$recherche}%");
+                            $query->where('numero_serie', 'like', "%{$recherche}%")
+                                  ->where('quantite_produit', '>', 0);
                         });
                 });
             }
 
             if (in_array($statut, ['vendu', 'en_stock'], true)) {
                 $query->whereHas('produitUnites', function ($query) use ($statut) {
-                    $query->where('statut', $statut);
+                    $query->where('statut', $statut)
+                          ->where('quantite_produit', '>', 0);
                 });
             }
         };
 
-        $produits_electroniques = Produits::with(['categorie', 'marque','produitUnites', 'produitDevise'])
-            ->where('categorie_id', '=', 1)
+        $produits_electroniques = Produits::with(['categorie', 'marque', 'produitDevise'])
+            ->where('categorie_id', 1)
+            ->whereHas('produitUnites', function ($query) {
+                $query->where('statut', '=', 'en_stock')
+                      ->where('quantite_produit', '>', 0);
+            })
+            ->with(['produitUnites' => function ($query) {
+                $query->where('statut', '=', 'en_stock')
+                      ->where('quantite_produit', '>', 0);
+            }])
             ->tap($appliquerFiltres)
-            ->orderBy('id', 'desc')
+            ->orderByDesc('id')
             ->paginate(10, ['*'], 'electroniques_page');
 
         $chaussures = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 2)
+               ->whereHas('produitUnites', function ($query) {
+                $query->where('statut', '=', 'en_stock')
+                      ->where('quantite_produit', '>', 0);
+            })
+            ->with(['produitUnites' => function ($query) {
+                $query->where('statut', '=', 'en_stock')
+                      ->where('quantite_produit', '>', 0);
+            }])
             ->tap($appliquerFiltres)
             ->paginate(10, ['*'], 'chaussures_page');
 
         $accessoires = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
             ->where('categorie_id', '=', 3)
+               ->whereHas('produitUnites', function ($query) {
+                $query->where('statut', '=', 'en_stock')
+                      ->where('quantite_produit', '>', 0);
+            })
+            ->with(['produitUnites' => function ($query) {
+                $query->where('statut', '=', 'en_stock')
+                      ->where('quantite_produit', '>', 0);
+            }])
             ->tap($appliquerFiltres)
             ->paginate(10, ['*'], 'accessoires_page');
 
@@ -887,6 +915,81 @@ class DashboardController extends Controller
         }
     }
 
+    //// 1. Lecture des donnees de la liste des produits dont le stock est épuisé
+    public function produits_epures(Request $request)
+    {
+     
+        $recherche_epures = trim($request->input('recherche_epures', ''));
+        $statut_epures = $request->input('statut_epures');
+
+        $appliquerFiltres = function ($query) use ($recherche_epures, $statut_epures) {
+            if ($recherche_epures !== '') {
+                $query->where(function ($query) use ($recherche_epures) {
+                    $query->where('nom', 'like', "%{$recherche_epures}%")
+                        ->orWhere('modele', 'like', "%{$recherche_epures}%")
+                        ->orWhereHas('marque', function ($query) use ($recherche_epures) {
+                            $query->where('nom', 'like', "%{$recherche_epures}%");
+                        })
+                        ->orWhereHas('produitUnites', function ($query) use ($recherche_epures) {
+                            $query->where('numero_serie', 'like', "%{$recherche_epures}%")
+                                  ->where('quantite_produit', '>', 0);
+                        });
+                });
+            }
+
+            if (in_array($statut_epures, ['vendu', 'en_stock'], true)) {
+                $query->whereHas('produitUnites', function ($query) use ($statut_epures) {
+                    $query->where('statut', $statut_epures)
+                          ->where('quantite_produit', '>', 0);
+                });
+            }
+        };
+
+        $produits_electroniques_epures = Produits::with(['categorie', 'marque', 'produitDevise'])
+            ->where('categorie_id', 1)
+            ->whereHas('produitUnites', function ($query) {
+                $query->where('statut', '=', 'vendu')
+                      ->where('quantite_produit', '=', 0);
+            })
+            ->with(['produitUnites' => function ($query) {
+                $query->where('statut', '=', 'vendu')
+                      ->where('quantite_produit', '=', 0);
+            }])
+            ->tap($appliquerFiltres)
+            ->orderByDesc('id')
+            ->paginate(10, ['*'], 'electroniques_page');
+
+        $liste_chaussures_epures = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
+            ->where('categorie_id', '=', 2)
+               ->whereHas('produitUnites', function ($query) {
+                $query->where('statut', '=', 'vendu')
+                      ->where('quantite_produit', '=', 0);
+            })
+            ->with(['produitUnites' => function ($query) {
+                $query->where('statut', '=', 'vendu')
+                      ->where('quantite_produit', '=', 0);
+            }])
+            ->tap($appliquerFiltres)
+            ->paginate(10, ['*'], 'chaussures_page');
+
+        $liste_accessoires_epures = Produits::with(['categorie', 'marque', 'produitUnites', 'produitDevise'])
+            ->where('categorie_id', '=', 3)
+               ->whereHas('produitUnites', function ($query) {
+                $query->where('statut', '=', 'vendu')
+                      ->where('quantite_produit', '=', 0);
+            })
+            ->with(['produitUnites' => function ($query) {
+                $query->where('statut', '=', 'vendu')
+                      ->where('quantite_produit', '=', 0);
+            }])
+            ->tap($appliquerFiltres)
+            ->paginate(10, ['*'], 'accessoires_page');
+
+        $liste_categories = Categories::orderBy('nom', 'asc')->get();
+
+        return view('pages.liste-epuration', compact('produits_electroniques_epures', 'liste_chaussures_epures', 'liste_accessoires_epures', 'recherche_epures', 'statut_epures'));
+    }
+
     //// 5. Récupérer les données d'un produit pour les modals
     // public function getProductData($id)
     // {
@@ -1236,6 +1339,22 @@ class DashboardController extends Controller
         // Filtre par devise
         $devise_id = $request->devise_id;
 
+        // Déterminer la plage de dates à utiliser
+        if ($request->date_debut && $request->date_fin) {
+            $date_debut = $request->date_debut;
+            $date_fin = $request->date_fin;
+        } elseif ($request->date_debut) {
+            $date_debut = $request->date_debut;
+            $date_fin = null;
+        } elseif ($request->date_fin) {
+            $date_debut = null;
+            $date_fin = $request->date_fin;
+        } else {
+            // Par défaut, utiliser le mois en cours
+            $date_debut = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $date_fin = Carbon::now()->endOfMonth()->format('Y-m-d');
+        }
+
         // Base query pour les statistiques avec filtre de devise
         $ventesQuery = Ventes::query();
         if ($devise_id) {
@@ -1270,71 +1389,186 @@ class DashboardController extends Controller
 
         $details_ventes = $detailsQuery->orderByDesc('ventes.created_at')->paginate(10);
 
-        // Statistiques financières - devise_id 1 ($)
-        // $somme_ventes_dollar = Ventes::where('devise_id', 1)->sum('total');
-        $debutMois = Carbon::now()->startOfMonth();
-        $finMois = Carbon::now()->endOfMonth();
+        // Statistiques financières - selon le filtre de devise
+        $benefice_total_dollar = 0;
+        $somme_ventes_dollar = 0;
+        $benefice_moyen_dollar = 0;
+        $meilleur_produit_dollar = null;
+        $ventes_dollar_count = 0;
 
-        $somme_ventes_dollar = Ventes::where('devise_id', 1)
-            ->whereBetween('created_at', [$debutMois, $finMois])
-            ->sum('total');
+        $benefice_total_fc = 0;
+        $somme_ventes_fc = 0;
+        $benefice_moyen_fc = 0;
+        $meilleur_produit_fc = null;
+        $ventes_fc_count = 0;
+
+        // Stats électroniques en dollars ($)
+        $benefice_total_electroniques_dollar = 0;
+        $somme_ventes_electroniques_dollar = 0;
+        $benefice_moyen_electroniques_dollar = 0;
+        $meilleur_produit_electroniques_dollar = null;
+        $ventes_electroniques_dollar_count = 0;
+
+        // Stats chaussures en dollars ($)
+        $benefice_total_chaussures_dollar = 0;
+        $somme_ventes_chaussures_dollar = 0;
+        $benefice_moyen_chaussures_dollar = 0;
+        $meilleur_produit_chaussures_dollar = null;
+        $ventes_chaussures_dollar_count = 0;
+
         $ventes_aujourdhui = Ventes::whereDate('created_at', today())->count();
         $remises_aujourdhui = Remises::whereDate('created_at', today())->count();
 
-        // Bénéfice total pour devise_id 1 ($)
-        // $benefice_total_dollar = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
-        //     ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
-        //     ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
-        //     ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
-        //     ->where('ventes.devise_id', 1)
-        //     ->value('benefice') ?? 0;
-        $benefice_total_dollar = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
-            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
-            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
-            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
-            ->where('ventes.devise_id', 1)
-            ->whereBetween('ventes.created_at', [$debutMois, $finMois])
-            ->value('benefice') ?? 0;
+        // Calculer les stats pour la devise sélectionnée ou les deux si aucun filtre
+        if (!$devise_id || $devise_id == 1) {
+            // Stats pour devise_id 1 ($)
+            $statsQueryDollar = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
+                ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+                ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+                ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+                ->where('ventes.devise_id', 1);
 
-        $ventes_dollar_count = Ventes::where('devise_id', 1)->count();
-        $benefice_moyen_dollar = $ventes_dollar_count > 0 ? $benefice_total_dollar / $ventes_dollar_count : 0;
+            // Appliquer les filtres de date aux statistiques
+            if ($request->date_debut && $request->date_fin) {
+                $statsQueryDollar->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+            } elseif ($request->date_debut) {
+                $statsQueryDollar->whereDate('ventes.created_at', '>=', $request->date_debut);
+            } elseif ($request->date_fin) {
+                $statsQueryDollar->whereDate('ventes.created_at', '<=', $request->date_fin);
+            } else {
+                $statsQueryDollar->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+            }
 
-        // Meilleur produit pour devise_id 1 ($)
-        $meilleur_produit_dollar = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
-            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
-            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
-            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
-            ->where('ventes.devise_id', 1)
-            ->groupBy('produits.id', 'produits.nom')
-            ->orderByDesc('benefice_total')
-            ->first();
+            // Appliquer le filtre de produit aux statistiques
+            if ($request->produit_id) {
+                $statsQueryDollar->whereHas('produitUnite.produit', function($q) use ($request) {
+                    $q->where('id', $request->produit_id);
+                });
+            }
 
-        // Statistiques financières - devise_id 2 (FC)
-        $somme_ventes_fc = Ventes::where('devise_id', 2)
-            ->whereBetween('created_at', [$debutMois, $finMois])
-            ->sum('total');
+            $benefice_total_dollar = $statsQueryDollar->value('benefice') ?? 0;
 
-        // Bénéfice total pour devise_id 2 (FC)
-        $benefice_total_fc = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
-            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
-            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
-            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
-            ->where('ventes.devise_id', 2)
-            ->whereBetween('ventes.created_at', [$debutMois, $finMois])
-            ->value('benefice') ?? 0;
+            // Somme des ventes pour devise_id 1 ($)
+            $ventesQueryDollar = Ventes::where('devise_id', 1);
 
-        $ventes_fc_count = Ventes::where('devise_id', 2)->count();
-        $benefice_moyen_fc = $ventes_fc_count > 0 ? $benefice_total_fc / $ventes_fc_count : 0;
+            // Appliquer les filtres de date
+            if ($request->date_debut && $request->date_fin) {
+                $ventesQueryDollar->whereBetween('created_at', [$request->date_debut, $request->date_fin]);
+            } elseif ($request->date_debut) {
+                $ventesQueryDollar->whereDate('created_at', '>=', $request->date_debut);
+            } elseif ($request->date_fin) {
+                $ventesQueryDollar->whereDate('created_at', '<=', $request->date_fin);
+            } else {
+                $ventesQueryDollar->whereBetween('created_at', [$date_debut, $date_fin]);
+            }
 
-        // Meilleur produit pour devise_id 2 (FC)
-        $meilleur_produit_fc = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
-            ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
-            ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
-            ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
-            ->where('ventes.devise_id', 2)
-            ->groupBy('produits.id', 'produits.nom')
-            ->orderByDesc('benefice_total')
-            ->first();
+            $somme_ventes_dollar = $ventesQueryDollar->sum('total');
+            $ventes_dollar_count = $ventesQueryDollar->count();
+            $benefice_moyen_dollar = $ventes_dollar_count > 0 ? $benefice_total_dollar / $ventes_dollar_count : 0;
+
+            // Meilleur produit pour devise_id 1 ($)
+            $meilleurProduitQueryDollar = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
+                ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+                ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+                ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+                ->where('ventes.devise_id', 1);
+
+            // Appliquer les filtres de date
+            if ($request->date_debut && $request->date_fin) {
+                $meilleurProduitQueryDollar->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+            } elseif ($request->date_debut) {
+                $meilleurProduitQueryDollar->whereDate('ventes.created_at', '>=', $request->date_debut);
+            } elseif ($request->date_fin) {
+                $meilleurProduitQueryDollar->whereDate('ventes.created_at', '<=', $request->date_fin);
+            } else {
+                $meilleurProduitQueryDollar->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+            }
+
+            // Appliquer le filtre de produit
+            if ($request->produit_id) {
+                $meilleurProduitQueryDollar->where('produits.id', $request->produit_id);
+            }
+
+            $meilleur_produit_dollar = $meilleurProduitQueryDollar
+                ->groupBy('produits.id', 'produits.nom')
+                ->orderByDesc('benefice_total')
+                ->first();
+        }
+
+        if (!$devise_id || $devise_id == 2) {
+            // Stats pour devise_id 2 (FC)
+            $statsQueryFc = VenteDetails::selectRaw('SUM(vente_details.total - (produits.prix_achat * vente_details.quantite)) as benefice')
+                ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+                ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+                ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+                ->where('ventes.devise_id', 2);
+
+            // Appliquer les filtres de date aux statistiques
+            if ($request->date_debut && $request->date_fin) {
+                $statsQueryFc->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+            } elseif ($request->date_debut) {
+                $statsQueryFc->whereDate('ventes.created_at', '>=', $request->date_debut);
+            } elseif ($request->date_fin) {
+                $statsQueryFc->whereDate('ventes.created_at', '<=', $request->date_fin);
+            } else {
+                $statsQueryFc->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+            }
+
+            // Appliquer le filtre de produit aux statistiques
+            if ($request->produit_id) {
+                $statsQueryFc->whereHas('produitUnite.produit', function($q) use ($request) {
+                    $q->where('id', $request->produit_id);
+                });
+            }
+
+            $benefice_total_fc = $statsQueryFc->value('benefice') ?? 0;
+
+            // Somme des ventes pour devise_id 2 (FC)
+            $ventesQueryFc = Ventes::where('devise_id', 2);
+
+            // Appliquer les filtres de date
+            if ($request->date_debut && $request->date_fin) {
+                $ventesQueryFc->whereBetween('created_at', [$request->date_debut, $request->date_fin]);
+            } elseif ($request->date_debut) {
+                $ventesQueryFc->whereDate('created_at', '>=', $request->date_debut);
+            } elseif ($request->date_fin) {
+                $ventesQueryFc->whereDate('created_at', '<=', $request->date_fin);
+            } else {
+                $ventesQueryFc->whereBetween('created_at', [$date_debut, $date_fin]);
+            }
+
+            $somme_ventes_fc = $ventesQueryFc->sum('total');
+            $ventes_fc_count = $ventesQueryFc->count();
+            $benefice_moyen_fc = $ventes_fc_count > 0 ? $benefice_total_fc / $ventes_fc_count : 0;
+
+            // Meilleur produit pour devise_id 2 (FC)
+            $meilleurProduitQueryFc = VenteDetails::select('produits.nom', DB::raw('SUM((vente_details.total - (produits.prix_achat * vente_details.quantite))) as benefice_total'))
+                ->join('produit_unites', 'vente_details.produit_unite_id', '=', 'produit_unites.id')
+                ->join('produits', 'produit_unites.produit_id', '=', 'produits.id')
+                ->join('ventes', 'vente_details.vente_id', '=', 'ventes.id')
+                ->where('ventes.devise_id', 2);
+
+            // Appliquer les filtres de date
+            if ($request->date_debut && $request->date_fin) {
+                $meilleurProduitQueryFc->whereBetween('ventes.created_at', [$request->date_debut, $request->date_fin]);
+            } elseif ($request->date_debut) {
+                $meilleurProduitQueryFc->whereDate('ventes.created_at', '>=', $request->date_debut);
+            } elseif ($request->date_fin) {
+                $meilleurProduitQueryFc->whereDate('ventes.created_at', '<=', $request->date_fin);
+            } else {
+                $meilleurProduitQueryFc->whereBetween('ventes.created_at', [$date_debut, $date_fin]);
+            }
+
+            // Appliquer le filtre de produit
+            if ($request->produit_id) {
+                $meilleurProduitQueryFc->where('produits.id', $request->produit_id);
+            }
+
+            $meilleur_produit_fc = $meilleurProduitQueryFc
+                ->groupBy('produits.id', 'produits.nom')
+                ->orderByDesc('benefice_total')
+                ->first();
+        }
 
         // Produits par statut
         $produits_en_stock = ProduitUnites::where('statut', 'en_stock')->count();

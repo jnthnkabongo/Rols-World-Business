@@ -11,110 +11,8 @@
             </button>
         </div>
 
-        <!-- Stats Cards with Gradients - Devise 1 ($) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-            <div class="bg-gradient-to-br from-green-400 to-green-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-green-100 text-xs md:text-sm font-medium">Bénéfice Total ($)</p>
-                        <p class="text-xl md:text-3xl font-bold text-white mt-1">{{ number_format($benefice_total_dollar, 2, ',', ' ') }} $</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-chart-line text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-blue-100 text-xs md:text-sm font-medium">Total Ventes ($)</p>
-                        <p class="text-xl md:text-3xl font-bold text-white mt-1">{{ number_format($somme_ventes_dollar, 2, ',', ' ') }} $</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-shopping-cart text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-orange-100 text-xs md:text-sm font-medium">Bénéfice Moyen ($)</p>
-                        <p class="text-xl md:text-3xl font-bold text-white mt-1">{{ number_format($benefice_moyen_dollar, 2, ',', ' ') }} $</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-calculator text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-amber-400 to-amber-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-amber-100 text-xs md:text-sm font-medium">Meilleur Produit ($)</p>
-                        <p class="text-xl md:text-3xl font-bold text-white mt-1">{{ $meilleur_produit_dollar->nom ?? '-' }}</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-trophy text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stats Cards with Gradients - Devise 2 (FC) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-            <div class="bg-gradient-to-br from-purple-400 to-purple-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-purple-100 text-xs md:text-sm font-medium">Bénéfice Total (FC)</p>
-                        <p class="text-xl md:text-3xl font-bold text-white mt-1">{{ number_format($benefice_total_fc, 2, ',', ' ') }} FC</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-chart-line text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-indigo-400 to-indigo-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-indigo-100 text-xs md:text-sm font-medium">Total Ventes (FC)</p>
-                        <p class="text-xl md:text-3xl font-bold text-white mt-1">{{ number_format($somme_ventes_fc, 2, ',', ' ') }} FC</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-shopping-cart text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-pink-400 to-pink-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-pink-100 text-xs md:text-sm font-medium">Bénéfice Moyen (FC)</p>
-                        <p class="text-xl md:text-3xl font-bold text-white mt-1">{{ number_format($benefice_moyen_fc, 2, ',', ' ') }} FC</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-calculator text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-rose-400 to-rose-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-rose-100 text-xs md:text-sm font-medium">Meilleur Produit (FC)</p>
-                        <p class="text-xl md:text-3xl font-bold text-white mt-1">{{ $meilleur_produit_fc->nom ?? '-' }}</p>
-                    </div>
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-trophy text-white text-xl md:text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Filter Section -->
-        <div class="bg-white rounded-2xl shadow-lg p-2 md:p-4 mb-4 md:mb-8">
+        <div class="bg-white rounded-2xl shadow-lg p-2 md:p-4 mb-6 md:mb-8">
             
             <form action="{{ route('liste-rapports') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 <div>
@@ -157,6 +55,108 @@
                     </a>
                 </div>
             </form>
+        </div>
+
+        <!-- Stats Cards with Gradients - Devise 1 ($) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+            <div class="bg-gradient-to-br from-green-400 to-green-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-xs md:text-sm font-medium">Bénéfice Total ($)</p>
+                        <p class="text-xl md:text-xl font-bold text-white mt-1">{{ number_format($benefice_total_dollar, 2, ',', ' ') }} $</p>
+                    </div>
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-chart-line text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-xs md:text-sm font-medium">Total Ventes ($)</p>
+                        <p class="text-xl md:text-xl font-bold text-white mt-1">{{ number_format($somme_ventes_dollar, 2, ',', ' ') }} $</p>
+                    </div>
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-shopping-cart text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-orange-100 text-xs md:text-sm font-medium">Bénéfice Moyen ($)</p>
+                        <p class="text-xl md:text-xl font-bold text-white mt-1">{{ number_format($benefice_moyen_dollar, 2, ',', ' ') }} $</p>
+                    </div>
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-calculator text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-amber-400 to-amber-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-amber-100 text-xs md:text-sm font-medium">Meilleur Produit ($)</p>
+                        <p class="text-xl md:text-xl font-bold text-white mt-1">{{ $meilleur_produit_dollar->nom ?? '-' }}</p>
+                    </div>
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-trophy text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards with Gradients - Devise 2 (FC) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+            <div class="bg-gradient-to-br from-purple-400 to-purple-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-xs md:text-sm font-medium">Bénéfice Total (FC)</p>
+                        <p class="text-xl md:text-xl font-bold text-white mt-1">{{ number_format($benefice_total_fc, 2, ',', ' ') }} FC</p>
+                    </div>
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-chart-line text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-indigo-400 to-indigo-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-indigo-100 text-xs md:text-sm font-medium">Total Ventes (FC)</p>
+                        <p class="text-xl md:text-xl font-bold text-white mt-1">{{ number_format($somme_ventes_fc, 2, ',', ' ') }} FC</p>
+                    </div>
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-shopping-cart text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-pink-400 to-pink-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-pink-100 text-xs md:text-sm font-medium">Bénéfice Moyen (FC)</p>
+                        <p class="text-xl md:text-xl font-bold text-white mt-1">{{ number_format($benefice_moyen_fc, 2, ',', ' ') }} FC</p>
+                    </div>
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-calculator text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-rose-400 to-rose-600 p-4 md:p-6 rounded-2xl shadow-lg card-hover transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-rose-100 text-xs md:text-sm font-medium">Meilleur Produit (FC)</p>
+                        <p class="text-xl md:text-xl font-bold text-white mt-1">{{ $meilleur_produit_fc->nom ?? '-' }}</p>
+                    </div>
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-trophy text-white text-xl md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Table Section -->

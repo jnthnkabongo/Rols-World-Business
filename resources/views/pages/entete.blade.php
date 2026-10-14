@@ -135,6 +135,10 @@
                     <i class="fas fa-box w-5"></i>
                     <span>Produits</span>
                 </a>
+                <a href="{{ route('liste-produits-epures')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
+                    <i class="fas fa-box-open w-5"></i>
+                    <span>Stock épuisé</span>
+                </a>
                 <a href="{{ route('liste-ventes') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200">
                     <i class="fas fa-shopping-cart w-5"></i>
                     <span>Ventes</span>
